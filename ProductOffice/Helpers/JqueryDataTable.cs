@@ -184,7 +184,7 @@ namespace Cliver.ProductOffice
                         {
                             for (int i = 0; i < fields.Length; i++)
                                 if (fields[i].Searchable)
-                                    if(vs[i] != null)
+                                    if(!(vs[i] is System.DBNull))
                                         vs[i] = Regex.Replace((string)vs[i], search, @"<span class='match'>$0</span>", RegexOptions.Compiled | RegexOptions.IgnoreCase);
                         }
                         array.Add(vs);
