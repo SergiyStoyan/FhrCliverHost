@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductOffice", "ProductOff
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Crawlers", "Crawlers", "{C2811A81-7EB2-4373-9738-BEB4D699A224}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CliverBotGui", "CliverBot\CliverBotGui\CliverBotGui.csproj", "{CCD9744F-AA5D-4D39-BD63-0451C3E1E16A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -127,6 +129,14 @@ Global
 		{8CC4FBA2-6978-4C05-8ED8-56A6151BA4F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8CC4FBA2-6978-4C05-8ED8-56A6151BA4F1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8CC4FBA2-6978-4C05-8ED8-56A6151BA4F1}.Release|x86.ActiveCfg = Release|Any CPU
+		{CCD9744F-AA5D-4D39-BD63-0451C3E1E16A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCD9744F-AA5D-4D39-BD63-0451C3E1E16A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCD9744F-AA5D-4D39-BD63-0451C3E1E16A}.Debug|x86.ActiveCfg = Debug|x86
+		{CCD9744F-AA5D-4D39-BD63-0451C3E1E16A}.Debug|x86.Build.0 = Debug|x86
+		{CCD9744F-AA5D-4D39-BD63-0451C3E1E16A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCD9744F-AA5D-4D39-BD63-0451C3E1E16A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCD9744F-AA5D-4D39-BD63-0451C3E1E16A}.Release|x86.ActiveCfg = Release|x86
+		{CCD9744F-AA5D-4D39-BD63-0451C3E1E16A}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
