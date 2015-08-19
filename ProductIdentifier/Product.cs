@@ -40,8 +40,9 @@ namespace Cliver.ProductIdentifier
                         throw new Exception("untreated case");
                 }
                 t = Cliver.PrepareField.Html.GetDbField(t);
-                t = engine.Configuration.Get(DbProduct.CompanyId).StripOfIgnoredWords(t);
+                t = t.ToLower();
                 t = engine.Configuration.Get(DbProduct.CompanyId).ReplaceWithSynonyms(t);
+                t = engine.Configuration.Get(DbProduct.CompanyId).StripOfIgnoredWords(t);
                 t = Regex.Replace(t, @"\s\s+", " ", RegexOptions.Compiled | RegexOptions.Singleline);
                 field2text[field] = t.Trim();
             }

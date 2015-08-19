@@ -97,6 +97,7 @@ CONSTRAINT [PK_ProductIdentifierData] PRIMARY KEY CLUSTERED ([CompanyId] ASC)
                     synonyms = Cliver.Bot.SerializationRoutines.Json.Get<Dictionary<string, string>>(pid.Synonyms);
                 }
                 ignored_words_regex = create_ignored_words_regex();
+                synonyms_regex = create_synonyms_regex();
             }
             readonly int company_id;
             readonly Configuration configuration;
@@ -158,7 +159,6 @@ CONSTRAINT [PK_ProductIdentifierData] PRIMARY KEY CLUSTERED ([CompanyId] ASC)
             }
 
             Dictionary<string, double> word_weights;
-            //HashSet<string> ignored_words;
             Dictionary<string, string> synonyms;
 
             public void SetWordWeight(string word, double weight)
@@ -168,7 +168,9 @@ CONSTRAINT [PK_ProductIdentifierData] PRIMARY KEY CLUSTERED ([CompanyId] ASC)
                 if (weight < 0)
                 {
                     word_weights[word] = -1;
+
                     ignored_words_regex = create_ignored_words_regex();
+                    //UnSetSynonym(word);
                     return;
                 }
                 word_weights[word] = weight;
@@ -184,15 +186,25 @@ CONSTRAINT [PK_ProductIdentifierData] PRIMARY KEY CLUSTERED ([CompanyId] ASC)
                 word = GetSynonym(word);
                 word = word.Trim().ToLower();
                 word_weights.Remove(word);
-                //ignored_words.Remove(word);
+
                 ignored_words_regex = create_ignored_words_regex();
             }
 
             internal string ReplaceWithSynonyms(string text)
             {
-                foreach (KeyValuePair<string, string> kvp in synonyms)
-                    text = Regex.Replace(text, @"(?<!\w)(" + kvp.Key + @")(?!\w)", kvp.Value, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                //foreach (KeyValuePair<string, string> kvp in synonyms)
+                //    text = Regex.Replace(text, @"(?<!\w)(" + kvp.Key + @")(?!\w)", kvp.Value, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+
+                text = synonyms_regex.Replace(text, (Match m) => { 
+                    return GetSynonym(m.Groups["Word"].Value); 
+                });
                 return text;
+            }
+            Regex synonyms_regex;
+
+            Regex create_synonyms_regex()
+            {
+                return new Regex(@"(?<!\w)(?'Word'" + synonyms.Keys.Aggregate((x, y) => x + "|" + Regex.Escape(y)) + @")(?!\w)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
             }
 
             public string GetSynonym(string word)
@@ -211,12 +223,17 @@ CONSTRAINT [PK_ProductIdentifierData] PRIMARY KEY CLUSTERED ([CompanyId] ASC)
                     return;
                 synonyms.Where(x => x.Value == word).ToList().ForEach(x => synonyms[x.Key] = synonym);
                 synonyms[word] = synonym;
+
+                synonyms_regex = create_synonyms_regex();
+                //UnSetWord(word);
             }
 
             public void UnSetSynonym(string word)
             {
                 word = word.Trim().ToLower();
                 synonyms.Remove(word);
+
+                synonyms_regex = create_synonyms_regex();
             }
 
             #region API for editing configuration
