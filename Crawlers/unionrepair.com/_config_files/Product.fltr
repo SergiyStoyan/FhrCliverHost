@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Filter tree file. Produced by DataSifter3.0, http://www.cliversoft.com-->
+<FilterTree>
+  <Filter type="AgileFilter" version="1.0" input_group="" definition="//a[@class=&quot;ty-breadcrumbs__a&quot;]&#xA;Category" comment="" />
+  <Filter type="AgileFilter" version="1.0" input_group="" definition="//h1[@class=&quot;ty-product-block-title&quot;]&#xA;Name" comment="" />
+  <Filter type="AgileFilter" version="1.0" input_group="" definition="//div[@class=&quot;ty-product-block__price-actual&quot;]&#xA;Price" comment="" />
+  <Filter type="AgileFilter" version="1.0" input_group="" definition="//div[@class=&quot;ty-product-block__sku&quot;]&#xA;0" comment="">
+    <Filter type="RegexFilter" version="1.0" input_group="0" definition="&lt;span[^&gt;]*&gt;(?'Sku'[^&gt;]+)&lt;&#xA;Compiled" comment="" />
+  </Filter>
+  <Filter type="RegexFilter" version="1.0" input_group="" definition="&lt;label class=&quot;ty-control-group__label&quot;&gt;Availability:&lt;/label&gt;\s*&lt;span[^&gt;]*&gt;(?'Stock'[^&gt;]+)&lt;&#xA;Compiled" comment="" />
+  <Filter type="AgileFilter" version="1.0" input_group="" definition="//div[@id=&quot;content_description&quot;]&#xA;Description" comment="" />
+  <Filter type="AgileFilter" version="1.0" input_group="" definition="//div[@class=&quot;ty-product-img cm-preview-wrapper&quot;]&#xA;0" comment="">
+    <Filter type="RegexFilter" version="1.0" input_group="0" definition="\ssrc=&quot;(?'ImageUrl'.*?)&quot;&#xA;Compiled" comment="" />
+  </Filter>
+  <Filter type="RegexFilter" version="1.0" input_group="" definition="property=&quot;og:url&quot; content=&quot;http://www.unionrepair.com/(?'Id'.*?)\.html&quot;&#xA;Compiled" comment="" />
+</FilterTree>

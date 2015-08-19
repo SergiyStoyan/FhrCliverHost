@@ -1,0 +1,5 @@
+NOTE:
+
+This application requires .NET Framework 2.0 installed on your computer.
+
+

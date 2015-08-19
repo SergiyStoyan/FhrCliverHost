@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="ProductOffice" Class="ProductOfficeDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=&quot;D:\_d\_PROJECTS\FHR(for Andreas Chermak)\CliverHost\ProductOffice\App_Data\ProductOffice.mdf&quot;;Integrated Security=True;Connect Timeout=30" SettingsObjectName="Cliver.FhrCrawlerHost.Properties.Settings" SettingsPropertyName="ProductOfficeConnectionString2" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.Prices" Member="Prices">
+    <Type Name="Price">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="ProductId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Value" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
+      <Column Name="CurrencyId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Time" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Association Name="Currency_Price" Member="Currency" ThisKey="CurrencyId" OtherKey="Id" Type="Currency" IsForeignKey="true" />
+      <Association Name="Product_Price" Member="Product" ThisKey="ProductId" OtherKey="Id" Type="Product" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Companies" Member="Companies">
+    <Type Name="Company">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="NVarChar(250) NOT NULL" CanBeNull="false" />
+      <Column Name="Url" Type="System.String" DbType="NVarChar(250) NOT NULL" CanBeNull="false" />
+      <Column Name="Comment" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="CrawlerId" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
+      <Association Name="Company_Product" Member="Products" ThisKey="Id" OtherKey="CompanyId" Type="Product" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Currencies" Member="Currencies">
+    <Type Name="Currency">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="NVarChar(250) NOT NULL" CanBeNull="false" />
+      <Column Name="Symbol" Type="System.String" DbType="NVarChar(2) NOT NULL" CanBeNull="false" />
+      <Association Name="Currency_Price" Member="Prices" ThisKey="Id" OtherKey="CurrencyId" Type="Price" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Products" Member="Products">
+    <Type Name="Product">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="CompanyId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ExternalId" Type="System.String" DbType="NVarChar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="CreateTime" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="ModifyTime" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UpdateTime" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="Name" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="Url" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="ImageUrls" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="Sku" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="Category" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="Description" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="LinkId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Source" Type="System.String" DbType="NVarChar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="Stock" Type="System.Decimal" DbType="Decimal(18,5)" CanBeNull="true" />
+      <Association Name="Product_Price" Member="Prices" ThisKey="Id" OtherKey="ProductId" Type="Price" />
+      <Association Name="Company_Product" Member="Company" ThisKey="CompanyId" OtherKey="Id" Type="Company" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ProductIdentifierData" Member="ProductIdentifierDatas">
+    <Type Name="ProductIdentifierData">
+      <Column Name="CompanyId" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="WordWeights" Type="System.String" DbType="NText NOT NULL" CanBeNull="false" UpdateCheck="Never" />
+      <Column Name="Synonyms" Type="System.String" DbType="NText NOT NULL" CanBeNull="false" UpdateCheck="Never" />
+    </Type>
+  </Table>
+</Database>

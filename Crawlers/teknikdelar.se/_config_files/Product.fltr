@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Filter tree file. Produced by DataSifter3.0, http://www.cliversoft.com-->
+<FilterTree>
+  <Filter type="AgileFilter" version="1.0" input_group="" definition="//ol[@itemprop=&quot;breadcrumb&quot;]//a&#xA;Category" comment="" />
+  <Filter type="RegexFilter" version="1.0" input_group="" definition="itemprop=&quot;name&quot;.*?&gt;(?'Name'.*?)&lt;&#xA;IgnoreCase, Compiled, Singleline" comment="" />
+  <Filter type="AgileFilter" version="1.0" input_group="" definition="//span[@itemprop=&quot;price&quot;]&#xA;Price" comment="" />
+  <Filter type="RegexFilter" version="1.0" input_group="" definition="&gt;(?'Stock'Finns i lager)&lt;&#xA;IgnoreCase, Compiled, Singleline" comment="" />
+  <Filter type="AgileFilter" version="1.0" input_group="" definition="//div[@itemprop=&quot;description&quot;]&#xA;Description" comment="" />
+  <Filter type="RegexFilter" version="1.0" input_group="" definition="type=&quot;hidden&quot; name=&quot;id&quot;\s+value=&quot;(?'Id'.*?)&quot;&#xA;Compiled" comment="" />
+  <Filter type="AgileFilter" version="1.0" input_group="" definition="//div[@class=&quot;product-thumbs&quot;]&#xA;0" comment="">
+    <Filter type="RegexFilter" version="1.0" input_group="0" definition="\s+href=&quot;(?'ImageUrl'.*?)&quot;&#xA;Compiled" comment="" />
+  </Filter>
+  <Filter type="AgileFilter" version="1.0" input_group="" definition="//span[@id=&quot;articleno&quot;]&#xA;Sku" comment="" />
+</FilterTree>

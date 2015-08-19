@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Filter tree file. Produced by DataSifter3.0, http://www.cliversoft.com-->
+<FilterTree>
+  <Filter type="AgileFilter" version="1.0" input_group="" definition="//div[@class=&quot;location&quot;]&#xA;0" comment="">
+    <Filter type="RegexFilter" version="1.0" input_group="0" definition="&lt;a.*?&gt;(?'Category'.*?)&lt;&#xA;Compiled" comment="" />
+  </Filter>
+  <Filter type="AgileFilter" version="1.0" input_group="" definition="//div[@class=&quot;title&quot;]/h2&#xA;Name" comment="" />
+  <Filter type="AgileFilter" version="1.0" input_group="" definition="//td[@class=&quot;property-value&quot;][descendant::span[@class=&quot;product-price-value&quot;]]&#xA;Price" comment="" />
+  <Filter type="AgileFilter" version="1.0" input_group="" definition="//td[@class=&quot;property-name&quot;][text()=&quot;SKU&quot;]//following::td&#xA;Sku" comment="" />
+  <Filter type="RegexFilter" version="1.0" input_group="" definition="class=&quot;property-name[^&gt;]*&gt;\s*Quantity\s*&lt;/td\s*&gt;\s*&lt;td.*?&gt;(.*?)&lt;/td\s*&gt;&#xA;IgnoreCase, Compiled, Singleline" comment="">
+    <Filter type="RegexFilter" version="1.0" input_group="1" definition=".*&lt;option value=&quot;(?'Stock'.*?)&quot;&#xA;IgnoreCase, Compiled, Singleline" comment="" />
+  </Filter>
+  <Filter type="AgileFilter" version="1.0" input_group="" definition="//div[@class=&quot;descr&quot;]&#xA;Description" comment="" />
+  <Filter type="RegexFilter" version="1.0" input_group="" definition="name=&quot;productid&quot;\s+value=&quot;(?'Id'.*?)&quot;&#xA;Compiled" comment="" />
+  <Filter type="RegexFilter" version="1.0" input_group="" definition="&quot;product_thumbnail&quot;\s+src=&quot;(?'ImageUrl'.*?)&quot;&#xA;Compiled" comment="" />
+</FilterTree>

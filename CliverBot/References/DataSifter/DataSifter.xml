@@ -1,0 +1,892 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>DataSifter</name>
+    </assembly>
+    <members>
+        <member name="F:Cliver.DataSifter.BaseControl.components">
+            <summary> 
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Cliver.DataSifter.BaseControl.Dispose(System.Boolean)">
+            <summary> 
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Cliver.DataSifter.BaseControl.InitializeComponent">
+            <summary> 
+            Required method for Designer support - do not modify 
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="F:Cliver.DataSifter.BaseForm.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Cliver.DataSifter.BaseForm.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Cliver.DataSifter.BaseForm.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:Cliver.DataSifter.AgileControl">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:Cliver.DataSifter.FilterControl.components">
+            <summary> 
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Cliver.DataSifter.FilterControl.Dispose(System.Boolean)">
+            <summary> 
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Cliver.DataSifter.FilterControl.InitializeComponent">
+            <summary> 
+            Required method for Designer support - do not modify 
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="M:Cliver.DataSifter.AgileControl.#ctor">
+            <summary>
+            needed for VS designer
+            </summary>
+        </member>
+        <member name="F:Cliver.DataSifter.AgileControl.components">
+            <summary> 
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Cliver.DataSifter.AgileControl.Dispose(System.Boolean)">
+            <summary> 
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Cliver.DataSifter.AgileControl.InitializeComponent">
+            <summary> 
+            Required method for Designer support - do not modify 
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="F:Cliver.DataSifter.RegexControl.components">
+            <summary> 
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Cliver.DataSifter.RegexControl.Dispose(System.Boolean)">
+            <summary> 
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Cliver.DataSifter.RegexControl.InitializeComponent">
+            <summary> 
+            Required method for Designer support - do not modify 
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:Cliver.DataSifter.NameForm">
+            <summary>
+            asks for name for the newly saved prepared filter tree
+            </summary>
+        </member>
+        <member name="F:Cliver.DataSifter.NameForm.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Cliver.DataSifter.NameForm.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Cliver.DataSifter.NameForm.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:Cliver.DataSifter.OutputForm">
+            <summary>
+            lists group names used in the current filter tree
+            </summary>
+        </member>
+        <member name="M:Cliver.DataSifter.OutputForm.get_data">
+            <summary>
+            constructs the output string
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Cliver.DataSifter.OutputForm.get_captures_for_selected_group(Cliver.DataSifter.OutputGroup[],System.String)">
+            <summary>
+            output the parse resutls
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="F:Cliver.DataSifter.OutputForm.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Cliver.DataSifter.OutputForm.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Cliver.DataSifter.OutputForm.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="M:Cliver.DataSifter.OutputGroup.GetPath(System.String)">
+            <summary>
+            return standard path used for comparison
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Cliver.DataSifter.Filter.fill_group_index2raw_group_names">
+            <summary>
+            must be invoked by constructor of inheriting class
+            </summary>
+        </member>
+        <member name="M:Cliver.DataSifter.Filter.GetGroupRawNames">
+            <summary>
+            If group has no name, its name is its index
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Cliver.DataSifter.Filter.GetGroupNameByIndex(System.Int32)">
+            <summary>
+            If no name, return null
+            </summary>
+            <param name="group_index"></param>
+            <returns></returns>
+        </member>
+        <member name="F:Cliver.DataSifter.Filter.group_index2group_raw_names">
+            <summary>
+            Keys are indexes of named groups. 
+            i => output_group_name
+            </summary>
+        </member>
+        <member name="F:Cliver.DataSifter.Filter.group_name2child_filters_group_names">
+            <summary>
+            Keys are names of named groups.
+            output_group_name => List
+            </summary>
+        </member>
+        <member name="T:Cliver.DataSifter.Capture">
+            <summary>
+            Node of tree of captures being a node of a data parsed tree (result of parsing data with a filter tree).
+            </summary>
+        </member>
+        <member name="M:Cliver.DataSifter.Capture.LengthOf(System.String)">
+            <summary>
+            Length of array of child Capture's for the key. 
+            It is the same like [key].Length but more efficient.
+            </summary>
+            <param name="key">group name of child filter</param>
+            <returns>length of array of child Capture's</returns>
+        </member>
+        <member name="F:Cliver.DataSifter.Capture.Value">
+            <summary>
+            Capture string of this Capture.
+            </summary>
+        </member>
+        <member name="F:Cliver.DataSifter.Capture.Index">
+            <summary>
+            Text position of the capture string of this Capture.
+            </summary>
+        </member>
+        <member name="F:Cliver.DataSifter.Capture.Length">
+            <summary>
+            Length of the capture string of this Capture.
+            </summary>
+        </member>
+        <member name="F:Cliver.DataSifter.Capture.Key">
+            <summary>
+            Key of this Capture. (Group name in the filter.)
+            </summary>
+        </member>
+        <member name="M:Cliver.DataSifter.Capture.ValueOf(System.String,System.Int32)">
+            <summary>
+            Value of child Capture's for the key and the index. It is captured string of named group of child filter.
+            </summary>
+            <param name="key">group name of child filter</param>
+            <param name="index">index within array of captures</param>
+            <returns>value of child Capture</returns>
+        </member>
+        <member name="M:Cliver.DataSifter.Capture.ValuesOf(System.String)">
+            <summary>
+            Values of last descendant GroupCaptures for the path. These are captured strings of named group of last descendant filter.
+            It is almost the same like this.[key][index]...[key] but more efficient and safe.
+            It is safe: ignores if some key is empty or some index is out of range in the path.
+            </summary>
+            <param name="path">path specified in the following manner: "key[, index][/ key[, index]]...", 
+            where key is a group name of child filter, index is integer or '*'</param>
+            <returns>values of last-descendant Capture's</returns>
+        </member>
+        <member name="M:Cliver.DataSifter.Capture.FirstValueOf(System.String)">
+            <summary>
+            First value of last-descendant Capture for the path. It is captured string of named group of last descendant filter.
+            Used when an only value needed. If the path specifies array of values, the first one is returned.
+            It is almost the same like this.[key][index]....Value but more efficient and safe.
+            It returns null if some key is empty or some index is out of range.
+            </summary>
+            <param name="path">path specified in the following manner: "key[, index][/ key[, index]]...", 
+            where key is a group name of child filter, index is integer or '*'</param>
+            <returns>first value of last-descendant GroupCaptures</returns>
+        </member>
+        <member name="M:Cliver.DataSifter.Capture.LastValueOf(System.String)">
+            <summary>
+            Last value of last-descendant Capture for the path. It is captured string of named group of last descendant filter.
+            Used when an only value needed. If the path specifies array of values, the first one is returned.
+            It is almost the same like this.[key][index]....Value but more efficient and safe.
+            It returns null if some key is empty or some index is out of range.
+            </summary>
+            <param name="path">path specified in the following manner: "key[, index][/ key[, index]]...", 
+            where key is a group name of child filter, index is integer or '*'</param>
+            <returns>last value of last-descendant GroupCaptures</returns>
+        </member>
+        <member name="M:Cliver.DataSifter.Capture.CapturesOf(System.String)">
+            <summary>
+            Array of last descendant GroupCaptures for the path. These are captures of named group of last descendant filter.
+            It is almost the same like this.[key][index]...[key] but more efficient and safe.
+            It is safe: ignores if some key is empty or some index is out of range in the path.
+            </summary>
+            <param name="path">path specified in the following manner: "key[, index][/ key[, index]]...", 
+            where key is a group name of child filter, index is integer or '*'</param>
+            <returns>values of last-descendant Capture's</returns>
+        </member>
+        <member name="M:Cliver.DataSifter.Capture.FirstOf(System.String)">
+            <summary>
+            Alias for [key, 0]
+            </summary>
+            <param name="key">group name of child filter</param>
+            <returns>first child Capture</returns>
+        </member>
+        <member name="M:Cliver.DataSifter.Capture.LastOf(System.String)">
+            <summary>
+            Alias for [key, LengthOf(key) - 1]
+            </summary>
+            <param name="key">group name of child filter</param>
+            <returns>last child Capture</returns>
+        </member>
+        <member name="M:Cliver.DataSifter.Capture.ValueOf(System.String)">
+            <summary>
+            Alias for FirstValueOf(path)
+            </summary>
+            <param name="path">path specified in the following manner: "key[, index][/ key[, index]]...", 
+            where key is a group name of child filter, index is integer or '*'</param>
+            <returns>first value of last-descendant GroupCaptures</returns>
+        </member>
+        <member name="P:Cliver.DataSifter.Capture.Item(System.String)">
+            <summary>
+            Child Capture's for the key. 
+            </summary>
+            <param name="key">group name of child filter</param>
+            <returns>child Capture's</returns>
+        </member>
+        <member name="P:Cliver.DataSifter.Capture.Item(System.String,System.Int32)">
+            <summary>
+            Child Capture for the key and the index. 
+            It is almost the same like [key][index] 
+            but more efficient since does not build an array of strings.
+            Also it is more safe in index use: returns null if index is out of range.
+            </summary>
+            <param name="key">group name of child filter</param>
+            <param name="index">index within array of captures</param>
+            <returns>child Capture</returns>
+        </member>
+        <member name="P:Cliver.DataSifter.Capture.Keys">
+            <summary>
+            Keys of child Capture's. (Group names of child filters.)
+            </summary>
+        </member>
+        <member name="T:Cliver.DataSifter.Parser">
+            <summary>
+            Engine for parsing text with filter tree.
+            </summary>
+        </member>
+        <member name="M:Cliver.DataSifter.Parser.#ctor(System.String)">
+            <summary>
+            Create Parser for the filter tree file.
+            </summary>
+            <param name="filter_file">filter tree file</param>
+        </member>
+        <member name="M:Cliver.DataSifter.Parser.#ctor(Cliver.DataSifter.Filter[])">
+            <summary>
+            used by DataSifter
+            </summary>
+            <param name="root_filters"></param>
+        </member>
+        <member name="M:Cliver.DataSifter.Parser.build_node_name_tree">
+            <summary>
+            Creates a tree of named groups so that each Capture to have a complete name collection 
+            independently on parse results.
+            ALSO(!) it checks filter tree for group name uniquness within the same branch-level.
+            </summary>
+        </member>
+        <member name="M:Cliver.DataSifter.Parser.get_next_level_group_names(Cliver.DataSifter.Filter[],System.String,System.Collections.Generic.List{System.String})">
+            <summary>
+            Create a tree of named groups so that each Capture to have a complete name collection independently on parse results. 
+            ALSO(!) it checks the filter tree for group name uniquness within the same branch-level.
+            </summary>
+        </member>
+        <member name="F:Cliver.DataSifter.Parser.RootFilters">
+            <summary>
+            Start level TlNodes collection.
+            (!)Changes in this data will bring to error or incorrect parsing.
+            </summary>
+        </member>
+        <member name="M:Cliver.DataSifter.Parser.Parse(System.String)">
+            <summary>
+            Perform parsing.
+            </summary>
+            <param name="text">text that is to be parsed with the tree</param>
+            <returns>Zero Capture that the tree of CroupCapture's starts from</returns>
+        </member>
+        <member name="T:Cliver.DataSifter.Message">
+            <summary>
+            Show MessageForm with predefined features
+            </summary>
+        </member>
+        <member name="F:Cliver.DataSifter.Message.ShowInTaskbar">
+            <summary>
+            Whether the message box must be displayed in the Windows taskbar.
+            </summary>
+        </member>
+        <member name="T:Cliver.DataSifter.MessageForm">
+            <summary>
+            Dynamic dialog box with many answer cases
+            </summary>
+        </member>
+        <member name="F:Cliver.DataSifter.MessageForm.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Cliver.DataSifter.MessageForm.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+        </member>
+        <member name="M:Cliver.DataSifter.MessageForm.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:Cliver.DataSifter.FilterTreeForm">
+            <summary>
+            Control (or Form) that provides creating/editing filter tree.
+            This part provides the main functionality that includes inserting/deleting filter nodes.
+            </summary>
+            <summary>
+            fanctionality of FilterTreeForm concerning to visibilty and external methods
+            </summary>
+        </member>
+        <member name="M:Cliver.DataSifter.FilterTreeForm.LoadFilterTree(System.String)">
+            <summary>
+            Load filter tree from xml file
+            </summary>
+            <param name="filter_tree_xml_file"></param>
+        </member>
+        <member name="M:Cliver.DataSifter.FilterTreeForm.fill_InputGroupName">
+            <summary>
+            fill the group drop down menu after selected filter tree node was changed
+            </summary>
+        </member>
+        <member name="M:Cliver.DataSifter.FilterTreeForm.set_tree_node_color(System.Windows.Forms.TreeNode)">
+            <summary>
+            used when inserting/removing node
+            </summary>
+            <param name="tn"></param>
+        </member>
+        <member name="M:Cliver.DataSifter.FilterTreeForm.FilterTree_AfterSelect(System.Object,System.Windows.Forms.TreeViewEventArgs)">
+            <summary>
+            on new filter tree node was selected
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Cliver.DataSifter.FilterTreeForm.Remove_Click(System.Object,System.EventArgs)">
+            <summary>
+            on remove filter tree node
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Cliver.DataSifter.FilterTreeForm.Insert_Click(System.Object,System.EventArgs)">
+            <summary>
+            on insert new filter tree node
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Cliver.DataSifter.FilterTreeForm.Add_Click(System.Object,System.EventArgs)">
+            <summary>
+            on add new filter tree node
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Cliver.DataSifter.FilterTreeForm.bUp_Click(System.Object,System.EventArgs)">
+            <summary>
+            Moves filter node up among siblings
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Cliver.DataSifter.FilterTreeForm.bDown_Click(System.Object,System.EventArgs)">
+            <summary>
+            Moves filter node down among siblings
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Cliver.DataSifter.FilterTreeForm.bRemoveBranch_Click(System.Object,System.EventArgs)">
+            <summary>
+            remove complete branch from the selected node
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Cliver.DataSifter.FilterTreeForm.FilterComment_Leave(System.Object,System.EventArgs)">
+            <summary>
+            sets the filter name to the selected filter tree node
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Cliver.DataSifter.FilterTreeForm.FilterBox_Leave(System.Object,System.EventArgs)">
+            <summary>
+            on filter edit box lost focus
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Cliver.DataSifter.FilterTreeForm.FilterTree_AfterCheck(System.Object,System.Windows.Forms.TreeViewEventArgs)">
+            <summary>
+            defines the current debug filter chain after checking filter node
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Cliver.DataSifter.FilterTreeForm.GetCheckedNodesChain">
+            <summary>
+            Create checked filter chain by highest_checked_node
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Cliver.DataSifter.FilterTreeForm.GetFilterChainParser">
+            <summary>
+            Create a chain of checked filteres to test it within DataSifter
+            </summary>
+            <returns>Parser, or null if error</returns>
+        </member>
+        <member name="M:Cliver.DataSifter.FilterTreeForm.is_tree_node_within_checked_path(System.Windows.Forms.TreeNode)">
+            <summary>
+            used while building the current debug filter chain 
+            </summary>
+            <param name="tree_node"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Cliver.DataSifter.FilterTreeForm.FilterTree_DrawNode(System.Object,System.Windows.Forms.DrawTreeNodeEventArgs)">
+            <summary>
+            draws filter tree item in a customized manner with several colors
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Cliver.DataSifter.FilterTreeForm.FilterBox_TextChanged(System.Object,System.EventArgs)">
+            <summary>
+            tints filter syntax in FilterBox
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="F:Cliver.DataSifter.FilterTreeForm.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Cliver.DataSifter.FilterTreeForm.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Cliver.DataSifter.FilterTreeForm.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="M:Cliver.DataSifter.FilterTreeForm.SaveAsPrepared_Click(System.Object,System.EventArgs)">
+            <summary>
+            saves the current filter tree as a prepared filter tree
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Cliver.DataSifter.FilterTreeForm.DeletePrepared_Click(System.Object,System.EventArgs)">
+            <summary>
+            deletes the selected prepared filter tree
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Cliver.DataSifter.FilterTreeForm.AddPrepared_Click(System.Object,System.EventArgs)">
+            <summary>
+            adds the selected prepared filter to the selected filter tree node
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Cliver.DataSifter.FilterTreeForm.GetFilterTreeParser">
+            <summary>
+            Create a tree of Filter's currently edited in the form
+            </summary>
+            <returns>filter tree Parser, if error then NULL</returns>
+        </member>
+        <member name="M:Cliver.DataSifter.FilterTreeForm.Save_Click(System.Object,System.EventArgs)">
+            <summary>
+            saves current filter collection into file
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Cliver.DataSifter.FilterTreeForm.OpenFilterTree_Click(System.Object,System.EventArgs)">
+            <summary>
+            on opening filter tree from file
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Cliver.DataSifter.FilterTreeForm.ToSavePreviousFilterTree">
+            <summary>
+            ask if previous filter tree must be saved
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Cliver.DataSifter.FilterTreeForm.NewFilterTree_Click(System.Object,System.EventArgs)">
+            <summary>
+            clear tegex tree before starting editing a new
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Cliver.DataSifter.FilterTreeForm.OutputData_Click(System.Object,System.EventArgs)">
+            <summary>
+            outputs parse data
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Cliver.DataSifter.FilterTreeForm.GetOutputGroupNames(Cliver.DataSifter.Filter[],Cliver.DataSifter.OutputGroup,System.String,System.Collections.Generic.List{Cliver.DataSifter.OutputGroup},System.Boolean)">
+            <summary>
+            Return output group names as an array
+            </summary>
+            <param name="rns">root filter nodes</param>
+            <param name="parent_og"></param>
+            <param name="parent_group_name"></param>
+            <param name="ogs">List</param>
+            <param name="named_only"></param>
+        </member>
+        <member name="M:Cliver.DataSifter.FilterTreeForm.buttonParse_CheckedChanged(System.Object,System.EventArgs)">
+            <summary>
+            start/break parsing thread
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Cliver.DataSifter.FilterTreeForm.FilterTree_Enter(System.Object,System.EventArgs)">
+            <summary>
+            shows number of named groups
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="P:Cliver.DataSifter.FilterTreeForm.FilterTreeChanged">
+            <summary>
+            shows if the current filter tree was modified after saving
+            </summary>
+        </member>
+        <member name="T:Cliver.RtfEditor">
+            <summary>
+            Edit rtf text
+            </summary>
+        </member>
+        <member name="M:Cliver.RtfEditor.IndexOf(System.Text.StringBuilder,System.String)">
+            <summary>
+            Analog string.IndexOf for StringBuilder
+            </summary>
+            <param name="str">string where to search</param>
+            <param name="value">string what to search</param>
+            <returns>-1 if not found or value is empty</returns>
+        </member>
+        <member name="M:Cliver.RtfEditor.IndexOf(System.Text.StringBuilder,System.String,System.Int32)">
+            <summary>
+            Analog string.IndexOf for StringBuilder
+            </summary>
+            <param name="str">string where to search</param>
+            <param name="value">string what to search</param>
+            <param name="start_index">where to start serch within str</param>
+            <returns>-1 if not found or value is empty</returns>
+        </member>
+        <member name="M:Cliver.RtfEditor.IndexOf(System.Text.StringBuilder,System.String,System.Int32,System.Int32)">
+            <summary>
+            Analog string.IndexOf for StringBuilder
+            </summary>
+            <param name="str">string where to search</param>
+            <param name="value">string what to search</param>
+            <param name="start_index">where to start serch within str</param>
+            <param name="count">the number of charakter positions to examine</param>
+            <returns>-1 if not found or value is empty</returns>
+        </member>
+        <member name="F:Cliver.DataSifter.Document.uri">
+            <summary>
+            uri of the document
+            </summary>
+        </member>
+        <member name="P:Cliver.DataSifter.Document.Text">
+            <summary>
+            initial text string that is to be parsed in DataSifter
+            </summary>
+        </member>
+        <member name="T:Cliver.DataSifter.AboutForm">
+            <summary>
+            Summary description for About.
+            </summary>
+        </member>
+        <member name="F:Cliver.DataSifter.AboutForm.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Cliver.DataSifter.AboutForm.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+        </member>
+        <member name="M:Cliver.DataSifter.AboutForm.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="F:Cliver.DataSifter.SettingsForm.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Cliver.DataSifter.SettingsForm.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Cliver.DataSifter.SettingsForm.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="M:Cliver.DataSifter.Program.Main">
+            <summary>
+            The main entry point for the application.
+            </summary>
+        </member>
+        <member name="T:Cliver.DataSifter.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Cliver.DataSifter.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Cliver.DataSifter.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="M:Cliver.DataSifter.Settings.GetFilterBackColor(System.Int32)">
+            <summary>
+            safely returns Color
+            </summary>
+            <param name="level"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Cliver.DataSifter.SourceForm">
+            <summary>
+            Form that hosts parsed text and filter tree editor control
+            </summary>
+            <summary>
+            CaptureLabel routines
+            </summary>
+            <summary>
+            This part contains navigation routines
+            </summary>
+        </member>
+        <member name="M:Cliver.DataSifter.SourceForm.count_positions_ignored_by_rich_text_box">
+            <summary>
+            RichTextBox takes '\r\n' as a single char so it counts them to restore a correct position
+            </summary>
+        </member>
+        <member name="M:Cliver.DataSifter.SourceForm.RunParse">
+            <summary>
+            start parsing by the current debug regex chain
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Cliver.DataSifter.SourceForm.StopParse">
+            <summary>
+            breaks parsing thread and stops parsing
+            </summary>
+        </member>
+        <member name="M:Cliver.DataSifter.SourceForm.TextBox_DoubleClick(System.Object,System.EventArgs)">
+            <summary>
+            selects the complete captured group within the parsed text box by double click
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="F:Cliver.DataSifter.SourceForm.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Cliver.DataSifter.SourceForm.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Cliver.DataSifter.SourceForm.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="F:Cliver.DataSifter.SourceForm.CaptureLabels">
+            <summary>
+            List of parse labels to be inserted in text
+            </summary>
+        </member>
+        <member name="M:Cliver.DataSifter.SourceForm.shift_on_positions_ignored_by_rich_text_box(System.Int32@,System.Int32@)">
+            <summary>
+            shift position on positions ignored by RichTextBox
+            </summary>
+            <param name="position">position in source</param>
+            <param name="length"></param>
+            <returns>position in RichTextBox</returns>
+        </member>
+        <member name="M:Cliver.DataSifter.SourceForm.set_status_by_position(System.Int32,System.Int32)">
+            <summary>
+            Sets status bar text along the current cursor position in the parsed text box.
+            Finds the selected capture, determines its filter tree path and constructs from them status text.
+            </summary>
+            <param name="start"></param>
+            <param name="length"></param>
+        </member>
+        <member name="T:Cliver.DataSifter.SourceForm.CaptureLabel">
+            <summary>
+            Defines label for each parse capture
+            </summary>
+        </member>
+        <member name="F:Cliver.DataSifter.SourceForm.CaptureLabel.start">
+            <summary>
+            start position of capture as it is in Document.Source
+            </summary>
+        </member>
+        <member name="F:Cliver.DataSifter.SourceForm.CaptureLabel.end">
+            <summary>
+            end position of capture as it is in Document.Source 
+            </summary>
+        </member>
+        <member name="F:Cliver.DataSifter.SourceForm.CaptureLabel.start2">
+            <summary>
+            start position of capture shifted on carriage_returns
+            </summary>
+        </member>
+        <member name="F:Cliver.DataSifter.SourceForm.CaptureLabel.end2">
+            <summary>
+            end position of capture shifted on carriage_returns
+            </summary>
+        </member>
+        <member name="F:Cliver.DataSifter.SourceForm.CaptureLabel.start3">
+            <summary>
+            start position of capture shifted on carriage_returns + if set, label's length
+            </summary>
+        </member>
+        <member name="F:Cliver.DataSifter.SourceForm.CaptureLabel.end3">
+            <summary>
+            end position of capture shifted on carriage_returns + if set, label's length
+            </summary>
+        </member>
+        <member name="F:Cliver.DataSifter.SourceForm.CaptureLabel.visible">
+            <summary>
+            is this capture highlighted
+            </summary>
+        </member>
+        <member name="M:Cliver.DataSifter.SourceForm.CaptureLabel.get_path">
+            <summary>
+            return standard path used for comparison
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Cliver.DataSifter.ThreadRunner">
+            <summary>
+            Run a function as another thread, polls if it is working too long and then asks to break it.
+            Used in GUI when a potentially time consuming operation is invoked.
+            </summary>
+        </member>
+        <member name="M:Cliver.DataSifter.ThreadRunner.#ctor(System.Int32,System.Windows.Forms.Control,System.String)">
+            <summary>
+            ThreadRunner constructor
+            </summary>
+            <param name="check_period">time period in ms when ask to abort the thread</param>
+            <param name="owner">control whose mouse cursor will be changed to busy during running. Can be null</param>
+            <param name="message">Can be null</param>
+        </member>
+        <member name="M:Cliver.DataSifter.ThreadRunner.Run(System.Object,System.String,System.Object[])">
+            <summary>
+            Run a function as another thread.
+            (!)Function must be public.
+            </summary>
+            <param name="target">instance of class hosting the function</param>
+            <param name="function_name">name of the function</param>
+            <param name="parameters">list of function parameters</param>
+            <returns>any return from the fuction. If it is void then = null</returns>
+        </member>
+        <member name="M:Cliver.DataSifter.ThreadRunner.Run(System.Object,System.Object[])">
+            <summary>
+            Run delegate of a function as another thread.
+            (!)Delegate must be public.
+            </summary>
+            <param name="target_function">delegate of the function</param>
+            <param name="parameters">list of function parameters</param>
+            <returns>any return from the fuction. If it is void then = null</returns>
+        </member>
+    </members>
+</doc>

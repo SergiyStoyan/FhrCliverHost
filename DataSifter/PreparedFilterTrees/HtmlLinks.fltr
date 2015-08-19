@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Filter tree file. Produced by DataSifter3.0, http://www.cliversoft.com-->
+<FilterTree>
+  <Filter type="AgileFilter" version="1.0" input_group="" definition="//div[@class=&quot;ty-mainbox-body&quot;]//div[@class=&quot;grid-list&quot;]&#xA;0" comment="">
+    <Filter type="RegexFilter" version="1.0" input_group="0" definition="&lt;(?'Tag'a|area) [^&gt;]*?href=(['\&quot;])?(?'Url'.*?)(?:\1.*?&gt;|\s.*?&gt;|&gt;)(?'Name'.*?)&lt;/\k'Tag'&#xA;Compiled" comment="" />
+  </Filter>
+</FilterTree>

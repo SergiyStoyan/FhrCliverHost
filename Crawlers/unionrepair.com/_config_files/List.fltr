@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Filter tree file. Produced by DataSifter3.0, http://www.cliversoft.com-->
+<FilterTree>
+  <Filter type="AgileFilter" version="1.0" input_group="" definition="//div[@class=&quot;ty-mainbox-body&quot;]//div[@class=&quot;grid-list&quot;]&#xA;0" comment="">
+    <Filter type="RegexFilter" version="1.0" input_group="0" definition="\shref=&quot;(?'ProductUrl'.*?)&quot;\s+class=&quot;product-title&quot;&#xA;Compiled" comment="" />
+  </Filter>
+  <Filter type="AgileFilter" version="1.0" input_group="" definition="//a[@class=&quot;ty-pagination__item ty-pagination__btn ty-pagination__next cm-history cm-ajax&quot;]&#xA;0" comment="">
+    <Filter type="RegexFilter" version="1.0" input_group="0" definition="\shref=&quot;(?'NextPageUrl'.*?)&quot;&#xA;Compiled" comment="" />
+  </Filter>
+</FilterTree>

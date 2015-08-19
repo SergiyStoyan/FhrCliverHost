@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Filter tree file. Produced by DataSifter3.0, http://www.cliversoft.com-->
+<FilterTree>
+  <Filter type="AgileFilter" version="1.0" input_group="" definition="//div[@class=&quot;l-categorybar-wrapper&quot;]//li[not(descendant::li)]&#xA;0" comment="">
+    <Filter type="RegexFilter" version="1.0" input_group="0" definition="href=&quot;(?'CategoryUrl'.*?)&quot;&#xA;Compiled" comment="" />
+  </Filter>
+</FilterTree>

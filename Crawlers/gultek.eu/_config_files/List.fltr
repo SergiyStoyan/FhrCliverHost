@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Filter tree file. Produced by DataSifter3.0, http://www.cliversoft.com-->
+<FilterTree>
+  <Filter type="AgileFilter" version="1.0" input_group="" definition="//div[@class=&quot;PListCellInside&quot;]&#xA;0" comment="">
+    <Filter type="RegexFilter" version="1.0" input_group="0" definition="\shref=&quot;(?'ProductUrl'[^\&quot;]*)&quot;\s*&gt;&#xA;Compiled" comment="" />
+  </Filter>
+  <Filter type="RegexFilter" version="1.0" input_group="" definition="&lt;(?'NextPageUrl'_)&gt;&#xA;Compiled" comment="" />
+</FilterTree>
