@@ -1,0 +1,194 @@
+﻿html {
+    background-color: #eee;
+} 
+
+body{margin:0px;}
+      #accordion .glyphicon { margin-right:10px; }
+      .panel-collapse>.list-group .list-group-item:first-child {border-top-right-radius: 0;border-top-left-radius: 0;}
+      .panel-collapse>.list-group .list-group-item {border-width: 1px 0;}
+      .panel-collapse>.list-group {margin-bottom: 0;}
+      .panel-collapse .list-group-item {border-radius:0;}
+
+      .panel-collapse .list-group .list-group {margin: 0;margin-top: 10px;}
+      .panel-collapse .list-group-item li.list-group-item {margin: 0 -15px;border-top: 1px solid #ddd;border-bottom: 0;padding-left: 30px;}
+      .panel-collapse .list-group-item li.list-group-item:last-child {padding-bottom: 0;}
+
+      .panel-collapse div.list-group div.list-group{margin: 0;}
+      .panel-collapse div.list-group .list-group a.list-group-item {border-top: 1px solid #ddd;border-bottom: 0;padding-left: 30px;}
+
+      .spacer {
+    margin-top: 40px; /* define margin as you see fit */
+}
+
+      .table{
+          margin-bottom:0px;
+          margin-top:0px;
+          background-color:#f6f6f6;
+      }
+      
+      th{
+          background-color:#b99;
+      }
+
+      .table-hover tbody tr:hover td {
+  background-color: #ddf;
+}
+
+      .config th {
+    font-size: 1.2em;
+    text-align: left;
+    border: none 0px;
+    padding-left: 0;
+    background-color: #b99;
+}
+
+.config td{
+}
+
+.config-before-th td{
+    background-color: #303030;
+    font-style:italic;
+    color:#ddd;
+    text-align:center;
+    border-left:solid;
+    font-style:italic;
+}
+
+.config-before-th td:first-of-type { 
+    border-left: 0 !important;
+}
+
+.config-new-row td{
+    background-color: #7b6;
+}
+
+.config-new-row input, select {
+}
+
+header {
+    background-color: #a67;
+}
+
+.footer {
+    margin-top: 40px;
+    padding-top: 4px;
+    padding-bottom: 0px;
+    padding-left: 20px;
+    background-color: #aa7;
+    color:#fff;
+}
+
+.form-control, input, select {
+    background-color:#f5fff5;
+}
+
+table input, select {
+    margin: 0;
+}
+
+.top-buffer { margin-top:20px; }
+
+.category {
+    color: #000;
+    font-weight:bold;
+}
+
+.category-separator {
+    color: #aa2288;
+}
+
+.table-editor{
+    background-color:#fff;
+}
+
+td.table-editor {
+    padding:5px;
+}
+
+tr.selected{
+    background-color:#f63 !important;
+}
+
+tr.odd{
+}
+
+table tbody tr.even{
+    background-color:#eef;
+}
+
+.button {
+  font-weight: bold;
+  text-decoration: none;
+  background-color: #f6f6f6;
+  color: #333333;
+  padding: 2px 6px 2px 6px;
+  margin: 0px 3px 0px 3px;
+  border: 1px solid #999;
+}
+
+    .button:hover {
+        background-color: #fafafa;
+        border: 1px solid #666666;
+        color: #000;
+    }
+    
+.table_floating_menu{
+    display: inline-block;
+    padding-left: 3px;
+    padding-right: 3px;
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+}
+
+.ui-widget {
+    font-family: "Segoe UI", Verdana, Helvetica, Sans-Serif !important;
+    font-size: 1.0em !important;
+}
+
+.ui-widget-header{
+    background:#a67 !important;
+}
+
+nav {
+    z-index: 1;
+    position: relative;
+}
+
+table span.match{
+    background-color:#ff0;
+}
+
+table tbody tr.error{
+    color:black;
+    background-color:#f85;
+}
+
+table tbody tr.warning{
+    color:black;
+    background-color:yellow;
+}
+
+.ProductLink table {
+border:none;
+border-collapse: collapse;
+}
+
+.ProductLink_table td {
+border-right: 1px dashed #999;
+border-top: 1px solid #999;
+vertical-align: top;
+padding-right: 0em;
+}
+
+.ProductLink_table th {
+border: 1px solid #999;
+}
+
+.ProductLink_table td:last-child {
+border-right: none;
+}
+
+.ProductLink_table tr:first-child td{
+border-top: none;
+}

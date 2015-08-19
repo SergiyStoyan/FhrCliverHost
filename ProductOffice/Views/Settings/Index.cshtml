@@ -1,0 +1,29 @@
+﻿@model IEnumerable<Cliver.ProductOffice.Models.Setting>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Settings</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Object)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Key)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Value)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <script type="text/javascript">
+        //init_table(true, 0, "New", "Details", "Edit", "Delete", "@Request.Path", [0]);
+    </script>

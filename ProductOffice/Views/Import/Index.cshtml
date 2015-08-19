@@ -1,0 +1,135 @@
+﻿@model Cliver.ProductOffice.Models.Import
+@{
+    ViewBag.Title = "Import";
+}
+
+<h2>Import products</h2>
+@using (Html.BeginForm("Index", null, FormMethod.Post, new { id = "ImportForm", enctype = "multipart/form-data" }))
+            {
+    <script>          
+        $(document).ready(function () {
+            $("#ImportForm").submit(function (e) {
+                submit_time_mss = new Date().getTime();
+            });
+            var submit_time_mss = 0;
+
+            window.onbeforeunload = function (e) {
+                if (submit_time_mss < new Date().getTime() - 100)
+                    return;
+                $('input[type="submit"]').parent().find('img').parent().show();
+                $('input[type="submit"]').hide();
+            };
+        });
+    </script>
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4></h4>
+        <hr />        
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.File, "File", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">               
+                 @Html.TextBoxFor(model => model.File, new { type = "file", @class = "form-control", onchange = "javascript: DetectDate(value);", accept = ".xls,.xlsx" })
+                @Html.ValidationMessageFor(model => model.File, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <script>
+            function ParseDate(name) {
+                var r = /(\d{4})\.(\d{2})\.(\d{2})/;
+                var m = r.exec(name);
+                if (m)
+                    return m[1] + "-" + m[2] + "-" + m[3];
+
+                var r = /(\d{4})(\d{2})(\d{2})/;
+                var m = r.exec(name);
+                if (m)
+                    return m[1] + "-" + m[2] + "-" + m[3];
+
+                var r = /(\d{2})\.(\d{2})\.(\d{2})/;
+                var m = r.exec(name);
+                if (m)
+                    return "20" + m[3] + "-" + m[2] + "-" + m[1];
+            }
+
+            function DetectDate(name) {
+                var d = ParseDate(name);
+                if (d)
+                    document.getElementById("UpdateTime").value = d;
+            }
+        </script>
+
+        <div class="form-group">            
+            @Html.LabelFor(model => model.UpdateTime, "Actual date", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                                   @Html.EditorFor(model => model.UpdateTime, new { id = "UpdateTime", @class = "form-control" })
+            
+            <script>
+                $(document).ready(function () {
+                    $("#UpdateTime").datepicker({ dateFormat: 'yy-mm-dd' });
+            });
+            </script>
+            @Html.ValidationMessageFor(model => model.UpdateTime, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.MapId, "Import map", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList(name: "MapId", selectList: null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.MapId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <br />
+        <div class="form-group">
+            @Html.LabelFor(model => model.CheckNotImport, "Only check file and not import", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.CheckBox(name: "CheckNotImport", htmlAttributes: new { @class = "form-control", onchange = "javascript: SetSubmit();", Checked = "checked" })
+                @Html.ValidationMessageFor(model => model.CheckNotImport, "", new { @class = "text-danger" })
+                <script>
+                    function SetSubmit() {
+                        var checked = $('input[name="CheckNotImport"]:checked').length > 0;
+                        if (checked) $('input[type="submit"]').prop('value', 'Check');
+                        else $('input[type="submit"]').prop('value', 'Import');
+                    }
+                    $(document).ready(function () {
+                        SetSubmit();
+                    })
+                    
+                </script>
+            </div>
+        </div>
+        </div>
+    <hr />
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10"> 
+            <p style="display:none;">PROCESSING...<br /><img src="/Images/ajax-loader.gif" /></p>
+            <input type="submit" value="Import" class="btn btn-default" />
+            </div>
+    </div>
+}
+
+
+  <!--link rel='stylesheet' href='//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css'>
+<script src='//code.jquery.com/jquery-1.10.2.js'></script>
+<script src='//code.jquery.com/ui/1.11.4/jquery-ui.js'></script>
+
+<div id='ProgressBar'></div>
+
+<script>
+    function ProcessSubmit() {
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/Import", true);
+        var data = new FormData($("#ImportForm"));
+        xhr.send(data);
+        xhr.onprogress = function () {
+            $('#progressbar').progressbar({
+                value: xhr.responseText
+            });
+        };
+        xhr.send();
+    }
+</script-->

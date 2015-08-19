@@ -1,0 +1,70 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+<h2>WatchDog</h2>
+
+@{
+    int RefreshSpanInSecs = 10;
+}
+Refresh data every @RefreshSpanInSecs seconds
+<input id="refresh_table_checkbox" type="checkbox" class="btn btn-default" onchange="javascript:RefreshTable(this.checked);" />
+
+<table class="table table-condensed table-bordered text-center config">
+    <thead>
+        <tr>
+            <th>
+                Source
+            </th>
+            <th>
+                Type
+            </th>
+            <th>
+                Severity
+            </th>
+            <th>
+                Value
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+<script type="text/javascript">
+    var table = init_table(true, 0, null, null, null, null, "@Request.Path", false);
+    
+    table.on( 'draw.dt', function (s, d) {
+        var rds = table.api().rows().data();
+        for(var i = 0; i < rds.length; i++){
+            switch(rds[i][2])
+            {
+                case "@Cliver.Bot.Log.MessageType.ERROR.ToString()" :
+                case "@Cliver.Bot.Log.MessageType.EXIT.ToString()" :
+                    table.api().row(i).nodes().to$().addClass('error');
+                    break;
+                case "@Cliver.Bot.Log.MessageType.WARNING.ToString()" :
+                    table.api().row(i).nodes().to$().addClass('warning');
+                    break;
+            }
+        }
+    } );
+    
+    var refresh_timer = null;
+    function RefreshTable(run){
+        if(run)
+        {
+            if(!refresh_timer )
+                refresh_timer = setInterval(function () {
+                    table.api().draw();
+                }, 1000 * @RefreshSpanInSecs);
+        }
+        else
+        {
+            if(refresh_timer )
+            {
+                clearInterval(refresh_timer);
+                refresh_timer = null;
+            }
+        }
+    }
+</script>

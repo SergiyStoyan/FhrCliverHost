@@ -1,0 +1,77 @@
+﻿<style>
+    table.copyright td {
+        width: 6px;
+        height: 6px;
+        padding: 0px;
+        border-collapse: separate;
+        border-spacing: 1px;
+    }
+
+    table.copyright {
+        margin: 0px;
+        border: 0px;
+    }
+
+    a.copyright:link, a.copyright:visited, a.copyright:active {
+        color: #000;
+        text-decoration: none;
+    }
+
+    a.copyright:hover {
+        color: #900;
+        text-decoration:underline;
+    }
+</style>
+
+<table style="margin: 0px; border: 0px;">
+    <tr>
+        <td style="margin: 0px; border: 0px; padding:0px;">
+            <a href="http://cliversoft.com" title="developed by Sergey Stoyan, www.cliversoft.com">
+                <table id="copyright" class="copyright">
+                    <tr>
+                        <td bgcolor=#ff9966 id="copyright_td1"></td>
+                        <td bgcolor=#999988 id="copyright_td2"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor=#ddddcc id="copyright_td3"></td>
+                        <td bgcolor=#bb99dd id="copyright_td4"></td>
+                    </tr>
+                </table>
+            </a>
+        </td>
+        <td>
+            &nbsp;&nbsp; by <a href="http://cliversoft.com" title="developed by Sergey Stoyan, www.cliversoft.com" class="copyright">cliversoft.com</a>, 2015
+</td>
+    </tr>
+</table>
+<script language="javascript">
+    {
+        function get_random(max) {
+            var ran_unrounded = Math.random() * max;
+            return ran_number = Math.floor(ran_unrounded);
+        };
+
+        function dec2hex(d) {
+            var hD = "0123456789ABCDEF";
+            var h = hD.substr(d & 15, 1);
+            while (d > 15) { d >>= 4; h = hD.substr(d & 15, 1) + h; }
+            return h;
+        };
+
+        function random_color(red_min, red_max, green_min, green_max, blue_min, blue_max) {
+            var red = red_min + get_random(red_max - red_min);
+            var green = green_min + get_random(green_max - green_min);
+            var blue = blue_min + get_random(blue_max - blue_min);
+            return "#" + dec2hex(red) + dec2hex(green) + dec2hex(blue);
+        };
+
+        function play() {
+            var t = document.getElementById("copyright_td" + (get_random(4) + 1));
+            var r = random_color(180, 255, 150, 230, 150, 255);
+            t.style.backgroundColor = r;
+            setTimeout('play()', 500);
+        };
+
+        play();
+    };
+</script>

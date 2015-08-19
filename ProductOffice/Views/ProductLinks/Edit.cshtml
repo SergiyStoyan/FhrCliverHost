@@ -1,0 +1,300 @@
+﻿@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Edit Linked Products</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <table id="LinkedProducts" class="ProductLink_table">
+
+        <thead>
+            <tr field="buttons">
+                <td></td>
+                @foreach (var c in ViewBag.Companies)
+                {
+                    <td>
+                        <input type="text" name="Keywords" style="width:100%;box-sizing:border-box;" /><br />
+                        <div class="_choosing_menu" style="display:none;white-space: nowrap;">
+                            <b><a class="_to_previous_product" title="Get product with lower match score" href="#" onclick="javascript: set_next_product(@c.Id, false);">&lt;&lt;</a></b>
+                            &nbsp;
+                            <a title="Remove product from the link" href="#" onclick="javascript: unset_product(@c.Id);">Remove</a>
+                            &nbsp;
+                            <b><a class="_to_next_product" title="Get product with higher match score" href="#" onclick="javascript: set_next_product(@c.Id, true);">&gt;&gt;</a></b>
+
+                            <span class="_matching_label" style="white-space: nowrap;background-color:#b6ff00;"></span>
+                        </div>
+                        <div class="_find_menu">
+                            <a href="#" onclick="javascript: set_next_product(@c.Id);">Find</a>
+                        </div>
+                        <input type="hidden" value="" name="ProductId" />
+                        <input type="hidden" value="" name="LinkId" />
+                    </td>
+                }
+            </tr>
+
+            <tr>
+                <th field="CompanyName">
+                    <b>Company:</b>
+                </th>
+                @foreach (var c in ViewBag.Companies)
+                {
+                    <th company_id="@c.Id">
+                        <b>@c.Name</b>
+                    </th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            <tr field="Name">
+                <td>
+                    <b>Name:</b>
+                </td>
+                @foreach (var c in ViewBag.Companies)
+                {
+                    <td></td>
+                }
+            </tr>
+            <tr field="ImageUrls_">
+                <td>
+                    <b>Images:</b>
+                </td>
+                @foreach (var c in ViewBag.Companies)
+                {
+                    <td></td>
+                }
+            </tr>
+            <tr field="Price">
+                <td>
+                    <b>Price:</b>
+                </td>
+                @foreach (var c in ViewBag.Companies)
+                {
+                    <td></td>
+                }
+            </tr>
+            <tr field="Sku">
+                <td>
+                    <b>Sku:</b>
+                </td>
+                @foreach (var c in ViewBag.Companies)
+                {
+                    <td></td>
+                }
+            </tr>
+            <tr field="Url_">
+                <td>
+                    <b>Url:</b>
+                </td>
+                @foreach (var c in ViewBag.Companies)
+                {
+                    <td></td>
+                }
+            </tr>
+            <tr field="ExternalId">
+                <td>
+                    <b>External Id:</b>
+                </td>
+                @foreach (var c in ViewBag.Companies)
+                {
+                    <td></td>
+                }
+            </tr>
+            <tr field="UpdateTime">
+                <td>
+                    <b>Up to Date:</b>
+                </td>
+                @foreach (var c in ViewBag.Companies)
+                {
+                    <td></td>
+                }
+            </tr>
+            <tr field="Description">
+                <td>
+                    <b>Description:</b>
+                </td>
+                @foreach (var c in ViewBag.Companies)
+                {
+                    <td></td>
+                }
+            </tr>
+            <tr field="Category">
+                <td>
+                    <b>Category:</b>
+                </td>
+                @foreach (var c in ViewBag.Companies)
+                {
+                    <td></td>
+                }
+            </tr>
+            <tr field="Source">
+                <td>
+                    <b>Source:</b>
+                </td>
+                @foreach (var c in ViewBag.Companies)
+                {
+                    <td></td>
+                }
+            </tr>
+            <tr field="Id">
+                <td>
+                    <b>Id:</b>
+                </td>
+                @foreach (var c in ViewBag.Companies)
+                {
+                    <td></td>
+                }
+            </tr>
+        </tbody>
+    </table>
+    
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Save" class="btn btn-default" />
+        </div>
+    </div>
+}
+
+<script>
+
+    function unset_product(company_id) {
+        var column_id = $('#LinkedProducts thead tr th[company_id=' + company_id + ']').index() + 1;
+        var link_id = $('#LinkedProducts tr td:nth-child(' + column_id + ') input[name="LinkId"]').val();
+        
+        //var column_ids = [];
+        //$('#LinkedProducts thead tr td').each(function(){
+        //    if($(this).find('input[name="LinkId"]').val() == link_id)
+        //        column_ids.push($(this).index() + 1);
+        //});
+        //for(var i in column_ids){
+        //    column_id = column_ids[i];
+
+            $('#LinkedProducts tr td:nth-child(' + column_id + ') input[name="ProductId"]').val('');
+            $('#LinkedProducts tr td:nth-child(' + column_id + ') input[name="LinkId"]').val('');
+            $('#LinkedProducts tbody tr td:nth-child(' + column_id + ')').text('');
+
+            $('#LinkedProducts tr td:nth-child(' + column_id + ') ._choosing_menu').hide();
+            $('#LinkedProducts tr td:nth-child(' + column_id + ') ._find_menu').show();
+        //}
+        $('#LinkedProducts tr td').css('background-color', '#fff');
+        current_product_link_id = null;
+
+        set_modal_window(product_links_table.modalBox);
+    }
+
+    var current_product_link_id = null;
+
+    function mark_current_product_link() {
+        var s = $('#LinkedProducts tbody tr:nth-child(1) td').each(function(){
+            var column_id = $(this).index() + 1;
+            var li = $('#LinkedProducts tr td:nth-child(' + column_id + ')').find("input[name='LinkId']").val();
+            var color;
+            if(li == current_product_link_id)
+                color = '#cde';
+            else
+                color = '#fff';
+            $('#LinkedProducts tbody tr td:nth-child(' + column_id + ')').css('background-color', color);
+        });
+    }
+
+    function set_product(product) {
+        var ius = '';
+        for (var i in product.ImageUrls) {
+            ius += '<a href="' + product.ImageUrls[i] + '" target="_blank"><img src="' + product.ImageUrls[i] + '" style="height:50px; width:50px;" /></a>';
+        }
+        product.ImageUrls_ = ius;
+
+        product.Url_ = '<a href="' + product.Url + '" target="_blank">' + product.Url + '</a>';
+
+        var column_id = $('#LinkedProducts thead tr').find('th[company_id=' + product.CompanyId + ']').index() + 1;
+        $.each(product, function (name, value) {
+            var row_id = $('#LinkedProducts tbody tr').filter(function () {
+                return $(this).attr('field') == name;
+            }).index() + 1;
+            if (row_id > 0) {
+                $('#LinkedProducts tbody tr:nth-child(' + row_id + ') td:nth-child(' + column_id + ')').html(value);
+            }
+        });
+        $('#LinkedProducts tr td:nth-child(' + column_id + ')').find("input[name='ProductId']").val(product.Id);
+        $('#LinkedProducts tr td:nth-child(' + column_id + ')').find("input[name='LinkId']").val(product.LinkId);
+
+        $('#LinkedProducts').find('._matching_label').hide();
+        if(product._Count){
+            var label = "Index: " + product._Index + "/" + product._Count + " Score: " + (Math.round(product._Score * 100000) / 100000) + "/" + Math.round(product._SecondaryScore);
+            $('#LinkedProducts tr td:nth-child(' + column_id + ')').find('._matching_label').html(label);
+            $('#LinkedProducts tr td:nth-child(' + column_id + ')').find('._matching_label').show();
+        }
+
+        $('#LinkedProducts tr td:nth-child(' + column_id + ')').find('._choosing_menu').show();
+        $('#LinkedProducts tr td:nth-child(' + column_id + ')').find('._find_menu').hide();
+
+        current_product_link_id = product.LinkId;
+    }
+
+    function set_products(products, main_company_id){
+        var main_product = null;
+        for(var i in products){
+            var product = products[i];
+            if(product.CompanyId == main_company_id)
+                main_product = product;
+            else
+                set_product(product);
+        }
+        if(main_product)
+            set_product(main_product);
+        mark_current_product_link();
+    }
+
+    var initial_products = @Html.Raw(ViewBag.LinkedProductsJson);
+    $(document).ready(function () {
+        set_products(initial_products, null);
+                
+        //$('#LinkedProducts td').click(function(event) { 
+        //    var column_id = $(this).index() + 1;
+        //    var name = $('#LinkedProducts tr td:nth-child(' + column_id + ')').find("td[field='Name']").html();
+        //});
+    });
+        
+    function set_next_product(company_id, forward) {
+        var product_ids = [];
+        $("input[name='ProductId']").each(function () {
+            product_ids.push($(this).val());
+        });
+
+        var column_id = $('#LinkedProducts thead tr').find('th[company_id=' + company_id + ']').index() + 1;
+        var keywords = $('#LinkedProducts tr td:nth-child(' + column_id + ')').find("input[name='Keywords']").val();
+        
+        product_links_table.modalBox.getContentByAjax(
+            {
+                type: 'GET',
+                data: {
+                    "product1_ids": product_ids,
+                    "company2_id": company_id,
+                    "keyword2s": keywords,
+                    //"current_product2_id": current_product2_id,
+                    //"create_new_list": create_new_list,
+                    "forward": forward ? true : false
+                },
+                url: "@Url.Action("GetNextProductLink")"
+            },
+            function (products) {
+                if (!products.length) {
+                    show_message("No product found.");
+                    unset_product(company_id);
+                    return;
+                }
+                if (current_product_link_id == products[0].LinkId) {
+                    if (forward)
+                        show_message("End of list is reached.");
+                    else
+                        show_message("Start of list is reached.");
+                    //$('#LinkedProducts tr td:nth-child(' + column_id + ')').find("._to_next_product").val();
+                    return;
+                }
+                set_products(products, company_id);
+            }
+        );
+    }
+</script>

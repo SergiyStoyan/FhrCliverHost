@@ -1,0 +1,88 @@
+﻿@model Cliver.ProductOffice.Models.Crawler
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this service? <br />Keep in mind that it may bring to malfunction of the system.</h3>
+<fieldset>
+    <legend>Crawler</legend>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Id)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Id)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.State)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.State)
+    </div>
+
+    <div class="display-label">
+        @Html.DisplayNameFor(model => model.Site)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Site)
+    </div>
+
+    <div class="display-label">
+        @Html.DisplayNameFor(model => model.Command)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Command)
+    </div>
+
+    <div class="display-label">
+        @Html.DisplayNameFor(model => model.RunTimeSpan)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.RunTimeSpan)
+    </div>
+
+    <div class="display-label">
+        @Html.DisplayNameFor(model => model.CrawlProductTimeout)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.CrawlProductTimeout)
+    </div>
+
+    <div class="display-label">
+        @Html.DisplayNameFor(model => model.YieldProductTimeout)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.YieldProductTimeout)
+    </div>
+
+    <div class="display-label">
+        @Html.DisplayNameFor(model => model.AdminEmails)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.AdminEmails)
+    </div>
+
+    <div class="display-label">
+        @Html.DisplayNameFor(model => model.Comment)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Comment)
+    </div>
+
+    <div class="display-label">
+        @Html.DisplayNameFor(model => model.RestartDelayIfBroken)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.RestartDelayIfBroken)
+    </div>
+</fieldset>
+@using (Html.BeginForm()) {
+    @Html.AntiForgeryToken()
+    <p>
+        <input type="submit" value="Delete" /> 
+    </p>
+}

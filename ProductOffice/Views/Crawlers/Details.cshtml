@@ -1,0 +1,33 @@
+﻿@model Cliver.ProductOffice.Models.Crawler
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<fieldset>
+    <legend>Crawler</legend>  
+
+    @Html.LabelFor(model => model.Id)  @Model.Id
+    @Html.LabelFor(model => model.State)  @Model.State
+    @Html.LabelFor(model => model.Site) @Model.Site
+    @Html.LabelFor(model => model.Command)  @Model.
+    @Html.LabelFor(model => model.RunTimeSpan)  @Model.RunTimeSpan
+    @Html.LabelFor(model => model.CrawlProductTimeout)  @Model.CrawlProductTimeout
+    @Html.LabelFor(model => model.YieldProductTimeout) @Model.YieldProductTimeout
+    @Html.LabelFor(model => model.AdminEmails) @Model.AdminEmails
+    @Html.LabelFor(model => model.Comment) @Model.Comment
+    @Html.LabelFor(model => model.RestartDelayIfBroken) @Model.RestartDelayIfBroken
+    @Html.LabelFor(model => model._SessionStartTime)  @Model._SessionStartTime
+    @Html.LabelFor(model => model._LastSessionState)        @Model._LastSessionState
+    @Html.LabelFor(model => model._NextStartTime)           @Model._NextStartTime
+    @Html.LabelFor(model => model._LastStartTime)            @Model._LastStartTime
+    @Html.LabelFor(model => model._LastEndTime)           @Model._LastEndTime
+    @Html.LabelFor(model => model._LastProcessId)           @Model._LastProcessId
+    @Html.LabelFor(model => model._LastLog)     @Model._LastLog
+    @Html.LabelFor(model => model._Archive)           @Model._Archive
+    @Html.LabelFor(model => model._ProductsTable)            @Model._ProductsTable
+    @Html.LabelFor(model => model._LastProductTime)            @Model._LastProductTime
+
+</fieldset>

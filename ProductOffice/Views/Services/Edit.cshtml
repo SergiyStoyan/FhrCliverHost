@@ -1,0 +1,100 @@
+﻿@model Cliver.ProductOffice.Models.Service
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Edit</h2>
+
+@using (Html.BeginForm()) {
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <fieldset>
+        <legend>Crawler</legend>
+
+        @Html.HiddenFor(model => model.Id)
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Id)
+        </div>
+        <div class="editor-field">
+            @Html.DisplayFor(model => model.Id)
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.State, "State", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("State", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.State, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.ExeFolder)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.ExeFolder)
+            @Html.ValidationMessageFor(model => model.ExeFolder)
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Command, "Command", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("Command", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Command, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.RunTimeSpan)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.RunTimeSpan)
+            @Html.ValidationMessageFor(model => model.RunTimeSpan)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.RunTimeout)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.RunTimeout)
+            @Html.ValidationMessageFor(model => model.RunTimeout)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.AdminEmails)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.AdminEmails)
+            @Html.ValidationMessageFor(model => model.AdminEmails)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Comment)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Comment)
+            @Html.ValidationMessageFor(model => model.Comment)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.RestartDelayIfBroken)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.RestartDelayIfBroken)
+            @Html.ValidationMessageFor(model => model.RestartDelayIfBroken)
+        </div>
+
+        <div class="editor-field">
+            @Html.EditorFor(model => model.RestartDelayIfBroken)
+            @Html.ValidationMessageFor(model => model.RestartDelayIfBroken)
+        </div>
+
+        <p>
+            <input type="submit" value="Save" />
+        </p>
+    </fieldset>
+}
+
+    @Scripts.Render("~/bundles/jqueryval")

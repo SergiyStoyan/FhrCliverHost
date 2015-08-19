@@ -1,0 +1,28 @@
+﻿@model IEnumerable<Cliver.ProductOffice.Models.LinkCategory>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Categories</h2>
+
+
+<table>
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ParentId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+        </tr>
+    </thead>
+</table>
+
+<script type="text/javascript">
+    var t = init_table(true, 0, "New", "Details", "Edit", "Delete", "@Request.Path", false);
+</script>

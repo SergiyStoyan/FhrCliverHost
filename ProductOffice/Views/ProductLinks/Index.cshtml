@@ -1,0 +1,26 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Product Links</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>
+                LinkId
+            </th>
+            @foreach (Cliver.ProductOffice.Models.Company c in ViewBag.Companies)
+            {
+                <th>
+                    @c.Name
+                </th>
+            }
+        </tr>
+    </thead>
+
+</table>
+<script type="text/javascript">
+    var product_links_table = init_table(true, 0, null, null, "Edit", null, "@Request.Path", [0]);
+
+</script>

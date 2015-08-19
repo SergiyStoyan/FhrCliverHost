@@ -1,0 +1,37 @@
+﻿@using System.Text.RegularExpressions;
+@using System.Collections;
+
+@if (Cliver.ProductOffice.Messages.Titles.Count > 0)
+{
+    foreach (string title in Cliver.ProductOffice.Messages.Titles)
+    {
+        string q = string.Join("<br/>", Cliver.ProductOffice.Messages.Dictionary[title]);
+        q = Regex.Replace(q, @"[\r\n]", @"", RegexOptions.Singleline);
+        q = Regex.Replace(q, @"'", @"\'", RegexOptions.Singleline);
+
+        <script type="text/javascript">
+    show_message('@Html.Raw(q)', '@title');
+        </script>
+    }
+}
+
+@if (Cliver.ProductOffice.Errors.Titles.Count > 0)
+{
+    foreach (string title in Cliver.ProductOffice.Errors.Titles)
+    {
+        string q = string.Join("<br/>", Cliver.ProductOffice.Errors.Dictionary[title]);
+        q = Regex.Replace(q, @"[\r\n]", @"", RegexOptions.Singleline);
+        q = Regex.Replace(q, @"'", @"\'", RegexOptions.Singleline);
+
+        <script type="text/javascript">
+    show_error('@Html.Raw(q)', '@title');
+        </script>
+    }
+}
+
+
+
+
+
+
+

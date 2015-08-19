@@ -1,0 +1,31 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Configuration</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>
+                Id
+            </th>
+            <th>
+                Company
+            </th>
+        </tr>
+    </thead>
+
+</table>
+<script type="text/javascript">
+    var products_table = init_table(true, 0, null, null, "Edit", null, "@Request.Path", [0]);
+
+    function select_in_products_table(field, pattern) {
+        if (pattern > -1)
+            products_table.api().columns(0).search(field + "=" + pattern);// it is how passed filter parameters due to to bad manual!
+        else
+            products_table.api().columns(0).search(null);// it is how passed filter parameters due to to bad manual!
+        products_table.api().draw();
+    }
+
+</script>

@@ -1,0 +1,53 @@
+﻿@model IEnumerable<Cliver.ProductOffice.Models.Service>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Services</h2>
+@{
+int RefreshSpanInSecs = 10;
+}
+Refresh data every @RefreshSpanInSecs seconds
+<input id="refresh_table_checkbox" type="checkbox" class="btn btn-default" onchange="javascript:RefreshTable(this.checked);" />
+
+<table>
+    <thead>
+        <tr>
+            <th></th>
+            <th>@Html.DisplayNameFor(model => model.Id)</th>
+            <th>@Html.DisplayNameFor(model => model.State)</th>
+            <th>@Html.DisplayNameFor(model => model.Command)</th>
+            <th>@Html.DisplayNameFor(model => model._LastSessionState)</th>
+            <th>@Html.DisplayNameFor(model => model._NextStartTime)</th>
+            <th>@Html.DisplayNameFor(model => model._LastStartTime)</th>
+            <th>@Html.DisplayNameFor(model => model._LastEndTime)</th>
+            <th>@Html.DisplayNameFor(model => model.RunTimeSpan)</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+<script type="text/javascript">
+    var table = init_table(true, 0, "Add", "Details", "Edit", "Delete", "@Request.Path", [0]);
+
+    var refresh_timer = null;
+    function RefreshTable(run){
+        if(run)
+        {
+            if(!refresh_timer )
+                refresh_timer = setInterval(function () {
+                    table.api().draw();
+                }, 1000 * @RefreshSpanInSecs);
+        }
+        else
+        {
+            if(refresh_timer )
+            {
+                clearInterval(refresh_timer);
+                refresh_timer = null;
+            }
+        }
+    }
+</script>
