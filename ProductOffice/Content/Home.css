@@ -69,12 +69,8 @@ header {
     background-color: #a67;
 }
 
-.footer {
-    margin-top: 40px;
-    padding-top: 4px;
-    padding-bottom: 0px;
-    padding-left: 20px;
-    background-color: #aa7;
+footer {
+    background-color: #243;
     color:#fff;
 }
 

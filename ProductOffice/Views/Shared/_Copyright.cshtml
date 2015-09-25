@@ -1,5 +1,21 @@
 ﻿<style>
-    table.copyright td {
+
+    .copyright-container{
+        position:relative; 
+        white-space:nowrap;
+    }
+
+.copyright-container a{
+        color: #fff;
+        text-decoration:underline;
+    }
+
+.copyright-container a:hover{
+        color: #9f0;
+        text-decoration:underline;
+    }
+
+.copyright-mark td{
         width: 6px;
         height: 6px;
         padding: 0px;
@@ -7,43 +23,54 @@
         border-spacing: 1px;
     }
 
-    table.copyright {
+table.copyright-mark{
         margin: 0px;
         border: 0px;
     }
-
-    a.copyright:link, a.copyright:visited, a.copyright:active {
-        color: #000;
-        text-decoration: none;
-    }
-
-    a.copyright:hover {
-        color: #900;
-        text-decoration:underline;
-    }
+    
+.copyright-tooltip {
+    display: none;
+    position: absolute;  
+    top: -10px;
+    left: 10px;
+    z-index:10;
+    white-space:nowrap;
+    background: #f00;
+    border: 1px solid #eed;
+    border-radius: 4px;
+    padding: 2px 4px;
+    color: #fff;
+}
+    
+.copyright-container:hover .copyright-tooltip {
+    display: block;
+}
 </style>
 
-<table style="margin: 0px; border: 0px;">
-    <tr>
-        <td style="margin: 0px; border: 0px; padding:0px;">
-            <a href="http://cliversoft.com" title="developed by Sergey Stoyan, www.cliversoft.com">
-                <table id="copyright" class="copyright">
-                    <tr>
-                        <td bgcolor=#ff9966 id="copyright_td1"></td>
-                        <td bgcolor=#999988 id="copyright_td2"></td>
-                    </tr>
-                    <tr>
-                        <td bgcolor=#ddddcc id="copyright_td3"></td>
-                        <td bgcolor=#bb99dd id="copyright_td4"></td>
-                    </tr>
-                </table>
-            </a>
-        </td>
-        <td>
-            &nbsp;&nbsp; by <a href="http://cliversoft.com" title="developed by Sergey Stoyan, www.cliversoft.com" class="copyright">cliversoft.com</a>, 2015
-</td>
-    </tr>
-</table>
+<div class="copyright-container">
+    <div class="copyright-tooltip">developed by Sergey Stoyan, <a href="http://cliversoft.com">www.cliversoft.com</a></div>
+    <table style="margin: 0px; border: 0px;">
+        <tr>
+            <td style="margin: 0px; border: 0px; padding:0px;">
+                <a href="http://cliversoft.com">
+                    <table id="copyright" class="copyright-mark">
+                        <tr>
+                            <td bgcolor=#ff9966 id="copyright_td1"></td>
+                            <td bgcolor=#999988 id="copyright_td2"></td>
+                        </tr>
+                        <tr>
+                            <td bgcolor=#ddddcc id="copyright_td3"></td>
+                            <td bgcolor=#bb99dd id="copyright_td4"></td>
+                        </tr>
+                    </table>
+                </a>
+            </td>
+            <td>
+                &nbsp;&nbsp; by <a href="http://cliversoft.com" style="padding-right:0;">cliversoft.com</a>, 2015
+            </td>
+        </tr>
+    </table>
+</div>
 <script language="javascript">
     {
         function get_random(max) {
@@ -67,7 +94,7 @@
 
         function play() {
             var t = document.getElementById("copyright_td" + (get_random(4) + 1));
-            var r = random_color(180, 255, 150, 230, 150, 255);
+            var r = random_color(50, 255, 100, 230, 80, 255);
             t.style.backgroundColor = r;
             setTimeout('play()', 500);
         };
