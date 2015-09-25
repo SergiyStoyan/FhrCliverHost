@@ -1,0 +1,18 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+<h2>SQL</h2>
+
+@using (Html.BeginForm()) {
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+<textarea name="Sql" style="resize:both;overflow:auto;width:100%;" rows="5">@ViewBag.Sql</textarea>
+
+    <p>
+        <input type="submit" value="Execute" />
+    </p>
+}
+    <script type="text/javascript">
+    </script>
