@@ -79,7 +79,8 @@ header {
 }
 
 footer {
-    background-color: #474;
+    background-color: #465;
+    background-color1: #466;
 }
 
 .form-control, input, select {
