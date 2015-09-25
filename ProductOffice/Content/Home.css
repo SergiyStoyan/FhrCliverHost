@@ -75,13 +75,11 @@ header {
 }
 
 .header a:hover, .header a:active{
-    color:#9f0;
+    color:#dfe;
 }
 
 footer {
     background-color: #474;
-    background-color1: #463;
-    background-color2: #a84;
 }
 
 .form-control, input, select {
