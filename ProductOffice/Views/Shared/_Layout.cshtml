@@ -31,7 +31,7 @@
                 </div>
                 <div class="float-right">                        
                     <section id="login">
-                        <span style="color:#ccc; padding-right:20px; font-size:12px;">@DateTime.Now.ToLongDateString()</span>
+                        <span style="color:#ccc; padding-right:20px; font-size:12px;">@DateTime.Now.ToString("dddd, dd, MMMM", CultureInfo.InvariantCulture)</span>
                         @Html.Partial("_LoginPartial")
                     </section>
                 </div>

@@ -95,7 +95,10 @@ h5, h6 {
 ----------------------------------------------------------*/
 .content-wrapper {
     margin: 0 auto;
-    max-width: 960px;
+    max-width1: 960px;
+    max-width:83%;
+margin-left1:auto; 
+margin-right1:auto;
 }
 
 #body {
