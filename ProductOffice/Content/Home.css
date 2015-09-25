@@ -67,11 +67,21 @@ body{margin:0px;}
 
 header {
     background-color: #a67;
+    color:#000;
+}
+
+.header a{
+    color:#000;
+}
+
+.header a:hover, .header a:active{
+    color:#9f0;
 }
 
 footer {
-    background-color: #573;
-    color:#fff;
+    background-color1: #472;
+    background-color: #463;
+    background-color2: #a84;
 }
 
 .form-control, input, select {

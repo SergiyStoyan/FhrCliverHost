@@ -59,6 +59,7 @@
 {
 	float:none;
     display: inline-block;
+    width:100%;
 }
 
 #primary_nav_wrap ul ul a

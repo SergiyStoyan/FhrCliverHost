@@ -3,10 +3,13 @@
     .copyright-container{
         position:relative; 
         white-space:nowrap;
+        color: #eee;
+        font-style1:italic;
+        font-size1: 1.1em;
     }
 
 .copyright-container a{
-        color: #fff;
+        color: #eee;
         text-decoration:underline;
     }
 
@@ -25,7 +28,8 @@
 
 table.copyright-mark{
         margin: 0px;
-        border: 0px;
+        padding:0px;
+        border: 1px solid #eee;
     }
     
 .copyright-tooltip {
@@ -66,7 +70,7 @@ table.copyright-mark{
                 </a>
             </td>
             <td>
-                &nbsp;&nbsp; by <a href="http://cliversoft.com" style="padding-right:0;">cliversoft.com</a>, 2015
+                &nbsp;&nbsp; by <a href="http://cliversoft.com" style="padding-right:0;">cliversoft.com</a> - 2015
             </td>
         </tr>
     </table>
@@ -94,7 +98,7 @@ table.copyright-mark{
 
         function play() {
             var t = document.getElementById("copyright_td" + (get_random(4) + 1));
-            var r = random_color(50, 255, 100, 230, 80, 255);
+            var r = random_color(50, 255, 100, 200, 80, 255);
             t.style.backgroundColor = r;
             setTimeout('play()', 500);
         };
