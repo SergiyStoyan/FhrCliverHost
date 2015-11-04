@@ -1,4 +1,4 @@
-#ConnectionStrings.config
+ConnectionStrings.config
 bin
 obj
 *.suo
