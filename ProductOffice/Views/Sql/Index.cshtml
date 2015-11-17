@@ -3,16 +3,26 @@
 }
 
 <h2>SQL</h2>
+<b style="color:red;">Be sure you understand what you do here!</b>
+<br />
+<br />
 
 @using (Html.BeginForm()) {
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(true)
 
-<textarea name="Sql" style="resize:both;overflow:auto;width:100%;" rows="5">@ViewBag.Sql</textarea>
+    <label>Use database:</label>        
+        <input type="radio" value="CliverCrawlerHost" name="Database" style="width:30px;"
+               @(ViewBag.Database == "CliverCrawlerHost" ? "checked" : "") /><text>CliverCrawlerHost</text><br />
+    <input type="radio" value="ProductOffice" name="Database" style="width:30px;"
+           @(ViewBag.Database == "ProductOffice" ? "checked" : "") /><text>ProductOffice</text>
+<br />
+    
+        <textarea name="Sql" style="resize:both;overflow:auto;width:100%;" rows="5">@ViewBag.Sql</textarea>
 
-    <p>
-        <input type="submit" value="Execute" />
-    </p>
-}
-    <script type="text/javascript">
-    </script>
+        <p>
+            <input type="submit" value="Execute" />
+        </p>
+        }
+        <script type="text/javascript">
+        </script>
