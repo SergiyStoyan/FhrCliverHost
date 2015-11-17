@@ -11,13 +11,15 @@
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(true)
 
-    <label>Use database:</label>        
-        <input type="radio" value="CliverCrawlerHost" name="Database" style="width:30px;"
-               @(ViewBag.Database == "CliverCrawlerHost" ? "checked" : "") /><text>CliverCrawlerHost</text><br />
-    <input type="radio" value="ProductOffice" name="Database" style="width:30px;"
-           @(ViewBag.Database == "ProductOffice" ? "checked" : "") /><text>ProductOffice</text>
-<br />
-    
+    <label>
+        Database:&nbsp;
+        <select name="Database">
+            <option @(ViewBag.Database == "CliverCrawlerHost" ? "selected" : "")>CliverCrawlerHost</option>
+            <option @(ViewBag.Database == "ProductOffice" ? "selected" : "")>ProductOffice</option>
+        </select>
+    </label>
+    <br />
+
         <textarea name="Sql" style="resize:both;overflow:auto;width:100%;" rows="5">@ViewBag.Sql</textarea>
 
         <p>
