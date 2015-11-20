@@ -170,7 +170,7 @@ GROUP BY a.LinkId";
             }
             List<Cliver.ProductIdentifier.ProductLink> filtered_product_links;
 
-            public static IdenticalProductList GetWithCurrentIndex(ProductLinksController controller, int[] product1_ids, int company2_id, string[] keyword2s, bool forward)
+            public static IdenticalProductList GetMovingToNextRange(ProductLinksController controller, int[] product1_ids, int company2_id, string[] keyword2s, int range_size, bool forward)
             {
                 product1_ids = product1_ids.Distinct().ToArray();
 
@@ -178,19 +178,22 @@ GROUP BY a.LinkId";
                 ipl.set_pls_filtered_by_keyword2s(keyword2s);
                 if (forward)
                 {
-                    ipl.CurrentProductLinkIndex++;
-                    if (ipl.CurrentProductLinkIndex >= ipl.CurrentProductLinks.Count)
-                        ipl.CurrentProductLinkIndex = ipl.CurrentProductLinks.Count;
+                    ipl.CurrentProductLinkRangeStartIndex = ipl.CurrentProductLinkRangeEndIndex + 1;
+                    ipl.CurrentProductLinkRangeEndIndex = ipl.CurrentProductLinkRangeStartIndex + range_size - 1;
+                    if (ipl.CurrentProductLinkRangeEndIndex >= ipl.CurrentProductLinks.Count)
+                        ipl.CurrentProductLinkRangeEndIndex = ipl.CurrentProductLinks.Count;
                 }
                 else
                 {
-                    ipl.CurrentProductLinkIndex--;
-                    if (ipl.CurrentProductLinkIndex < 0)
-                        ipl.CurrentProductLinkIndex = 0;
+                    ipl.CurrentProductLinkRangeEndIndex = ipl.CurrentProductLinkRangeStartIndex - 1;
+                    ipl.CurrentProductLinkRangeStartIndex = ipl.CurrentProductLinkRangeEndIndex - range_size + 1;
+                    if (ipl.CurrentProductLinkRangeStartIndex < 0)
+                        ipl.CurrentProductLinkRangeStartIndex = 0;
                 }
                 return ipl;
             }
-            public int CurrentProductLinkIndex = 0;
+            public int CurrentProductLinkRangeStartIndex = -1;
+            public int CurrentProductLinkRangeEndIndex = -1;
 
             void set_pls_filtered_by_keyword2s(string[] keyword2s)
             {
@@ -201,7 +204,8 @@ GROUP BY a.LinkId";
                     if (this.keyword2s_ != null)
                     {
                         this.keyword2s_ = null;
-                        CurrentProductLinkIndex = -1;
+                        CurrentProductLinkRangeStartIndex = -1;
+                        CurrentProductLinkRangeEndIndex = -1;
                     }
                     filtered_product_links = product_links;
                     return;
@@ -211,7 +215,8 @@ GROUP BY a.LinkId";
                 if (this.keyword2s_ == keyword2s_)
                     return;
                 this.keyword2s_ = keyword2s_;
-                CurrentProductLinkIndex = -1;
+                CurrentProductLinkRangeStartIndex = -1;
+                CurrentProductLinkRangeEndIndex = -1;
                 filtered_product_links = new List<Cliver.ProductIdentifier.ProductLink>();
                 List<Regex> rs = new List<Regex>();
                 foreach(string k in keyword2s)
@@ -289,23 +294,32 @@ GROUP BY a.LinkId";
             }
         }
 
-        public ActionResult GetNextProductLink(
+        public ActionResult GetNextProductLinks(
             [Bind(Prefix = "product1_ids[]")]string[] product1_ids_,
             [Bind(Prefix = "company2_id")]string company2_id_,
             [Bind(Prefix = "keyword2s")]string keyword2s_,
+            int range_size,
             bool forward
             )
         {
             int[] product1_ids = (from x in product1_ids_ where !string.IsNullOrWhiteSpace(x) select int.Parse(x)).ToArray();
             int company2_id = int.Parse(company2_id_);
             string[] keyword2s = keyword2s_.Split(' ');
-            IdenticalProductList ipl = IdenticalProductList.GetWithCurrentIndex(this, product1_ids, company2_id, keyword2s, forward);
+            IdenticalProductList ipl = IdenticalProductList.GetMovingToNextRange(this, product1_ids, company2_id, keyword2s, range_size, forward);
             if (ipl.CurrentProductLinks.Count < 1)
                 return Json(new List<object>(), JsonRequestBehavior.AllowGet);
-            return Json(get_product_objects(ipl.CurrentProductLinks[ipl.CurrentProductLinkIndex], ipl.CurrentProductLinkIndex, ipl.CurrentProductLinks.Count, keyword2s), JsonRequestBehavior.AllowGet);
+
+            List<List<object>> pss = new List<List<object>>();
+            for (int i = ipl.CurrentProductLinkRangeStartIndex; i <= ipl.CurrentProductLinkRangeEndIndex; i++)
+                pss.Add(get_ProductLink_objects(ipl.CurrentProductLinks[i], i));
+            Dictionary<string, object> json = new Dictionary<string,object>();
+            json["Product2Range"] = pss;
+            json["Product2Count"] = ipl.CurrentProductLinks.Count;
+            json["Keyword2s"] = keyword2s;
+            return Json(json, JsonRequestBehavior.AllowGet);
         }
 
-        object get_product_objects(Cliver.ProductIdentifier.ProductLink pl, int index, int count, string[] keyword2s)
+        List<object> get_ProductLink_objects(Cliver.ProductIdentifier.ProductLink pl, int index)
         {
             if (pl == null)
                 return null;
@@ -336,7 +350,6 @@ GROUP BY a.LinkId";
                     Price = (from r in p.Prices orderby r.Time descending select (string)r.Currency.Symbol + r.Value.ToString()).FirstOrDefault(),
                     //_MatchedWords = (from x in pl.Product1s select new { x.DbProduct.Id, pl.Get(x.DbProduct.Id, p.Id).MatchedWords }).ToDictionary(x => x.Id, x => x.MatchedWords),
                     _Index = index,
-                    _Count = count,
                     _Score = pl.Score,
                     _SecondaryScore = !double.IsNaN(pl.SecondaryScore) ? pl.SecondaryScore : 1,
                 };

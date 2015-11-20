@@ -69,6 +69,48 @@ function show_error(content, title) {
     return e;
 }
 
+/*function show_div_as_modal_box(div_id, buttons) {
+    if (!div_id)
+        alert("div_id is empty.");
+
+    var e = $('#' + div_id);
+
+    if (!buttons) {
+        buttons["Close"] = null;
+    }
+
+    $.each(buttons, function (name, value) {
+        if (!value) {
+            buttons[name] = function () {
+                e.dialog("destroy");
+            }
+        }
+    });
+
+    e.on('dialogclose', function (event) {
+        e.dialog("destroy");
+    });
+
+    e.dialog({
+        resizable: true,
+        height: 'auto',
+        width: 'auto',
+        modal: true,
+        buttons: buttons,
+        show: {
+            effect: "fade",
+            duration: 400
+        },
+        hide: {
+            effect: "fade",
+            duration: 400
+        }
+    });
+
+    set_modal_window(e);
+    return e;
+}*/
+
 function set_modal_window(e) {
     //var p = $(e).closest('.ui-dialog-content');
     ////console.log($(e).html());
@@ -114,28 +156,53 @@ function set_modal_window(e) {
     //console.log(($(window).width() + ' - ' + $(e).parent().width()) + ':' + ($(window).width() - $(e).parent().width()) / 2);
 }
 
-function show_modal_box(dialog_id, title, buttons) {
-    if (!dialog_id)
-        dialog_id = '';
+function show_ajax_modal_box(title, buttons, content_div_id) {
+    if (content_div_id) {
+        if (!$('#' + content_div_id).length)
+            alert("ERROR: content_div_id '" + content_div_id + "' does not exist!");
+        if ($('#' + content_div_id).attr("opened"))
+            alert("ERROR: content_div_id '" + content_div_id + "' is already used in a modal box!");
+        $('#' + content_div_id).attr("opened", "true");
+    }
+            
     if (!title)
         title = '&nbsp;';
-    var html = '<div class="' + dialog_id + '" title="' + title + '"><div class="_loading" style="height:100%;width:100%;position:absolute;z-index:10;"><img src="/Images/ajax-loader.gif" style="display:block;margin:auto;position:relative;top:50%;transform:translateY(-50%);"/></div><div class="_content"></div></div>';
+
+    var html = '<div title="' + title + '"><div class="_loading" style="height:100%;width:100%;position:absolute;z-index:10;"><img src="/Images/ajax-loader.gif" style="display:block;margin:auto;position:relative;top:50%;transform:translateY(-50%);"/></div></div>';
     var e = $(html);
     $("body").append(e);
 
-    e.on('dialogclose', function (event) {
-        e.remove();
-    });
-    
+    var content_e;
+    if (content_div_id) {
+        content_e = $("#" + content_div_id);
+        content_e.addClass("_content");
+        content_e.show();
+    }
+    else {
+        content_e = $('<div class="_content"></div>');
+    }
+    e.append(content_e);
+        
+    var close = function (event) {
+        if (content_div_id)            
+            //content_e = $("#" + content_div_id);
+            //content_e.hide();
+            //$("body").append(content_e);
+            e.dialog("close");
+        else
+            e.remove();
+    };
+
+    e.on('dialogclose', close);
+
     if (!buttons) {
+        var buttons = {};
         buttons["Cancel"] = null;
     }
     $.each(buttons, function (name, value) {
-        if(!value)
-            buttons[name] = function () {
-            e.remove();
-        }
-    });
+        if (!value) 
+            buttons[name] = close;
+    });    
 
     e.dialog({
         resizable: true,
@@ -196,6 +263,8 @@ function show_modal_box(dialog_id, title, buttons) {
         $.ajax(ajax_config);
     }
 
+    e.close = close;
+
     return e;
 }
 
@@ -239,7 +308,7 @@ function show_table_row_editor(content_url, ok_button_text, on_success) {
         }
     }
     
-    e = show_modal_box(null, null, buttons);
+    e = show_ajax_modal_box(null, buttons);
 
     e.getContentByAjax(
         {

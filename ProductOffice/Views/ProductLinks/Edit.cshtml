@@ -2,13 +2,13 @@
     ViewBag.Title = "Edit";
 }
 
-<h2>Edit Linked Products</h2>
+<h2>Manage Linked Products</h2>
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
 
-    <table id="LinkedProducts" class="ProductLink_table">
+    <table id="LinkedProductsTable" class="ProductLink_table">
 
         <thead>
             <tr field="buttons">
@@ -16,19 +16,33 @@
                 @foreach (var c in ViewBag.Companies)
                 {
                     <td>
-                        <input type="text" name="Keywords" style="width:100%;box-sizing:border-box;" /><br />
-                        <div class="_choosing_menu" style="display:none;white-space: nowrap;">
-                            <b><a class="_to_previous_product" title="Get product with lower match score" href="#" onclick="javascript: set_next_product(@c.Id, false);">&lt;&lt;</a></b>
-                            &nbsp;
-                            <a title="Remove product from the link" href="#" onclick="javascript: unset_product(@c.Id);">Remove</a>
-                            &nbsp;
-                            <b><a class="_to_next_product" title="Get product with higher match score" href="#" onclick="javascript: set_next_product(@c.Id, true);">&gt;&gt;</a></b>
-
-                            <span class="_matching_label" style="white-space: nowrap;background-color:#b6ff00;"></span>
-                        </div>
-                        <div class="_find_menu">
-                            <a href="#" onclick="javascript: set_next_product(@c.Id);">Find</a>
-                        </div>
+                        <a class="bFind" href="#" onclick="javascript: show_ProductMatchesDlg(@c.Id);">Find</a>
+                        <script>
+                            function show_ProductMatchesDlg(company2_id){
+                                if(!ProductMatchesDlg){
+                                    ProductMatchesDlg = show_ajax_modal_box(
+                                        "Product Matches", 
+                                        {
+                                            "Close":function(){
+                                                ProductMatchesDlg.close();
+                                            }
+                                        },
+                                        "ProductMatchesContent"
+                                    );
+                                }
+                                else                                
+                                    ProductMatchesDlg.dialog("open");
+                                
+                                if(CurrentCompany2Id == company2_id)
+                                    return;
+                                
+                                CurrentCompany2Id = company2_id;
+                                $('#ProductMatchesList table').empty();
+                                get_next_product2_range(true);
+                            }
+                            var ProductMatchesDlg;
+                        </script>
+                        <a class="bRemove" href="#" onclick="javascript: remove_product_from_LinkedProducts(@c.Id);" style="display:none;">Remove</a>
                         <input type="hidden" value="" name="ProductId" />
                         <input type="hidden" value="" name="LinkId" />
                     </td>
@@ -157,49 +171,145 @@
     </div>
 }
 
+    <div id="ProductMatchesContent" style="display:none;">
+    Keyword: <input type="text" name="Keywords" id="Keywords" style="box-sizing:border-box;" /><br />
+    Category: <select><option></option></select><br />
+    <b><a href="#" onclick="javascript: get_next_product_range();">Refine</a></b>
+    <hr />
+    Range Size: <input type="text" name="RangeSize" id="RangeSize" style="box-sizing:border-box;width:50px;" value="50" maxlength="3" />
+    @*Accumulate pages: <input type="checkbox" style="" checked
+                                 onchange="javascript: if(checked) {$('#page_by_page_navigation').css('display', 'none'); $('#accumulate_pages_navigation').css('display', 'inline');} else {$('#page_by_page_navigation').css('display', 'inline'); $('#accumulate_pages_navigation').css({'display':'none'});}" />
+        <div id="page_by_page_navigation" style="display:none;">
+            <b><a class="_to_previous_product" title="Get products with higher match score" href="#" onclick="javascript: get_next_product2_range(false);">Prev</a></b>
+            &nbsp;
+            <b><a class="_to_next_product" title="Get products with lower match score" href="#" onclick="javascript: get_next_product2_range(true);">Next</a></b>
+        </div>*@
+    <div id="accumulate_pages_navigation" style="display:inline;">
+        <b><a class="_to_next_product" title="Add products with lower match score" href="#" onclick="javascript: get_next_product2_range(true);">Append</a></b>
+    </div>
+    <hr />
+
+        <div id="ProductMatchesList" style="overflow: auto;">
+            <table style="word-wrap: break-word;"></table>
+        </div>
+</div>
+
+    <script>
+        $("#ProductMatchesList table").on('click', 'tr', function () {
+            var row = $(this);
+            if (row.hasClass('selected')) {
+                row.removeClass('selected');
+            }
+            else {
+                row.parent().find('tr.selected').removeClass('selected');
+                row.addClass('selected');
+            }
+        });
+
+        var CurrentCompany2Id;
+
+        function get_next_product2_range(forward) {
+            var product1_ids = [];
+            $("input[name='ProductId']").each(function () {
+                product1_ids.push($(this).val());
+            });
+
+            var keyword2s = $('#Keywords').val();
+            var range_size = $('#RangeSize').val();
+
+            ProductMatchesDlg.getContentByAjax(
+                {
+                    type: 'GET',
+                    data: {
+                        "product1_ids": product1_ids,
+                        "company2_id": CurrentCompany2Id,
+                        "keyword2s": keyword2s,
+                        "range_size": range_size,
+                        "forward": forward ? true : false
+                    },
+                    url: "@Url.Action("GetNextProductLinks")"
+                },
+                function (data) {
+                    //console.log(data);
+                    var product2_matches = data.Product2Range;
+                    if (!product2_matches.length) {
+                        show_message("No product found.");
+                        return;
+                    }
+                    if (LastAddedProductLinkId == product2_matches[0][0].LinkId) {
+                        if (forward)
+                            show_message("End of list is reached.");
+                        else
+                            show_message("Start of list is reached.");
+                        return;
+                    }
+                    for(var i in product2_matches){                    
+                        for(var j in product2_matches[i]){
+                            var product = product2_matches[i][j];
+                            if(product.CompanyId != CurrentCompany2Id)
+                                continue;
+                            
+                            ProductIds2LinkedProducts[product.Id] = product2_matches[i];
+
+                            var image_urls = '';
+                            for (var i in product.ImageUrls) {
+                                image_urls += '<a href="' + product.ImageUrls[i] + '" target="_blank"><img src="' + product.ImageUrls[i] + '" style="height:50px; width:50px;" /></a>';
+                            }
+
+                            var name = '<a href="' + product.Url + '" target="_blank">' + product.Name + '</a>';
+               
+                            var label = "Index: " + product._Index + "/" + data.Product2Count + " Score: " + (Math.round(product._Score * 100000) / 100000) + "/" + Math.round(product._SecondaryScore);
+                        
+                            var product_html = "<tr><td>" + image_urls + "</td><td>" + name + "</td><td>" + label + "</td><td><a href='#' onclick='javascript: add_product2s_to_LinkedProductsTable(ProductIds2LinkedProducts[" + product.Id + "]); ProductMatchesDlg.close();'>link</a></td></tr>";
+                            var r = $(product_html);
+                            r.attr("product_id", product.Id);
+                            $('#ProductMatchesList table').append(r);
+                        }
+                    }
+                    set_modal_window(ProductMatchesDlg);
+                    $("#ProductMatchesList").height($("#ProductMatchesContent").parent().height() - $("#ProductMatchesList").position().top); 
+                }
+            );
+        }
+        var ProductIds2LinkedProducts = Array();
+    </script>
+
+
 <script>
 
-    function unset_product(company_id) {
-        var column_id = $('#LinkedProducts thead tr th[company_id=' + company_id + ']').index() + 1;
-        var link_id = $('#LinkedProducts tr td:nth-child(' + column_id + ') input[name="LinkId"]').val();
+    function remove_product_from_LinkedProducts(company_id) {
+        var column_id = $('#LinkedProductsTable thead tr th[company_id=' + company_id + ']').index() + 1;
+        var link_id = $('#LinkedProductsTable tr td:nth-child(' + column_id + ') input[name="LinkId"]').val();
+      
+        $('#LinkedProductsTable tr td:nth-child(' + column_id + ') input[name="ProductId"]').val('');
+        $('#LinkedProductsTable tr td:nth-child(' + column_id + ') input[name="LinkId"]').val('');
+        $('#LinkedProductsTable tbody tr td:nth-child(' + column_id + ')').text('');
+
+        $('#LinkedProductsTable tr td').css('background-color', '#fff');
+        LastAddedProductLinkId = null;
         
-        //var column_ids = [];
-        //$('#LinkedProducts thead tr td').each(function(){
-        //    if($(this).find('input[name="LinkId"]').val() == link_id)
-        //        column_ids.push($(this).index() + 1);
-        //});
-        //for(var i in column_ids){
-        //    column_id = column_ids[i];
+        //$('#LinkedProductsTable tr td:nth-child(' + column_id + ')').find(".bFind").show();
+        $('#LinkedProductsTable tr td:nth-child(' + column_id + ')').find(".bRemove").hide();
 
-            $('#LinkedProducts tr td:nth-child(' + column_id + ') input[name="ProductId"]').val('');
-            $('#LinkedProducts tr td:nth-child(' + column_id + ') input[name="LinkId"]').val('');
-            $('#LinkedProducts tbody tr td:nth-child(' + column_id + ')').text('');
-
-            $('#LinkedProducts tr td:nth-child(' + column_id + ') ._choosing_menu').hide();
-            $('#LinkedProducts tr td:nth-child(' + column_id + ') ._find_menu').show();
-        //}
-        $('#LinkedProducts tr td').css('background-color', '#fff');
-        current_product_link_id = null;
-
-        set_modal_window(product_links_table.modalBox);
+        set_modal_window(ProductLinksTable.modalBox);
     }
 
-    var current_product_link_id = null;
+    var LastAddedProductLinkId = null;
 
-    function mark_current_product_link() {
-        var s = $('#LinkedProducts tbody tr:nth-child(1) td').each(function(){
+    function mark_last_added_product2s() {
+        var s = $('#LinkedProductsTable tbody tr:nth-child(1) td').each(function(){
             var column_id = $(this).index() + 1;
-            var li = $('#LinkedProducts tr td:nth-child(' + column_id + ')').find("input[name='LinkId']").val();
+            var li = $('#LinkedProductsTable tr td:nth-child(' + column_id + ')').find("input[name='LinkId']").val();
             var color;
-            if(li == current_product_link_id)
+            if(li == LastAddedProductLinkId)
                 color = '#cde';
             else
                 color = '#fff';
-            $('#LinkedProducts tbody tr td:nth-child(' + column_id + ')').css('background-color', color);
+            $('#LinkedProductsTable tbody tr td:nth-child(' + column_id + ')').css('background-color', color);
         });
     }
 
-    function set_product(product) {
+    function add_product_to_LinkedProductsTable(product) {
         var ius = '';
         for (var i in product.ImageUrls) {
             ius += '<a href="' + product.ImageUrls[i] + '" target="_blank"><img src="' + product.ImageUrls[i] + '" style="height:50px; width:50px;" /></a>';
@@ -208,97 +318,41 @@
 
         product.Url_ = '<a href="' + product.Url + '" target="_blank">' + product.Url + '</a>';
 
-        var column_id = $('#LinkedProducts thead tr').find('th[company_id=' + product.CompanyId + ']').index() + 1;
+        var column_id = $('#LinkedProductsTable thead tr').find('th[company_id=' + product.CompanyId + ']').index() + 1;
         $.each(product, function (name, value) {
-            var row_id = $('#LinkedProducts tbody tr').filter(function () {
+            var row_id = $('#LinkedProductsTable tbody tr').filter(function () {
                 return $(this).attr('field') == name;
             }).index() + 1;
             if (row_id > 0) {
-                $('#LinkedProducts tbody tr:nth-child(' + row_id + ') td:nth-child(' + column_id + ')').html(value);
+                $('#LinkedProductsTable tbody tr:nth-child(' + row_id + ') td:nth-child(' + column_id + ')').html(value);
             }
         });
-        $('#LinkedProducts tr td:nth-child(' + column_id + ')').find("input[name='ProductId']").val(product.Id);
-        $('#LinkedProducts tr td:nth-child(' + column_id + ')').find("input[name='LinkId']").val(product.LinkId);
-
-        $('#LinkedProducts').find('._matching_label').hide();
-        if(product._Count){
-            var label = "Index: " + product._Index + "/" + product._Count + " Score: " + (Math.round(product._Score * 100000) / 100000) + "/" + Math.round(product._SecondaryScore);
-            $('#LinkedProducts tr td:nth-child(' + column_id + ')').find('._matching_label').html(label);
-            $('#LinkedProducts tr td:nth-child(' + column_id + ')').find('._matching_label').show();
-        }
-
-        $('#LinkedProducts tr td:nth-child(' + column_id + ')').find('._choosing_menu').show();
-        $('#LinkedProducts tr td:nth-child(' + column_id + ')').find('._find_menu').hide();
-
-        current_product_link_id = product.LinkId;
+        $('#LinkedProductsTable tr td:nth-child(' + column_id + ')').find("input[name='ProductId']").val(product.Id);
+        $('#LinkedProductsTable tr td:nth-child(' + column_id + ')').find("input[name='LinkId']").val(product.LinkId);
+        
+        LastAddedProductLinkId = product.LinkId;
+        
+        //$('#LinkedProductsTable tr td:nth-child(' + column_id + ')').find(".bFind").hide();
+        $('#LinkedProductsTable tr td:nth-child(' + column_id + ')').find(".bRemove").show();
     }
 
-    function set_products(products, main_company_id){
+    function add_product2s_to_LinkedProductsTable(products){
         var main_product = null;
         for(var i in products){
             var product = products[i];
-            if(product.CompanyId == main_company_id)
+            if(product.CompanyId == CurrentCompany2Id)
                 main_product = product;
             else
-                set_product(product);
+                add_product_to_LinkedProductsTable(product);
         }
         if(main_product)
-            set_product(main_product);
-        mark_current_product_link();
+            add_product_to_LinkedProductsTable(main_product);
+        mark_last_added_product2s();
+        set_modal_window(ProductLinksTable.modalBox);
     }
 
     var initial_products = @Html.Raw(ViewBag.LinkedProductsJson);
     $(document).ready(function () {
-        set_products(initial_products, null);
-                
-        //$('#LinkedProducts td').click(function(event) { 
-        //    var column_id = $(this).index() + 1;
-        //    var name = $('#LinkedProducts tr td:nth-child(' + column_id + ')').find("td[field='Name']").html();
-        //});
-    });
-        
-    function show_products(company_id) {
-
-    }
-    
-    function set_next_product(company_id, forward) {
-        var product_ids = [];
-        $("input[name='ProductId']").each(function () {
-            product_ids.push($(this).val());
-        });
-
-        var column_id = $('#LinkedProducts thead tr').find('th[company_id=' + company_id + ']').index() + 1;
-        var keywords = $('#LinkedProducts tr td:nth-child(' + column_id + ')').find("input[name='Keywords']").val();
-        
-        product_links_table.modalBox.getContentByAjax(
-            {
-                type: 'GET',
-                data: {
-                    "product1_ids": product_ids,
-                    "company2_id": company_id,
-                    "keyword2s": keywords,
-                    //"current_product2_id": current_product2_id,
-                    //"create_new_list": create_new_list,
-                    "forward": forward ? true : false
-                },
-                url: "@Url.Action("GetNextProductLink")"
-            },
-            function (products) {
-                if (!products.length) {
-                    show_message("No product found.");
-                    unset_product(company_id);
-                    return;
-                }
-                if (current_product_link_id == products[0].LinkId) {
-                    if (forward)
-                        show_message("End of list is reached.");
-                    else
-                        show_message("Start of list is reached.");
-                    //$('#LinkedProducts tr td:nth-child(' + column_id + ')').find("._to_next_product").val();
-                    return;
-                }
-                set_products(products, company_id);
-            }
-        );
-    }
+        add_product2s_to_LinkedProductsTable(initial_products, null);                
+    });       
 </script>
