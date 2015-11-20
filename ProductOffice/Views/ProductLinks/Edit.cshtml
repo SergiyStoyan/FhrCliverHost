@@ -38,6 +38,25 @@
                                 
                                 CurrentCompany2Id = company2_id;
                                 $('#ProductMatchesList table').empty();
+                                $("#Categories").empty();
+                                $("#Keywords").val('');
+                                                                
+                                ProductMatchesDlg.getContentByAjax(
+                                    {
+                                        type: 'GET',
+                                        data: {
+                                            "company_id": CurrentCompany2Id
+                                        },
+                                        url: "@Url.Action("GetCompanyCategories")"
+                                    },
+                                    function (categories) {
+                                        var os = categories.join("</option><option>");
+                                        if(os)
+                                            os = "<option>" + os + "</option>";
+                                        $("#Categories").append("<option></option>" + os);
+                                    }
+                                );
+
                                 get_next_product2_range(true);
                             }
                             var ProductMatchesDlg;
@@ -173,8 +192,8 @@
 
     <div id="ProductMatchesContent" style="display:none;">
     Keyword: <input type="text" name="Keywords" id="Keywords" style="box-sizing:border-box;" /><br />
-    Category: <select><option></option></select><br />
-    <b><a href="#" onclick="javascript: get_next_product_range();">Refine</a></b>
+    Category: <select id="Categories"></select><br />
+    <b><a href="#" onclick="javascript: $('#ProductMatchesList table').empty(); get_next_product2_range(true);">Refine</a></b>
     <hr />
     Range Size: <input type="text" name="RangeSize" id="RangeSize" style="box-sizing:border-box;width:50px;" value="50" maxlength="3" />
     @*Accumulate pages: <input type="checkbox" style="" checked
@@ -225,7 +244,7 @@
                         "company2_id": CurrentCompany2Id,
                         "keyword2s": keyword2s,
                         "range_size": range_size,
-                        "forward": forward ? true : false
+                        "forward": forward || forward == undefined ? true : false
                     },
                     url: "@Url.Action("GetNextProductLinks")"
                 },
@@ -267,7 +286,7 @@
                         }
                     }
                     set_modal_window(ProductMatchesDlg);
-                    $("#ProductMatchesList").height($("#ProductMatchesContent").parent().height() - $("#ProductMatchesList").position().top); 
+                    $("#ProductMatchesList").height($("#ProductMatchesContent").parent().height() - $("#ProductMatchesList").position().top);
                 }
             );
         }

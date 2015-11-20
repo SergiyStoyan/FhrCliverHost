@@ -241,7 +241,7 @@ GROUP BY a.LinkId";
 
             static IdenticalProductList get_from_session(ProductLinksController controller, int[] product1_ids, int company2_id)
             {
-                IdenticalProductList ipl = (IdenticalProductList)controller.Session[IdenticalProductList.KeyName];
+                IdenticalProductList ipl = (IdenticalProductList)controller.Session[IdenticalProductList.SESSION_KEY];
                 //IdenticalProductList ipl = (IdenticalProductList)System.Runtime.Caching.MemoryCache.Default.Get(IdenticalProductList.CacheKey);
                 if (product1_ids == null)
                     return ipl;
@@ -249,11 +249,11 @@ GROUP BY a.LinkId";
                     ipl = new IdenticalProductList(controller, product1_ids, company2_id, new Cliver.ProductIdentifier.Engine());
                 else if (!ipl.is_corresponding(controller, product1_ids, company2_id))
                     ipl = new IdenticalProductList(controller, product1_ids, company2_id, ipl.engine);
-                controller.Session[IdenticalProductList.KeyName] = ipl;
+                controller.Session[IdenticalProductList.SESSION_KEY] = ipl;
                 //System.Runtime.Caching.MemoryCache.Default.Set(IdenticalProductList.CacheKey, ipl, DateTimeOffset.Now.AddSeconds(3600));
                 return ipl;
             }
-            const string KeyName = "IDENTICAL_PRODUCT_LIST";
+            const string SESSION_KEY = "IDENTICAL_PRODUCT_LIST";
             bool is_corresponding(ProductLinksController controller, int[] product1_ids, int company2_id)
             {
                 if (Company2Id != company2_id)
@@ -312,11 +312,11 @@ GROUP BY a.LinkId";
             List<List<object>> pss = new List<List<object>>();
             for (int i = ipl.CurrentProductLinkRangeStartIndex; i <= ipl.CurrentProductLinkRangeEndIndex; i++)
                 pss.Add(get_ProductLink_objects(ipl.CurrentProductLinks[i], i));
-            Dictionary<string, object> json = new Dictionary<string,object>();
-            json["Product2Range"] = pss;
-            json["Product2Count"] = ipl.CurrentProductLinks.Count;
-            json["Keyword2s"] = keyword2s;
-            return Json(json, JsonRequestBehavior.AllowGet);
+            Dictionary<string, object> json_o = new Dictionary<string,object>();
+            json_o["Product2Range"] = pss;
+            json_o["Product2Count"] = ipl.CurrentProductLinks.Count;
+            json_o["Keyword2s"] = keyword2s;
+            return Json(json_o, JsonRequestBehavior.AllowGet);
         }
 
         List<object> get_ProductLink_objects(Cliver.ProductIdentifier.ProductLink pl, int index)
@@ -357,6 +357,12 @@ GROUP BY a.LinkId";
                 ds.Add(d);
             }
             return ds;
+        }
+
+        public ActionResult GetCompanyCategories(int company_id)
+        {
+            List<string> categories = db.Products.Where(p => p.CompanyId == company_id).GroupBy(p => p.Category).Select(c => c.Key).ToList();
+            return Json(categories, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
