@@ -91,8 +91,8 @@ function show_ajax_modal_box(title, buttons, content_div_id) {
         $('#' + content_div_id).attr("opened", "true");
     }
             
-    if (!title)
-        title = '&nbsp;';
+    //if (!title)
+    //    title = '&nbsp;';
 
     var html = '<div><div class="_loading" style="height:100%;width:100%;position:absolute;z-index:10;"><img src="/Images/ajax-loader.gif" style="display:block;margin:auto;position:relative;top:50%;transform:translateY(-50%);"/></div></div>';
     var e = $(html);

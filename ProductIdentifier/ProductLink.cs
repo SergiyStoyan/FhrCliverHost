@@ -17,27 +17,46 @@ namespace Cliver.ProductIdentifier
         public class PairStatistics
         {
             public Dictionary<Field, List<string>> MatchedWords = new Dictionary<Field, List<string>>();
-            public double Score = 0;
+            public double CategoryScore = 0;
+            public double NameScore = 0;
 
             public PairStatistics(Engine engine, Product product1, Product product2)
             {
                 this.engine = engine;
 
-                Dictionary<string, double> word2score = new Dictionary<string, double>();
+                Dictionary<string, double> word2category_score = new Dictionary<string, double>();
+                foreach (string word in product1.Words(Field.Category))
+                {
+                    if (product2.Words2Count(Field.Category).ContainsKey(word))
+                    {
+                        Word w = engine.Words.Get(word);
+                        word2category_score[word] = w.Get(product1.DbProduct.CompanyId).Weight * w.Get(product2.DbProduct.CompanyId).Weight;
+                    }
+                }
+                MatchedWords[Field.Category] = word2category_score.Keys.ToList();
+                if (word2category_score.Count > 0)
+                {
+                    CategoryScore = ((double)word2category_score.Values.Sum() / word2category_score.Count)
+                        * ((double)word2category_score.Count / product1.Words(Field.Name).Count)
+                        * ((double)word2category_score.Count / product2.Words(Field.Name).Count);
+                }
+
+                Dictionary<string, double> word2name_score = new Dictionary<string, double>();
                 foreach (string word in product1.Words(Field.Name))
                 {
                     if (product2.Words2Count(Field.Name).ContainsKey(word))
                     {
                         Word w = engine.Words.Get(word);
-                        word2score[word] = w.Get(product1.DbProduct.CompanyId).Weight * w.Get(product2.DbProduct.CompanyId).Weight;
+                        word2name_score[word] = w.Get(product1.DbProduct.CompanyId).Weight * w.Get(product2.DbProduct.CompanyId).Weight;
                     }
                 }
-                MatchedWords[Field.Name] = word2score.Keys.ToList();
-                if (word2score.Count < 1)
-                    return;
-                Score = ((double)word2score.Values.Sum() / word2score.Count)
-                    * ((double)word2score.Count / product1.Words(Field.Name).Count)
-                    * ((double)word2score.Count / product2.Words(Field.Name).Count);
+                MatchedWords[Field.Name] = word2name_score.Keys.ToList();
+                if (word2name_score.Count > 0)
+                {
+                    NameScore = ((double)word2name_score.Values.Sum() / word2name_score.Count)
+                        * ((double)word2name_score.Count / product1.Words(Field.Name).Count)
+                        * ((double)word2name_score.Count / product2.Words(Field.Name).Count);
+                }
 
                 //    decimal p1 = product1.DbProduct.Price;
 
@@ -88,6 +107,8 @@ namespace Cliver.ProductIdentifier
             public int Id2;
         }
 
+        public readonly double CategoryScore = 0;
+        public readonly double NameScore = 0;
         public readonly double Score = 0;
 
         public double SecondaryScore
@@ -129,8 +150,10 @@ namespace Cliver.ProductIdentifier
 
             //word order
             //word density
-
-            Score = (double)product1_id_product2_id_s2PairStatistics.Values.Select(x => x.Score).Sum() / product1_id_product2_id_s2PairStatistics.Count;
+            
+            CategoryScore = (double)product1_id_product2_id_s2PairStatistics.Values.Select(x => x.CategoryScore).Sum() / product1_id_product2_id_s2PairStatistics.Count;
+            NameScore = (double)product1_id_product2_id_s2PairStatistics.Values.Select(x => x.NameScore).Sum() / product1_id_product2_id_s2PairStatistics.Count;
+            Score = 0.6 * CategoryScore + 0.4 * NameScore;
         }
         readonly public Engine Engine;
 
@@ -151,7 +174,9 @@ namespace Cliver.ProductIdentifier
             //word order
             //word density
 
-            Score = (double)product1_id_product2_id_s2PairStatistics.Values.Select(x => x.Score).Sum() / product1_id_product2_id_s2PairStatistics.Count;
+            CategoryScore = (double)product1_id_product2_id_s2PairStatistics.Values.Select(x => x.CategoryScore).Sum() / product1_id_product2_id_s2PairStatistics.Count;
+            NameScore = (double)product1_id_product2_id_s2PairStatistics.Values.Select(x => x.NameScore).Sum() / product1_id_product2_id_s2PairStatistics.Count;
+            Score = CategoryScore * 0.5 * NameScore;
         }
     }
 }

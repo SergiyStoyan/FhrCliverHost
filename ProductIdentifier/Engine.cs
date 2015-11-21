@@ -113,6 +113,10 @@ WHERE b.LinkId IS NULL").GetSingleValue();
                     Product product1 = Products.Get(product1_id);
                     Product product2 = Products.Get(product2_id);
                     Dictionary<Field, HashSet<string>> matched_words = new Dictionary<Field, HashSet<string>>();
+                    //matched_words[Field.Category] = new HashSet<string>();
+                    //foreach (string word in product1.Words(Field.Category))
+                    //    if (product2.Words2Count(Field.Category).ContainsKey(word))
+                    //        matched_words[Field.Category].Add(word);
                     matched_words[Field.Name] = new HashSet<string>();
                     foreach (string word in product1.Words(Field.Name))
                         if (product2.Words2Count(Field.Name).ContainsKey(word))
@@ -128,6 +132,12 @@ WHERE b.LinkId IS NULL").GetSingleValue();
                             if (product1_id == p2.DbProduct.Id)
                                 continue;
                             Dictionary<Field, List<string>> mws = pl.Get(product1_id, p2.DbProduct.Id).MatchedWords;
+                            //List<string> week_mws = mws[Field.Category].Where(x => !matched_words[Field.Category].Contains(x)).ToList();
+                            //foreach (string word in week_mws)
+                            //{
+                            //    Configuration.Get(product1).SetWordWeight(word, 0.9 * Configuration.Get(product1).GetWordWeight(word));
+                            //    Configuration.Get(product2).SetWordWeight(word, 0.9 * Configuration.Get(product2).GetWordWeight(word));
+                            //}
                             List<string> week_mws = mws[Field.Name].Where(x => !matched_words[Field.Name].Contains(x)).ToList();
                             foreach (string word in week_mws)
                             {

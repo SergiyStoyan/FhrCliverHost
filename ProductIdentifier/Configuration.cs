@@ -130,6 +130,8 @@ CONSTRAINT [PK_ProductIdentifierData] PRIMARY KEY CLUSTERED ([CompanyId] ASC)
                     Word w = configuration.engine.Words.Get(word);
                     //if (w.IsInDictionary)
                     //    weight *= 0.3;
+                    weight *= (1 - w.Get(company_id).ProductFrequency(Field.Category));
+                    weight *= (1 - w.Get(company_id).WordDensity(Field.Category));
                     weight *= (1 - w.Get(company_id).ProductFrequency(Field.Name));
                     weight *= (1 - w.Get(company_id).WordDensity(Field.Name));
                     weight *= 0.3 * (1 - w.Get(company_id).ProductFrequency(Field.Description));

@@ -16,7 +16,8 @@ namespace Cliver.ProductIdentifier
     public enum Field
     {
         Name,
-        Description
+        Description,
+        Category
     }
 
     public class Product
@@ -35,6 +36,9 @@ namespace Cliver.ProductIdentifier
                         break;
                     case Field.Description:
                         t = DbProduct.Description;
+                        break;
+                    case Field.Category:
+                        t = Regex.Replace(DbProduct.Category, "->", " ", RegexOptions.Compiled | RegexOptions.Singleline);
                         break;
                     default:
                         throw new Exception("untreated case");

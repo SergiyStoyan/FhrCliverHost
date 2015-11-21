@@ -40,6 +40,7 @@
                                 $('#ProductMatchesList table').empty();
                                 $("#Categories").empty();
                                 $("#Keywords").val('');
+                                $("#ProductCount").html('');
 
                                 get_next_product2_range(true);
                                                                 
@@ -206,6 +207,7 @@
     <div id="accumulate_pages_navigation" style="display:inline;">
         <b><a class="_to_next_product" title="Add products with lower match score" href="#" onclick="javascript: get_next_product2_range(true);">Get</a></b>
     </div>
+    Product Count: <span id="ProductCount"></span>
     <hr />
 
         <div id="ProductMatchesList" style="overflow: auto;">
@@ -214,7 +216,7 @@
 </div>
 <style>
 .ProductMatch_selected{
-    background-color:lightblue;
+    background-color:#cde;
 }
 </style>
 
@@ -252,11 +254,8 @@
                     //console.log(data);
                     if(data.Is_CurrentProductLinks_Changed)
                         $('#ProductMatchesList table').empty();
-                    var product2_matches = data.Product2Range;
-                    if (!product2_matches.length) {
-                        show_message("No product found.");
-                        return;
-                    }
+                    var product2_matches = data.Product2s;
+                    $("#ProductCount").html(data.Product2sCount);
                     if (!product2_matches.length) {
                         if (forward)
                             show_message("End of list is reached.");
@@ -279,7 +278,7 @@
 
                             var name = '<a href="' + product.Url + '" target="_blank">' + product.Name + '</a>';
                
-                            var label = "Index: " + product._Index + "/" + data.Product2Count + " Score: " + (Math.round(product._Score * 100000) / 100000) + "/" + Math.round(product._SecondaryScore);
+                            var label = "[" + product._Index + "] Score: " + Math.round(product._Score * 10000) + "/" + Math.round(product._CategoryScore * 10000) + "/" + Math.round(product._NameScore * 10000) + "/" + Math.round(product._SecondaryScore * 10000);
                         
                             var product_html = "<tr><td>" + image_urls + "</td><td>" + name + "</td><td>" + label + "</td><td><a href='#' onclick='javascript: add_product2s_to_LinkedProductsTable(ProductIds2LinkedProducts[" + product.Id + "]); ProductMatchesDlg.close();'>link</a></td></tr>";
                             var r = $(product_html);

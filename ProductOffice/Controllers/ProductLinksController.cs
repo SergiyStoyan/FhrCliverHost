@@ -247,6 +247,8 @@ GROUP BY a.LinkId";
             }
             string keyword2s_ = string.Empty;
 
+            public double ScoreFactor = 1;
+
             static IdenticalProductList get_from_session(ProductLinksController controller, int[] product1_ids, int company2_id)
             {
                 IdenticalProductList ipl = (IdenticalProductList)controller.Session[IdenticalProductList.SESSION_KEY];
@@ -259,6 +261,8 @@ GROUP BY a.LinkId";
                     ipl = new IdenticalProductList(controller, product1_ids, company2_id, ipl.engine);
                 controller.Session[IdenticalProductList.SESSION_KEY] = ipl;
                 //System.Runtime.Caching.MemoryCache.Default.Set(IdenticalProductList.CacheKey, ipl, DateTimeOffset.Now.AddSeconds(3600));
+                if (ipl.product_links.Count > 0)
+                    ipl.ScoreFactor = 1D / ipl.product_links[0].Score;
                 return ipl;
             }
             const string SESSION_KEY = "IDENTICAL_PRODUCT_LIST";
@@ -315,21 +319,17 @@ GROUP BY a.LinkId";
             string[] keyword2s = keyword2s_.Split(' ');
             bool is_CurrentProductLinks_changed;
             IdenticalProductList ipl = IdenticalProductList.GetMovingToNextRange(this, product1_ids, company2_id, keyword2s, range_size, forward, out is_CurrentProductLinks_changed);
-            if (ipl.CurrentProductLinks.Count < 1)
-                return Json(new List<object>(), JsonRequestBehavior.AllowGet);
-
             List<List<object>> pss = new List<List<object>>();
             for (int i = ipl.CurrentProductLinkRangeStartIndex; i <= ipl.CurrentProductLinkRangeEndIndex; i++)
-                pss.Add(get_ProductLink_objects(ipl.CurrentProductLinks[i], i));
+                pss.Add(get_ProductLink_objects(ipl.CurrentProductLinks[i], i, ipl.ScoreFactor));
             Dictionary<string, object> json_o = new Dictionary<string, object>();
-            json_o["Product2Range"] = pss;
-            json_o["Product2Count"] = ipl.CurrentProductLinks.Count;
-            json_o["Keyword2s"] = keyword2s;
+            json_o["Product2s"] = pss;
+            json_o["Product2sCount"] = ipl.CurrentProductLinks.Count;
             json_o["Is_CurrentProductLinks_Changed"] = is_CurrentProductLinks_changed;
             return Json(json_o, JsonRequestBehavior.AllowGet);
         }
 
-        List<object> get_ProductLink_objects(Cliver.ProductIdentifier.ProductLink pl, int index)
+        List<object> get_ProductLink_objects(Cliver.ProductIdentifier.ProductLink pl, int index, double score_factor)
         {
             if (pl == null)
                 return null;
@@ -360,8 +360,10 @@ GROUP BY a.LinkId";
                     Price = (from r in p.Prices orderby r.Time descending select (string)r.Currency.Symbol + r.Value.ToString()).FirstOrDefault(),
                     //_MatchedWords = (from x in pl.Product1s select new { x.DbProduct.Id, pl.Get(x.DbProduct.Id, p.Id).MatchedWords }).ToDictionary(x => x.Id, x => x.MatchedWords),
                     _Index = index,
-                    _Score = pl.Score,
-                    _SecondaryScore = !double.IsNaN(pl.SecondaryScore) ? pl.SecondaryScore : 1,
+                    _Score = pl.Score * score_factor,
+                    _CategoryScore = pl.CategoryScore * score_factor,
+                    _NameScore = pl.NameScore * score_factor,
+                    _SecondaryScore = (!double.IsNaN(pl.SecondaryScore) ? pl.SecondaryScore : 1) * score_factor,
                 };
                 d = Cliver.PrepareField.Html.GetDbObject(d);
                 ds.Add(d);
