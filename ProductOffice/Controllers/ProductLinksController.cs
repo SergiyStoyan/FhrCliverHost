@@ -168,20 +168,24 @@ GROUP BY a.LinkId";
             {
                 get { return filtered_product_links; }
             }
-            List<Cliver.ProductIdentifier.ProductLink> filtered_product_links;
+            List<Cliver.ProductIdentifier.ProductLink> filtered_product_links = null;
 
-            public static IdenticalProductList GetMovingToNextRange(ProductLinksController controller, int[] product1_ids, int company2_id, string[] keyword2s, int range_size, bool forward)
+            public static IdenticalProductList GetMovingToNextRange(ProductLinksController controller, int[] product1_ids, int company2_id, string[] keyword2s, int range_size, bool forward, out bool is_CurrentProductLinks_changed)
             {
                 product1_ids = product1_ids.Distinct().ToArray();
 
                 IdenticalProductList ipl = get_from_session(controller, product1_ids, company2_id);
                 ipl.set_pls_filtered_by_keyword2s(keyword2s);
+                is_CurrentProductLinks_changed = ipl.CurrentProductLinkRangeStartIndex == INITIAL_INDEX && ipl.CurrentProductLinkRangeEndIndex == INITIAL_INDEX;
+
                 if (forward)
                 {
                     ipl.CurrentProductLinkRangeStartIndex = ipl.CurrentProductLinkRangeEndIndex + 1;
                     ipl.CurrentProductLinkRangeEndIndex = ipl.CurrentProductLinkRangeStartIndex + range_size - 1;
                     if (ipl.CurrentProductLinkRangeEndIndex >= ipl.CurrentProductLinks.Count)
-                        ipl.CurrentProductLinkRangeEndIndex = ipl.CurrentProductLinks.Count;
+                        ipl.CurrentProductLinkRangeEndIndex = ipl.CurrentProductLinks.Count - 1;
+                    if (ipl.CurrentProductLinkRangeStartIndex >= ipl.CurrentProductLinks.Count)
+                        ipl.CurrentProductLinkRangeStartIndex = ipl.CurrentProductLinks.Count;
                 }
                 else
                 {
@@ -189,34 +193,38 @@ GROUP BY a.LinkId";
                     ipl.CurrentProductLinkRangeStartIndex = ipl.CurrentProductLinkRangeEndIndex - range_size + 1;
                     if (ipl.CurrentProductLinkRangeStartIndex < 0)
                         ipl.CurrentProductLinkRangeStartIndex = 0;
+                    if (ipl.CurrentProductLinkRangeEndIndex < 0)
+                        ipl.CurrentProductLinkRangeEndIndex = -1;
                 }
                 return ipl;
             }
-            public int CurrentProductLinkRangeStartIndex = -1;
-            public int CurrentProductLinkRangeEndIndex = -1;
+            public int CurrentProductLinkRangeStartIndex = INITIAL_INDEX;
+            public int CurrentProductLinkRangeEndIndex = INITIAL_INDEX;
+            const int INITIAL_INDEX = -1;
 
             void set_pls_filtered_by_keyword2s(string[] keyword2s)
             {
-                if (keyword2s != null)
-                    keyword2s = keyword2s.Select(x => x.Trim().ToLower()).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct().OrderBy(x => x).ToArray();
-                if (keyword2s == null || keyword2s.Length < 1)
+                if (keyword2s == null)
+                    keyword2s = new string[] { string.Empty };
+                
+                keyword2s = keyword2s.Select(x => x.Trim().ToLower()).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct().OrderBy(x => x).ToArray();                
+                string keyword2s_ = string.Join(" ", keyword2s).Trim();
+                if (this.keyword2s_ == keyword2s_)
                 {
-                    if (this.keyword2s_ != null)
-                    {
-                        this.keyword2s_ = null;
-                        CurrentProductLinkRangeStartIndex = -1;
-                        CurrentProductLinkRangeEndIndex = -1;
-                    }
+                    if (filtered_product_links == null)
+                        filtered_product_links = product_links;
+                    return;
+                }
+
+                this.keyword2s_ = keyword2s_;
+                CurrentProductLinkRangeStartIndex = INITIAL_INDEX;
+                CurrentProductLinkRangeEndIndex = INITIAL_INDEX;
+                if (string.IsNullOrEmpty(keyword2s_))
+                {
+                    this.keyword2s_ = string.Empty;
                     filtered_product_links = product_links;
                     return;
                 }
-                
-                string keyword2s_ = string.Join(" ", keyword2s);
-                if (this.keyword2s_ == keyword2s_)
-                    return;
-                this.keyword2s_ = keyword2s_;
-                CurrentProductLinkRangeStartIndex = -1;
-                CurrentProductLinkRangeEndIndex = -1;
                 filtered_product_links = new List<Cliver.ProductIdentifier.ProductLink>();
                 List<Regex> rs = new List<Regex>();
                 foreach(string k in keyword2s)
@@ -237,7 +245,7 @@ GROUP BY a.LinkId";
                         filtered_product_links.Add(l);
                 }
             }
-            string keyword2s_ = null;
+            string keyword2s_ = string.Empty;
 
             static IdenticalProductList get_from_session(ProductLinksController controller, int[] product1_ids, int company2_id)
             {
@@ -305,17 +313,19 @@ GROUP BY a.LinkId";
             int[] product1_ids = (from x in product1_ids_ where !string.IsNullOrWhiteSpace(x) select int.Parse(x)).ToArray();
             int company2_id = int.Parse(company2_id_);
             string[] keyword2s = keyword2s_.Split(' ');
-            IdenticalProductList ipl = IdenticalProductList.GetMovingToNextRange(this, product1_ids, company2_id, keyword2s, range_size, forward);
+            bool is_CurrentProductLinks_changed;
+            IdenticalProductList ipl = IdenticalProductList.GetMovingToNextRange(this, product1_ids, company2_id, keyword2s, range_size, forward, out is_CurrentProductLinks_changed);
             if (ipl.CurrentProductLinks.Count < 1)
                 return Json(new List<object>(), JsonRequestBehavior.AllowGet);
 
             List<List<object>> pss = new List<List<object>>();
             for (int i = ipl.CurrentProductLinkRangeStartIndex; i <= ipl.CurrentProductLinkRangeEndIndex; i++)
                 pss.Add(get_ProductLink_objects(ipl.CurrentProductLinks[i], i));
-            Dictionary<string, object> json_o = new Dictionary<string,object>();
+            Dictionary<string, object> json_o = new Dictionary<string, object>();
             json_o["Product2Range"] = pss;
             json_o["Product2Count"] = ipl.CurrentProductLinks.Count;
             json_o["Keyword2s"] = keyword2s;
+            json_o["Is_CurrentProductLinks_Changed"] = is_CurrentProductLinks_changed;
             return Json(json_o, JsonRequestBehavior.AllowGet);
         }
 

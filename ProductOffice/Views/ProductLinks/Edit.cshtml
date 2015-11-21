@@ -193,8 +193,8 @@
     <div id="ProductMatchesContent" style="display:none;">
     Keyword: <input type="text" name="Keywords" id="Keywords" style="box-sizing:border-box;" /><br />
     Category: <select id="Categories"></select><br />
-    <b><a href="#" onclick="javascript: $('#ProductMatchesList table').empty(); get_next_product2_range(true);">Refine</a></b>
-    <hr />
+    @*<b><a href="#" onclick="javascript: $('#ProductMatchesList table').empty(); get_next_product2_range(true);">Refine</a></b>
+    <hr />*@
     Range Size: <input type="text" name="RangeSize" id="RangeSize" style="box-sizing:border-box;width:50px;" value="50" maxlength="3" />
     @*Accumulate pages: <input type="checkbox" style="" checked
                                  onchange="javascript: if(checked) {$('#page_by_page_navigation').css('display', 'none'); $('#accumulate_pages_navigation').css('display', 'inline');} else {$('#page_by_page_navigation').css('display', 'inline'); $('#accumulate_pages_navigation').css({'display':'none'});}" />
@@ -204,7 +204,7 @@
             <b><a class="_to_next_product" title="Get products with lower match score" href="#" onclick="javascript: get_next_product2_range(true);">Next</a></b>
         </div>*@
     <div id="accumulate_pages_navigation" style="display:inline;">
-        <b><a class="_to_next_product" title="Add products with lower match score" href="#" onclick="javascript: get_next_product2_range(true);">Append</a></b>
+        <b><a class="_to_next_product" title="Add products with lower match score" href="#" onclick="javascript: get_next_product2_range(true);">Get</a></b>
     </div>
     <hr />
 
@@ -250,12 +250,14 @@
                 },
                 function (data) {
                     //console.log(data);
+                    if(data.Is_CurrentProductLinks_Changed)
+                        $('#ProductMatchesList table').empty();
                     var product2_matches = data.Product2Range;
                     if (!product2_matches.length) {
                         show_message("No product found.");
                         return;
                     }
-                    if (LastAddedProductLinkId == product2_matches[0][0].LinkId) {
+                    if (!product2_matches.length) {
                         if (forward)
                             show_message("End of list is reached.");
                         else
@@ -304,7 +306,6 @@
         $('#LinkedProductsTable tbody tr td:nth-child(' + column_id + ')').text('');
 
         $('#LinkedProductsTable tr td').css('background-color', '#fff');
-        LastAddedProductLinkId = null;
         
         //$('#LinkedProductsTable tr td:nth-child(' + column_id + ')').find(".bFind").show();
         $('#LinkedProductsTable tr td:nth-child(' + column_id + ')').find(".bRemove").hide();
@@ -312,14 +313,12 @@
         arrange_modal_window(ProductLinksTable.modalBox);
     }
 
-    var LastAddedProductLinkId = null;
-
-    function mark_last_added_product2s() {
+    function mark_added_product2s(link_id) {
         var s = $('#LinkedProductsTable tbody tr:nth-child(1) td').each(function(){
             var column_id = $(this).index() + 1;
             var li = $('#LinkedProductsTable tr td:nth-child(' + column_id + ')').find("input[name='LinkId']").val();
             var color;
-            if(li == LastAddedProductLinkId)
+            if(li == link_id)
                 color = '#cde';
             else
                 color = '#fff';
@@ -348,25 +347,15 @@
         $('#LinkedProductsTable tr td:nth-child(' + column_id + ')').find("input[name='ProductId']").val(product.Id);
         $('#LinkedProductsTable tr td:nth-child(' + column_id + ')').find("input[name='LinkId']").val(product.LinkId);
         
-        LastAddedProductLinkId = product.LinkId;
-        
         //$('#LinkedProductsTable tr td:nth-child(' + column_id + ')').find(".bFind").hide();
         $('#LinkedProductsTable tr td:nth-child(' + column_id + ')').find(".bRemove").show();
     }
 
     function add_product2s_to_LinkedProductsTable(products){
-        var main_product = null;
         for(var i in products){
-            var product = products[i];
-            if(product.CompanyId == CurrentCompany2Id)
-                main_product = product;
-            else
-                add_product_to_LinkedProductsTable(product);
+            add_product_to_LinkedProductsTable(products[i]);
         }
-        if(main_product)
-            add_product_to_LinkedProductsTable(main_product);
-        mark_last_added_product2s();
-
+        mark_added_product2s(products[0].LinkId);
         arrange_modal_window(ProductLinksTable.modalBox);
     }
 

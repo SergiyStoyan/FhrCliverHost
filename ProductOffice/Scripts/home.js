@@ -76,6 +76,7 @@ function arrange_modal_window(e) {
     var s = $(e).parent().offset().left + $(e).parent().outerWidth() - $(window).width();
     if (s + 2 > 0) {
         var w = $(e).outerWidth() - $(e).parent().offset().left;
+        //alert(w);
         $(e).width(w);
         e.dialog({ "position": { my: "center", at: "center", of: window, collision: 'fit' } });
     }
