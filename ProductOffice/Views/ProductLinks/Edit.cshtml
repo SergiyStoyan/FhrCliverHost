@@ -212,17 +212,17 @@
             <table style="word-wrap: break-word;"></table>
         </div>
 </div>
+<style>
+.ProductMatch_selected{
+    background-color:lightblue;
+}
+</style>
 
     <script>
         $("#ProductMatchesList table").on('click', 'tr', function () {
             var row = $(this);
-            if (row.hasClass('selected')) {
-                row.removeClass('selected');
-            }
-            else {
-                row.parent().find('tr.selected').removeClass('selected');
-                row.addClass('selected');
-            }
+            row.parent().find('tr.ProductMatch_selected').removeClass('ProductMatch_selected');
+            row.addClass('ProductMatch_selected');
         });
 
         var CurrentCompany2Id;
