@@ -28,8 +28,8 @@ function show_message(content, title) {
             duration: 400
         }
     });
-
-    set_modal_window(e);
+    
+    arrange_modal_window(e);
     return e;
 }
 
@@ -65,95 +65,20 @@ function show_error(content, title) {
         }
     });
 
-    set_modal_window(e);
+    arrange_modal_window(e);
     return e;
 }
 
-/*function show_div_as_modal_box(div_id, buttons) {
-    if (!div_id)
-        alert("div_id is empty.");
-
-    var e = $('#' + div_id);
-
-    if (!buttons) {
-        buttons["Close"] = null;
+function arrange_modal_window(e) {
+    e.dialog({ "position": { my: "center", at: "center", of: window, collision: 'fit' } });
+        
+    //fixing a bug when the box is stuck with the right edge of the window
+    var s = $(e).parent().offset().left + $(e).parent().outerWidth() - $(window).width();
+    if (s + 2 > 0) {
+        var w = $(e).outerWidth() - $(e).parent().offset().left;
+        $(e).width(w);
+        e.dialog({ "position": { my: "center", at: "center", of: window, collision: 'fit' } });
     }
-
-    $.each(buttons, function (name, value) {
-        if (!value) {
-            buttons[name] = function () {
-                e.dialog("destroy");
-            }
-        }
-    });
-
-    e.on('dialogclose', function (event) {
-        e.dialog("destroy");
-    });
-
-    e.dialog({
-        resizable: true,
-        height: 'auto',
-        width: 'auto',
-        modal: true,
-        buttons: buttons,
-        show: {
-            effect: "fade",
-            duration: 400
-        },
-        hide: {
-            effect: "fade",
-            duration: 400
-        }
-    });
-
-    set_modal_window(e);
-    return e;
-}*/
-
-function set_modal_window(e) {
-    //var p = $(e).closest('.ui-dialog-content');
-    ////console.log($(e).html());
-    //if (p) {
-    //    //console.log(c.parent().parent().html());
-    //    //var p = c.parent();
-    //    var h = p[0].scrollHeight - p.height();
-    //    //console.log(c[0].scrollHeight + ':' + c.innerHeight() + ':' + c.outerHeight() + ':' + c.outerHeight(true) + ':' + c.height());
-    //    console.log(p[0].scrollHeight + ':' + p.innerHeight() + ':' + p.outerHeight() + ':' + p.outerHeight(true) + ':' + p.height());
-    //    var h2 = $(window).height() - $(e).parent().height();
-    //    if (h > h2)
-    //        h = h2;
-    //    $(e).height($(e).height() + h);
-
-    //    var w = p.scrollWidth - p.width();
-    //    var w2 = $(window).width() - $(e).parent().width();
-    //    if (w > w2)
-    //        w = w2;
-    //    $(e).width($(e).width() + w);
-
-    //    console.log(h + '-' + w);
-    //}
-    //else {
-    var h = $(e).parent().height() - $(window).height();
-    if (h > 0)
-        $(e).height($(e).height() - h - 10);
-    var w = $(e).parent().width() - $(window).width();
-    if (w > 0)
-        $(e).width($(e).width() - w - 10);
-    else {
-        if (w < -50)
-            w = -50;
-        $(e).width($(e).width() - w - 10);
-    }
-    //} 
-    e.dialog({
-        "position": {
-            my: "center", at: "center", of: window, collision: 'fit',
-        },
-    });
-        //$(e).parent().offset({ 'top': ($(window).height() - $(e).parent().height()) / 2, 'left': ($(window).width() - $(e).parent().width()) / 2 });
-        //$(e).parent().offset({ 'top': ($(window).height() - $(e).parent().height()) / 2, 'left': ($(window).width() - $(e).parent().width()) / 2 });
-    //console.log(($(window).width() + ' - ' + $(e).parent().width()) + ':' + ($(window).width() - $(e).parent().width()) / 2);
 }
 
 function show_ajax_modal_box(title, buttons, content_div_id) {
@@ -168,7 +93,7 @@ function show_ajax_modal_box(title, buttons, content_div_id) {
     if (!title)
         title = '&nbsp;';
 
-    var html = '<div title="' + title + '"><div class="_loading" style="height:100%;width:100%;position:absolute;z-index:10;"><img src="/Images/ajax-loader.gif" style="display:block;margin:auto;position:relative;top:50%;transform:translateY(-50%);"/></div></div>';
+    var html = '<div><div class="_loading" style="height:100%;width:100%;position:absolute;z-index:10;"><img src="/Images/ajax-loader.gif" style="display:block;margin:auto;position:relative;top:50%;transform:translateY(-50%);"/></div></div>';
     var e = $(html);
     $("body").append(e);
 
@@ -183,7 +108,7 @@ function show_ajax_modal_box(title, buttons, content_div_id) {
     }
     e.append(content_e);
         
-    var close = function (event) {
+    var close = function (event, ui) {
         if (content_div_id)            
             //content_e = $("#" + content_div_id);
             //content_e.hide();
@@ -192,9 +117,7 @@ function show_ajax_modal_box(title, buttons, content_div_id) {
         else
             e.remove();
     };
-
-    e.on('dialogclose', close);
-
+    
     if (!buttons) {
         var buttons = {};
         buttons["Cancel"] = null;
@@ -205,6 +128,20 @@ function show_ajax_modal_box(title, buttons, content_div_id) {
     });    
 
     e.dialog({
+        close: close,
+        //open: function (event, ui) {
+        //},
+        create: function (event, ui) {
+            arrange_modal_window(e);
+        },
+        resizeStop: function (event, ui) {
+            //e.dialog({ "position": { my: "center", at: "center", of: window, collision: 'fit' } });
+        },
+        title: title,
+        maxHeight: $(window).height() - 10,
+        maxWidth: $(window).width() - 10,
+        closeOnEscape: true,
+        draggable: true,
         resizable: true,
         height: 'auto',
         width: 'auto',
@@ -219,7 +156,7 @@ function show_ajax_modal_box(title, buttons, content_div_id) {
             duration: 400
         }
     });
-    
+
     e.processing = function (show) {
         if (show || show == undefined) {
             e.find("._loading").show();
@@ -249,14 +186,10 @@ function show_ajax_modal_box(title, buttons, content_div_id) {
         ajax_config["success"] = function (response) {
             e.processing(false);
             on_success(response);
-            set_modal_window(e);
+            arrange_modal_window(e);
         };
         ajax_config["error"] = function (xhr, error) {
             e.processing(false);
-            //e.parent().find(".ui-dialog-title").html("Server Error");
-            //e.content("<span style='color:red;font-weight:bold;'>" + error + "</span><hr>" + xhr.responseText);
-            //e.content(e.content() + xhr.responseText);
-            //set_modal_window(e);
             show_error(xhr.responseText, error);
         };
         e.processing();
@@ -320,7 +253,7 @@ function show_table_row_editor(content_url, ok_button_text, on_success) {
                 var r = /\<h2\s*[^>]*\>([^]*)\<\/h2\s*[^>]*\>/mi;
                 var m = r.exec(data);
                 if (m) {
-                    title = m[0];
+                    title = m[1];
                     data = data.replace(r, "");
                 }
                 e.title(title);

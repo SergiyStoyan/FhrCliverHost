@@ -30,7 +30,7 @@
                                         "ProductMatchesContent"
                                     );
                                 }
-                                else                                
+                                else 
                                     ProductMatchesDlg.dialog("open");
                                 
                                 if(CurrentCompany2Id == company2_id)
@@ -40,6 +40,8 @@
                                 $('#ProductMatchesList table').empty();
                                 $("#Categories").empty();
                                 $("#Keywords").val('');
+
+                                get_next_product2_range(true);
                                                                 
                                 ProductMatchesDlg.getContentByAjax(
                                     {
@@ -56,8 +58,6 @@
                                         $("#Categories").append("<option></option>" + os);
                                     }
                                 );
-
-                                get_next_product2_range(true);
                             }
                             var ProductMatchesDlg;
                         </script>
@@ -285,7 +285,6 @@
                             $('#ProductMatchesList table').append(r);
                         }
                     }
-                    set_modal_window(ProductMatchesDlg);
                     $("#ProductMatchesList").height($("#ProductMatchesContent").parent().height() - $("#ProductMatchesList").position().top);
                 }
             );
@@ -310,7 +309,7 @@
         //$('#LinkedProductsTable tr td:nth-child(' + column_id + ')').find(".bFind").show();
         $('#LinkedProductsTable tr td:nth-child(' + column_id + ')').find(".bRemove").hide();
 
-        set_modal_window(ProductLinksTable.modalBox);
+        arrange_modal_window(ProductLinksTable.modalBox);
     }
 
     var LastAddedProductLinkId = null;
@@ -367,7 +366,8 @@
         if(main_product)
             add_product_to_LinkedProductsTable(main_product);
         mark_last_added_product2s();
-        set_modal_window(ProductLinksTable.modalBox);
+
+        arrange_modal_window(ProductLinksTable.modalBox);
     }
 
     var initial_products = @Html.Raw(ViewBag.LinkedProductsJson);
