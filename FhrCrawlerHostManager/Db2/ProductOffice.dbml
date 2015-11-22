@@ -50,11 +50,4 @@
       <Association Name="Company_Product" Member="Company" ThisKey="CompanyId" OtherKey="Id" Type="Company" IsForeignKey="true" />
     </Type>
   </Table>
-  <Table Name="dbo.ProductIdentifierData" Member="ProductIdentifierDatas">
-    <Type Name="ProductIdentifierData">
-      <Column Name="CompanyId" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="WordWeights" Type="System.String" DbType="NText NOT NULL" CanBeNull="false" UpdateCheck="Never" />
-      <Column Name="Synonyms" Type="System.String" DbType="NText NOT NULL" CanBeNull="false" UpdateCheck="Never" />
-    </Type>
-  </Table>
 </Database>

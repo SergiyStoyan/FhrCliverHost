@@ -42,9 +42,6 @@ namespace Cliver.FhrCrawlerHost.Db2
     partial void InsertProduct(Product instance);
     partial void UpdateProduct(Product instance);
     partial void DeleteProduct(Product instance);
-    partial void InsertProductIdentifierData(ProductIdentifierData instance);
-    partial void UpdateProductIdentifierData(ProductIdentifierData instance);
-    partial void DeleteProductIdentifierData(ProductIdentifierData instance);
     #endregion
 		
 		public ProductOfficeDataContext() : 
@@ -106,14 +103,6 @@ namespace Cliver.FhrCrawlerHost.Db2
 			get
 			{
 				return this.GetTable<Product>();
-			}
-		}
-		
-		public System.Data.Linq.Table<ProductIdentifierData> ProductIdentifierDatas
-		{
-			get
-			{
-				return this.GetTable<ProductIdentifierData>();
 			}
 		}
 	}
@@ -1146,116 +1135,6 @@ namespace Cliver.FhrCrawlerHost.Db2
 		{
 			this.SendPropertyChanging();
 			entity.Product = null;
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ProductIdentifierData")]
-	public partial class ProductIdentifierData : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _CompanyId;
-		
-		private string _WordWeights;
-		
-		private string _Synonyms;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnCompanyIdChanging(int value);
-    partial void OnCompanyIdChanged();
-    partial void OnWordWeightsChanging(string value);
-    partial void OnWordWeightsChanged();
-    partial void OnSynonymsChanging(string value);
-    partial void OnSynonymsChanged();
-    #endregion
-		
-		public ProductIdentifierData()
-		{
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CompanyId", DbType="Int NOT NULL", IsPrimaryKey=true)]
-		public int CompanyId
-		{
-			get
-			{
-				return this._CompanyId;
-			}
-			set
-			{
-				if ((this._CompanyId != value))
-				{
-					this.OnCompanyIdChanging(value);
-					this.SendPropertyChanging();
-					this._CompanyId = value;
-					this.SendPropertyChanged("CompanyId");
-					this.OnCompanyIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WordWeights", DbType="NText NOT NULL", CanBeNull=false, UpdateCheck=UpdateCheck.Never)]
-		public string WordWeights
-		{
-			get
-			{
-				return this._WordWeights;
-			}
-			set
-			{
-				if ((this._WordWeights != value))
-				{
-					this.OnWordWeightsChanging(value);
-					this.SendPropertyChanging();
-					this._WordWeights = value;
-					this.SendPropertyChanged("WordWeights");
-					this.OnWordWeightsChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Synonyms", DbType="NText NOT NULL", CanBeNull=false, UpdateCheck=UpdateCheck.Never)]
-		public string Synonyms
-		{
-			get
-			{
-				return this._Synonyms;
-			}
-			set
-			{
-				if ((this._Synonyms != value))
-				{
-					this.OnSynonymsChanging(value);
-					this.SendPropertyChanging();
-					this._Synonyms = value;
-					this.SendPropertyChanged("Synonyms");
-					this.OnSynonymsChanged();
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
 		}
 	}
 }
