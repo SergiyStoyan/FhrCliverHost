@@ -250,19 +250,19 @@ function show_table_row_editor(content_url, ok_button_text, on_success) {
             url: content_url,
         },
         function (data) {
-                var title;
-                var r = /\<h2\s*[^>]*\>([^]*)\<\/h2\s*[^>]*\>/mi;
-                var m = r.exec(data);
-                if (m) {
-                    title = m[1];
-                    data = data.replace(r, "");
-                }
-                e.title(title);
+            var title;
+            var r = /\<h2\s*[^>]*\>([^]*)\<\/h2\s*[^>]*\>/mi;
+            var m = r.exec(data);
+            if (m) {
+                title = m[1];
+                data = data.replace(r, "");
+            }
+            e.title(title);
 
-                e.content(data);
-                e.find("form").find("input[type='submit']").parent().hide();
+            e.content(data);
+            e.find("form").find("input[type='submit']").parent().hide();
 
-                e.find("form").validate();//does not work properly
+            e.find("form").validate();//does not work properly
                 //$.getScript("/Scripts/jquery.validate.js");
                 //$.getScript("/Scripts/jquery.validate.unobtrusive.js");
             //e.find("form").valid();

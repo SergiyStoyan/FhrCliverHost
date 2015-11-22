@@ -160,11 +160,14 @@
     <Compile Include="BotEngine\WorkItemDictionary.cs" />
     <Compile Include="DbCommand.cs" />
     <Compile Include="DbConnection.cs" />
+    <Compile Include="Misc\DbSettings.cs" />
     <Compile Include="Misc\PrepareField.cs" />
     <Compile Include="InternetDateTime.cs" />
     <Compile Include="BaseProgram.cs" />
     <Compile Include="BaseForm\Message.cs" />
-    <Compile Include="BaseForm\MessageForm.cs" />
+    <Compile Include="BaseForm\MessageForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="BaseForm\MessageForm.Designer.cs">
       <DependentUpon>MessageForm.cs</DependentUpon>
     </Compile>

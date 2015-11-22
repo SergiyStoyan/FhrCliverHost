@@ -90,6 +90,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="BaseForm.Designer.cs" />
+    <Compile Include="Configuration.Company.cs" />
     <Compile Include="HelpForm.cs">
       <SubType>Form</SubType>
     </Compile>

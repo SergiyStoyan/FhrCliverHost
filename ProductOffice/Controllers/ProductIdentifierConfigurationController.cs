@@ -34,6 +34,13 @@ namespace Cliver.ProductOffice.Controllers
 
         public ActionResult Index()
         {
+            FhrCrawlerHost.Db2Api db2api = new Cliver.FhrCrawlerHost.Db2Api();
+            Bot.DbSettings ss = new Bot.DbSettings(db2api.Connection);
+            DateTime t = ss.Get<DateTime>(Cliver.ProductIdentifier.Configuration.SettingsKey.SCOPE, Cliver.ProductIdentifier.Configuration.SettingsKey.TRAINING_TIME);
+            if (t != default(DateTime))
+                ViewBag.SelfTrainingDate = t.ToShortDateString();
+            else
+                ViewBag.SelfTrainingDate = "no training was done yet.";
             return View();
         }
 
@@ -74,11 +81,24 @@ namespace Cliver.ProductOffice.Controllers
         public ActionResult Edit(int company_id, string synonyms, string word_weights, string ignored_words)
         {
             ProductIdentifier.Engine e = new ProductIdentifier.Engine();
-            e.Configuration.Get(company_id).SetConfigurationFromString(word_weights, ignored_words, synonyms);
-            e.Configuration.Get(company_id).Save();
+            e.Configuration.Get(company_id).SetWordWeightsFromString(word_weights, ignored_words);
+            e.Configuration.Get(company_id).SaveWordWeights();
+            e.Configuration.Get(company_id).SetSynonymsFromString(synonyms);
+            e.Configuration.Get(company_id).SaveSynonyms();
 
             if (Request.IsAjaxRequest())
                 return Content(null);
+            return RedirectToAction("Index");
+        }
+
+        [ValidateAntiForgeryToken]
+        public ActionResult PerformSelfTraining()
+        {
+            ProductIdentifier.Engine e = new ProductIdentifier.Engine();
+            e.PerformSelfTrainingAnalysisOfLinks();
+
+            if (Request.IsAjaxRequest())
+                return Content("Done!");
             return RedirectToAction("Index");
         }
     }

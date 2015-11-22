@@ -70,6 +70,11 @@ namespace Cliver.ProductIdentifier
             return pls;
         }
 
+        /// <summary>
+        /// If a product was not yet linked, its LinkId = -Id to differ from all other LinkId's);
+        /// </summary>
+        /// <param name="dbc"></param>
+        /// <returns></returns>
         static int get_minimal_free_link_id(Cliver.Bot.DbConnection dbc)
         {
             int link_id = 1;
@@ -79,7 +84,7 @@ FROM (SELECT LinkId FROM Products WHERE LinkId>0) a LEFT OUTER JOIN (SELECT Link
 WHERE b.LinkId IS NULL").GetSingleValue();
             return link_id;
         }
-
+        
         public void SaveLink(int[] product_ids)
         {
             product_ids = product_ids.Distinct().ToArray();
@@ -99,11 +104,17 @@ WHERE b.LinkId IS NULL").GetSingleValue();
                 p.LinkId = link_id;
             }
             Db2Api.Context.SubmitChanges();
-
-            self_training_analysis(product_ids);
         }
 
-        void self_training_analysis(int[] linked_product_ids)
+        public void PerformSelfTrainingAnalysisOfLinks()
+        {
+            Dictionary<int?, List<FhrCrawlerHost.Db2.Product>> link_ids2linked_products = Db2Api.Context.Products.GroupBy(p => p.LinkId).Where(g => g.Key>0&& g.Count() > 1).ToDictionary(g => g.Key, g => g.ToList());
+            foreach (List<FhrCrawlerHost.Db2.Product> lps in link_ids2linked_products.Values)
+                analyse_link(lps.Select(p => p.Id).ToArray());
+            Configuration.Save();
+        }
+
+        void analyse_link(int[] linked_product_ids)
         {
             for (int i = 0; i < linked_product_ids.Length; i++)
                 for (int j = i + 1; j < linked_product_ids.Length; j++)
@@ -112,6 +123,9 @@ WHERE b.LinkId IS NULL").GetSingleValue();
                     int product2_id = linked_product_ids[j];
                     Product product1 = Products.Get(product1_id);
                     Product product2 = Products.Get(product2_id);
+
+                    Configuration.MapCategories(product1, product2);
+
                     Dictionary<Field, HashSet<string>> matched_words = new Dictionary<Field, HashSet<string>>();
                     //matched_words[Field.Category] = new HashSet<string>();
                     //foreach (string word in product1.Words(Field.Category))
@@ -147,7 +161,6 @@ WHERE b.LinkId IS NULL").GetSingleValue();
                         }
                     }
                 }
-            Configuration.Save();
         }
 
         List<ProductLink> create_identical_Product_list_for_training(int product1_id, int company2_id)

@@ -41,6 +41,8 @@ namespace Cliver.ProductIdentifier
                         * ((double)word2category_score.Count / product2.Words(Field.Name).Count);
                 }
 
+                CategoryScore = (engine.Configuration.AreCategoriesMapped(product1, product2) ? 1 : 0.5) * CategoryScore;
+
                 Dictionary<string, double> word2name_score = new Dictionary<string, double>();
                 foreach (string word in product1.Words(Field.Name))
                 {
@@ -150,9 +152,9 @@ namespace Cliver.ProductIdentifier
 
             //word order
             //word density
-            
+
             CategoryScore = (double)product1_id_product2_id_s2PairStatistics.Values.Select(x => x.CategoryScore).Sum() / product1_id_product2_id_s2PairStatistics.Count;
-            NameScore = (double)product1_id_product2_id_s2PairStatistics.Values.Select(x => x.NameScore).Sum() / product1_id_product2_id_s2PairStatistics.Count;
+            NameScore = (double)product1_id_product2_id_s2PairStatistics.Values.Select(x => x.NameScore).Sum() / product1_id_product2_id_s2PairStatistics.Count;            
             Score = 0.6 * CategoryScore + 0.4 * NameScore;
         }
         readonly public Engine Engine;
@@ -173,10 +175,10 @@ namespace Cliver.ProductIdentifier
 
             //word order
             //word density
-
+            
             CategoryScore = (double)product1_id_product2_id_s2PairStatistics.Values.Select(x => x.CategoryScore).Sum() / product1_id_product2_id_s2PairStatistics.Count;
             NameScore = (double)product1_id_product2_id_s2PairStatistics.Values.Select(x => x.NameScore).Sum() / product1_id_product2_id_s2PairStatistics.Count;
-            Score = CategoryScore * 0.5 * NameScore;
+            Score = 0.6 * CategoryScore + 0.4 * NameScore;
         }
     }
 }

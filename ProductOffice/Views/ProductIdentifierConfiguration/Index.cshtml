@@ -4,6 +4,28 @@
 
 <h2>Product Linker Configuration</h2>
 
+Last autotraining date: @ViewBag.SelfTrainingDate  
+<a href="#" onclick="javascript: perform_self_training();" class="button">Perform AutoTraining</a> (may take long time...)
+
+<script>
+    function perform_self_training(){ 
+        var e = show_ajax_modal_box("Self Training", {Close:function(){location.reload();}}, "SelfTrainingContent");
+        var data = {};
+        data.__RequestVerificationToken = $('input[name=__RequestVerificationToken]').val();
+        e.getContentByAjax(
+            {
+                data: data,
+                url: "@Url.Action("PerformSelfTraining")"
+            },
+            function () {
+                $("#SelfTrainingContent").html("<h2>Done!</h2>");
+            }
+        );
+    }
+</script>
+
+<div id="SelfTrainingContent" style="display:none;width:200px;height:150px;">If you do not want to break execution, do not close this window...</div>
+
 <table>
     <thead>
         <tr>
