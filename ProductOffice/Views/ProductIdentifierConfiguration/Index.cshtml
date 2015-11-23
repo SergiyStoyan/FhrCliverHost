@@ -3,10 +3,10 @@
 }
 
 <h2>Product Linker Configuration</h2>
-
+<br />
 Last autotraining date: @ViewBag.SelfTrainingDate  
 <a href="#" onclick="javascript: perform_self_training();" class="button">Perform AutoTraining</a> (may take long time...)
-
+<br /><br />
 <script>
     function perform_self_training(){ 
         var e = show_ajax_modal_box("Self Training", {Close:function(){location.reload();}}, "SelfTrainingContent");
@@ -42,7 +42,7 @@ Last autotraining date: @ViewBag.SelfTrainingDate
 <script type="text/javascript">
     var table1 = init_table(true, 0, null, null, "Edit", null, "@Request.Path", [0]);
 </script>
-<br /><br /><br />
+<br /><br />
 <table>
     <thead>
         <tr>

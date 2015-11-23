@@ -41,7 +41,9 @@
                                 $("#Categories").empty();
                                 $("#Keyword2s").val('');
                                 $("#ProductCount").html('');
-                                $('#CategoryTreeViewContent').html('');;
+                                //$('#CategoryTreeViewContent').html('');
+                                $("#CategoryTreeViewContent").jstree("destroy");
+                                $("#Category2").val("");
 
                                 get_next_product2_range(true);
                             }
@@ -178,9 +180,9 @@
 
 <div id="ProductMatchesContent" style="display:none;">
     Keyword: <input type="text" name="Keyword2s" id="Keyword2s" style="box-sizing:border-box;" /><br />
-    <a href="#" onclick="javascript: show_CategoryTreeView();">Category:</a> 
-    <a class="button" href="#" onclick='javascript: $("#Category2").val("");'>X</a>
-    <input type="text" id="Category2" name="Category2" style="box-sizing:border-box;" readonly />
+    <a href="#" onclick="javascript: show_CategoryTreeView();" style="">Category:</a> 
+    <a class="button" href="#" onclick='javascript: $("#Category2").val("");' style="">X</a>
+    <input type="text" id="Category2" name="Category2" style="box-sizing:border-box;width:600px;" readonly />
     <br />
     <link rel="stylesheet" href="https://static.jstree.com/3.2.1/assets/dist/themes/default/style.min.css" />
     <script src="https://static.jstree.com/3.2.1/assets/dist/jstree.min.js"></script>
@@ -228,6 +230,9 @@
 
                         var tree_view_json = [];
                         build_tree_view_from_tree(category_tree, tree_view_json);
+                        
+                        console.log(category_tree);
+                        console.log(tree_view_json);
 
                         $('#CategoryTreeViewContent').jstree({
                             core : {

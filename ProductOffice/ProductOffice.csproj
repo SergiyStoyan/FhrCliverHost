@@ -216,7 +216,6 @@
     <Compile Include="Controllers\SqlController.cs" />
     <Compile Include="Controllers\SettingsController.cs" />
     <Compile Include="Controllers\ProductLinksController.cs" />
-    <Compile Include="Controllers\TreeViewController.cs" />
     <Compile Include="Controllers\WatchDogController.cs" />
     <Compile Include="Controllers\PriceComparisonController.cs" />
     <Compile Include="Controllers\ServicesController.cs" />
@@ -238,7 +237,6 @@
     <Compile Include="Helpers\ErrorHandler.cs" />
     <Compile Include="Helpers\Message.cs" />
     <Compile Include="Helpers\JqueryDataTable.cs" />
-    <Compile Include="Helpers\TreeView.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Helpers\CurrencyRoutines.cs" />
     <Compile Include="Models\Company.cs">
@@ -434,7 +432,6 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Views\ProductIdentifierConfiguration\Edit2.cshtml" />
-    <Content Include="Views\TreeView\Index.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
