@@ -40,14 +40,26 @@ Last autotraining date: @ViewBag.SelfTrainingDate
 
 </table>
 <script type="text/javascript">
-    var products_table = init_table(true, 0, null, null, "Edit", null, "@Request.Path", [0]);
+    var table1 = init_table(true, 0, null, null, "Edit", null, "@Request.Path", [0]);
+</script>
 
-    function select_in_products_table(field, pattern) {
-        if (pattern > -1)
-            products_table.api().columns(0).search(field + "=" + pattern);// it is how passed filter parameters due to to bad manual!
-        else
-            products_table.api().columns(0).search(null);// it is how passed filter parameters due to to bad manual!
-        products_table.api().draw();
-    }
+<table>
+    <thead>
+        <tr>
+            <th>
+                C1IdC2Id
+            </th>
+            @foreach (Cliver.ProductOffice.Models.Company c in ViewBag.Companies)
+            {
+                <th>
+                    @c.Name
+                </th>
+            }
+        </tr>
+    </thead>
+
+</table>
+<script type="text/javascript">
+    var table2 = init_table(true, 0, null, null, "Edit", null, "@Request.Path", [0], "2");
 
 </script>

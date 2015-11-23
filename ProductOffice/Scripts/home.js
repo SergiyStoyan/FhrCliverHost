@@ -272,7 +272,9 @@ function show_table_row_editor(content_url, ok_button_text, on_success) {
     return e;
 }
 
-function init_table(server_side, id_column_id, new_button_text, details_button_text, edit_button_text, delete_button_text, path, invisible_column_ids) {
+function init_table(server_side, id_column_id, new_button_text, details_button_text, edit_button_text, delete_button_text, path, invisible_column_ids, prefix) {
+    if (!prefix)
+        prefix = "";
     var definition = {
         "scrollX": true,
         "processing": true,
@@ -303,7 +305,7 @@ function init_table(server_side, id_column_id, new_button_text, details_button_t
     if (server_side) {
         definition["serverSide"] = true;
         definition["ajax"] = {
-            "url": path + "/TableJson",
+            "url": path + "/TableJson" + prefix,
             "type": 'POST',
         };
     }
@@ -340,7 +342,7 @@ function init_table(server_side, id_column_id, new_button_text, details_button_t
         buttons.append(b);
 
         b.click(function () {
-            table.modalBox = show_table_row_editor(path + "/Create", "Create", function () {
+            table.modalBox = show_table_row_editor(path + "/Create" + prefix, "Create", function () {
                 if (server_side)
                     table.api().draw();
                 else
@@ -359,7 +361,7 @@ function init_table(server_side, id_column_id, new_button_text, details_button_t
             }
             var id = table.fnGetData(table.$('tr.selected'))[id_column_id];
 
-            table.modalBox = show_table_row_editor(path + "/Details?Id=" + id, "OK");
+            table.modalBox = show_table_row_editor(path + "/Details" + prefix + "?Id=" + id, "OK");
         });
     }
     if (edit_button_text) {
@@ -373,7 +375,7 @@ function init_table(server_side, id_column_id, new_button_text, details_button_t
             }
             var id = table.fnGetData(table.$('tr.selected'))[id_column_id];
 
-            table.modalBox = show_table_row_editor(path + "/Edit?Id=" + id, "Save", function () {
+            table.modalBox = show_table_row_editor(path + "/Edit" + prefix + "?Id=" + id, "Save", function () {
                 if (server_side)
                     table.api().draw();
                 else
@@ -393,7 +395,7 @@ function init_table(server_side, id_column_id, new_button_text, details_button_t
             }
             var id = table.fnGetData(table.$('tr.selected'))[id_column_id];
 
-            table.modalBox = show_table_row_editor(path + "/Delete?Id=" + id, delete_button_text, function () {
+            table.modalBox = show_table_row_editor(path + "/Delete" + prefix + "?Id=" + id, delete_button_text, function () {
                 if (server_side)
                     table.api().draw();
                 else

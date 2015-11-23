@@ -13,6 +13,18 @@ using System.Reflection;
 
 namespace Cliver.ProductIdentifier
 {
+    public class SettingsKey : Cliver.Enum<string>
+    {
+        public const string SCOPE = "PRODUCT_IDENTIFIER";
+        public const string COMPANY = "COMPANY/";
+        public const string TRAINING_TIME = "TrainingTime";
+        public const string WORD_WEIGHTS = "/WordWeights";
+        public const string SYNONYMS = "/Synonyms";
+        public const string CATEGORY_MAP = "CATEGORYMAP/";
+
+        public SettingsKey(string value) : base(value) { }
+    }
+
     public partial class Configuration
     {
         public const int NO_COMPANY_DEPENDENT = -1;
@@ -27,22 +39,10 @@ namespace Cliver.ProductIdentifier
             List<string> iws = (from x in default_ignored_words select x.Trim()).ToList();
             default_ignored_words = new HashSet<string>(iws);
 
-            default_synonyms = default_synonyms.ToDictionary(x => x.Key.Trim().ToLower(), x => x.Value.Trim().ToLower());
+            default_synonyms = default_synonyms.ToDictionary(x => x.Key.Trim().ToLower(), x => x.Value.Trim().ToLower());            
         }
         readonly Engine engine;
-
         readonly Bot.DbSettings settings;
-        public class SettingsKey : Cliver.Enum<string>
-        {
-            public const string SCOPE = "PRODUCT_IDENTIFIER";
-            public const string COMPANY = "COMPANY/";
-            public const string TRAINING_TIME = "TrainingTime";
-            public const string WORD_WEIGHTS = "/WordWeights";
-            public const string SYNONYMS = "/Synonyms";
-            public const string CATEGORY_MAP = "CATEGORYMAP/";
-
-            public SettingsKey(string value) : base(value) { }
-        }
 
         public Company Get(Product product)
         {
@@ -67,7 +67,7 @@ namespace Cliver.ProductIdentifier
             company_ids2Company.Values.ToList().ForEach(x => { x.SaveWordWeights(); x.SaveSynonyms(); });
             SaveMappedCategories();
             if (update_traning_time)
-                settings.Save(Configuration.SettingsKey.SCOPE, Configuration.SettingsKey.TRAINING_TIME, DateTime.Now);
+                settings.Save(SettingsKey.SCOPE, SettingsKey.TRAINING_TIME, DateTime.Now);
         }
 
         public void MapCategories(Product product1, Product product2)
@@ -107,6 +107,14 @@ namespace Cliver.ProductIdentifier
             Dictionary<string, HashSet<string>> category1s_to_mapped_category2s;
             string company1_id_company2_id = product1.DbProduct.CompanyId.ToString() + "," + product2.DbProduct.CompanyId;
             if (!company1_id_company2_id_to_category1s_to_mapped_category2s.TryGetValue(company1_id_company2_id, out category1s_to_mapped_category2s))
+            {
+                var category1s_to_mapped_category2s_ = settings.Get<Dictionary<string, List<string>>>(SettingsKey.SCOPE, SettingsKey.CATEGORY_MAP + company1_id_company2_id);
+                category1s_to_mapped_category2s = new Dictionary<string, HashSet<string>>();
+                foreach (string c1 in category1s_to_mapped_category2s_.Keys)
+                    category1s_to_mapped_category2s[c1] = new HashSet<string>(category1s_to_mapped_category2s_[c1]);
+                company1_id_company2_id_to_category1s_to_mapped_category2s[company1_id_company2_id] = category1s_to_mapped_category2s;
+            }
+            if (category1s_to_mapped_category2s == null)
                 return false;
             HashSet<string> mapped_category2s;
             if (!category1s_to_mapped_category2s.TryGetValue(product1.DbProduct.Category, out mapped_category2s))
@@ -117,7 +125,7 @@ namespace Cliver.ProductIdentifier
         public void SaveMappedCategories()
         {
             foreach (string company1_id_company2_id in company1_id_company2_id_to_category1s_to_mapped_category2s.Keys)
-                settings.Save(Configuration.SettingsKey.SCOPE, Configuration.SettingsKey.CATEGORY_MAP + company1_id_company2_id, company1_id_company2_id_to_category1s_to_mapped_category2s[company1_id_company2_id]);
+                settings.Save(SettingsKey.SCOPE, SettingsKey.CATEGORY_MAP + company1_id_company2_id, company1_id_company2_id_to_category1s_to_mapped_category2s[company1_id_company2_id]);
         }
 
         #region API for editing configuration
@@ -127,13 +135,15 @@ namespace Cliver.ProductIdentifier
             if (company2_id < company1_id)
                 throw new Exception("company1_id must be < company2_id");
             string company1_id_company2_id = company1_id.ToString() + "," + company2_id;
-            Dictionary<string, HashSet<string>> category1s_to_mapped_category2s;
-            if (!company1_id_company2_id_to_category1s_to_mapped_category2s.TryGetValue(company1_id_company2_id, out category1s_to_mapped_category2s))
-            {
-                mapped_categories = null;
-                return;
-            }
-            mapped_categories = Cliver.Bot.SerializationRoutines.Json.Get(category1s_to_mapped_category2s);
+            //Dictionary<string, HashSet<string>> category1s_to_mapped_category2s;
+            //if (!company1_id_company2_id_to_category1s_to_mapped_category2s.TryGetValue(company1_id_company2_id, out category1s_to_mapped_category2s))
+            //    mapped_categories = null;
+            //else
+            //    mapped_categories = Cliver.Bot.SerializationRoutines.Json.Get(category1s_to_mapped_category2s);
+            Dictionary<string, List<string>> category1s_to_mapped_category2s = settings.Get<Dictionary<string, List<string>>>(SettingsKey.SCOPE, SettingsKey.CATEGORY_MAP + company1_id_company2_id);
+            mapped_categories = Bot.SerializationRoutines.Json.Get(category1s_to_mapped_category2s);
+            mapped_categories = Regex.Replace(mapped_categories, @",", "$0\r\n", RegexOptions.Singleline);
+            mapped_categories = Regex.Replace(mapped_categories, @"\:|\]\s*,", "$0\r\n", RegexOptions.Singleline);
         }
 
         public void SaveMappedCategoriesFromString(int company1_id, int company2_id, string mapped_categories)
@@ -145,7 +155,7 @@ namespace Cliver.ProductIdentifier
             Dictionary<string, HashSet<string>> category1s_to_mapped_category2s = Cliver.Bot.SerializationRoutines.Json.Get<Dictionary<string, HashSet<string>>>(mapped_categories);
             company1_id_company2_id_to_category1s_to_mapped_category2s[company1_id_company2_id] = category1s_to_mapped_category2s;
 
-            settings.Save(Configuration.SettingsKey.SCOPE, Configuration.SettingsKey.CATEGORY_MAP + company1_id_company2_id, company1_id_company2_id_to_category1s_to_mapped_category2s[company1_id_company2_id]);
+            settings.Save(SettingsKey.SCOPE, SettingsKey.CATEGORY_MAP + company1_id_company2_id, company1_id_company2_id_to_category1s_to_mapped_category2s[company1_id_company2_id]);
         }
         #endregion
 

@@ -431,6 +431,7 @@
     <Content Include="ConnectionStrings.config">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="Views\ProductIdentifierConfiguration\Edit2.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

@@ -32,7 +32,7 @@ Refresh data every @RefreshSpanInSecs seconds
 </table>
 <script type="text/javascript">
     var table = init_table(true, 0, null, null, null, null, "@Request.Path", false);
-    
+
     table.on( 'draw.dt', function (s, d) {
         var rds = table.api().rows().data();
         for(var i = 0; i < rds.length; i++){
@@ -48,7 +48,7 @@ Refresh data every @RefreshSpanInSecs seconds
             }
         }
     } );
-    
+
     var refresh_timer = null;
     function RefreshTable(run){
         if(run)
