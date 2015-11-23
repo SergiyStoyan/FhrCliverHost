@@ -32,7 +32,9 @@ namespace Cliver.FhrCrawlerHost
             Price = price;
             List<string> cs = new List<string>();
             foreach (string c in category_branch)
-                cs.Add(Regex.Replace(c, Regex.Escape(CATEGORY_SEPARATOR), " ", RegexOptions.Singleline | RegexOptions.Compiled).Trim());
+                cs.Add(Cliver.PrepareField.Html.GetDbField(
+                    Regex.Replace(c, Regex.Escape(CATEGORY_SEPARATOR), "-", RegexOptions.Singleline | RegexOptions.Compiled)
+                    ));
             Category = string.Join(CATEGORY_SEPARATOR, cs);
             ImageUrls = image_urls;
             Description = description;
