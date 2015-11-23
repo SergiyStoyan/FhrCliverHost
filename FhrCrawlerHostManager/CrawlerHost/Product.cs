@@ -32,8 +32,8 @@ namespace Cliver.FhrCrawlerHost
             Price = price;
             List<string> cs = new List<string>();
             foreach (string c in category_branch)
-                cs.Add(Regex.Replace(c, @"\\", "", RegexOptions.Singleline));
-            Category = string.Join(@"\", cs);
+                cs.Add(Regex.Replace(c, Regex.Escape(CATEGORY_SEPARATOR), " ", RegexOptions.Singleline | RegexOptions.Compiled).Trim());
+            Category = string.Join(CATEGORY_SEPARATOR, cs);
             ImageUrls = image_urls;
             Description = description;
 
@@ -42,6 +42,8 @@ namespace Cliver.FhrCrawlerHost
             else
                 Stock = (decimal)stock;
         }
+
+        public const string CATEGORY_SEPARATOR = @">";
 
         readonly public string Name;
         readonly public string Sku;

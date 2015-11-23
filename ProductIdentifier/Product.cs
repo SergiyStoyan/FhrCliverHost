@@ -38,7 +38,7 @@ namespace Cliver.ProductIdentifier
                         t = DbProduct.Description;
                         break;
                     case Field.Category:
-                        t = Regex.Replace(DbProduct.Category == null ? "" : DbProduct.Category, @"\\", " ", RegexOptions.Compiled | RegexOptions.Singleline);
+                        t = Regex.Replace(DbProduct.Category == null ? "" : DbProduct.Category, Regex.Escape(FhrCrawlerHost.Product.CATEGORY_SEPARATOR), " ", RegexOptions.Compiled | RegexOptions.Singleline);
                         break;
                     default:
                         throw new Exception("untreated case");

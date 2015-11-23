@@ -53,10 +53,12 @@
                                         url: "@Url.Action("GetCompanyCategories")"
                                     },
                                     function (categories) {
-                                        var os = categories.join("</option><option>");
-                                        if(os)
-                                            os = "<option>" + os + "</option>";
-                                        $("#Categories").append("<option></option>" + os);
+                                        //var os = categories.join("</option><option>");
+                                        //if(os)
+                                        //    os = "<option>" + os + "</option>";
+                                        //$("#Categories").append("<option></option>" + os);
+                                        console.log(categories);
+                                        alert("1");
                                     }
                                 );
                             }

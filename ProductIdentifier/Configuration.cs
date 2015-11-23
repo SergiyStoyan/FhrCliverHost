@@ -109,9 +109,14 @@ namespace Cliver.ProductIdentifier
             if (!company1_id_company2_id_to_category1s_to_mapped_category2s.TryGetValue(company1_id_company2_id, out category1s_to_mapped_category2s))
             {
                 var category1s_to_mapped_category2s_ = settings.Get<Dictionary<string, List<string>>>(SettingsKey.SCOPE, SettingsKey.CATEGORY_MAP + company1_id_company2_id);
-                category1s_to_mapped_category2s = new Dictionary<string, HashSet<string>>();
-                foreach (string c1 in category1s_to_mapped_category2s_.Keys)
-                    category1s_to_mapped_category2s[c1] = new HashSet<string>(category1s_to_mapped_category2s_[c1]);
+                if (category1s_to_mapped_category2s_ != null)
+                {
+                    category1s_to_mapped_category2s = new Dictionary<string, HashSet<string>>();
+                    foreach (string c1 in category1s_to_mapped_category2s_.Keys)
+                        category1s_to_mapped_category2s[c1] = new HashSet<string>(category1s_to_mapped_category2s_[c1]);
+                }
+                else
+                    category1s_to_mapped_category2s = null;
                 company1_id_company2_id_to_category1s_to_mapped_category2s[company1_id_company2_id] = category1s_to_mapped_category2s;
             }
             if (category1s_to_mapped_category2s == null)

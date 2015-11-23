@@ -371,12 +371,6 @@ GROUP BY a.LinkId";
             return ds;
         }
 
-        public ActionResult GetCompanyCategories(int company_id)
-        {
-            List<string> categories = db.Products.Where(p => p.CompanyId == company_id).GroupBy(p => p.Category).Select(c => c.Key).ToList();
-            return Json(categories, JsonRequestBehavior.AllowGet);
-        }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Prefix = "ProductId")]string[] product_ids_)
@@ -386,6 +380,41 @@ GROUP BY a.LinkId";
             if (Request.IsAjaxRequest())
                 return Content(null);
             return RedirectToAction("Index");
+        }
+
+        public ActionResult GetCompanyCategories(int company_id)
+        {
+            List<string> categories = db.Products.Where(p => p.CompanyId == company_id).GroupBy(p => p.Category).Select(c => c.Key).ToList();
+            Dictionary<string, dynamic> tree = build_tree_from_paths(categories);
+            return Json(tree, JsonRequestBehavior.AllowGet);
+        }
+
+        Dictionary<string, dynamic> build_tree_from_paths(List<string> category_paths)
+        {
+            Dictionary<string, dynamic> tree = new Dictionary<string, dynamic>();
+            foreach (string category_path in category_paths)
+                add_path(category_path, tree);
+            return tree;
+        }
+
+        void add_path(string category_path, Dictionary<string, dynamic> tree)
+        {
+            Match m = Regex.Match(category_path, "^(.*?)" + Regex.Escape(FhrCrawlerHost.Product.CATEGORY_SEPARATOR) + "+(.+)", RegexOptions.Compiled | RegexOptions.Singleline);
+            if (m.Success)
+            {
+                string category_name = m.Groups[1].Value;
+                dynamic child_tree;
+                if (!tree.TryGetValue(category_name, out child_tree))
+                {
+                    child_tree = new Dictionary<string, object>();
+                    tree[category_name] = child_tree;
+                }
+                add_path(m.Groups[2].Value, child_tree);
+            }
+            else
+            {
+                tree[category_path] = null;
+            }
         }
 
         protected override void Dispose(bool disposing)
