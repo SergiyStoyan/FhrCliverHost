@@ -70,6 +70,13 @@ function show_error(content, title) {
 }
 
 function arrange_modal_window(e) {
+    var h = $(e).parent().height() - $(window).height();
+    if (h > 0)
+        $(e).height($(e).height() - h - 10);
+    var w = $(e).parent().width() - $(window).width();
+    if (w > 0)
+        $(e).width($(e).width() - w - 10);
+
     e.dialog({ "position": { my: "center", at: "center", of: window, collision: 'fit' } });
         
     //fixing a bug when the box is stuck with the right edge of the window
