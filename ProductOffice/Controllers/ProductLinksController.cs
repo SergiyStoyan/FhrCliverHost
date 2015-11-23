@@ -113,11 +113,10 @@ GROUP BY a.LinkId";
                 products = db.Products.Where(p => p.Id == -link_id).ToList();
             else
                 products = db.Products.Where(p => p.LinkId == link_id).ToList();
-            //ViewBag.LinkedProductIds = string.Join(",", products.Select(p => p.Id));
-            //ViewBag.CompanyId = new SelectList(CompanySelect, "Value", "Name");
             ViewBag.LinkId = link_id > 0 ? link_id : -products[0].Id;
             ViewBag.Companies = db.Companies;
             ViewBag.LinkedProductsJson = Cliver.Bot.SerializationRoutines.Json.Get(get_product_objects(products));
+            ViewBag.CATEGORY_SEPARATOR = Cliver.FhrCrawlerHost.Product.CATEGORY_SEPARATOR;
             if (Request.IsAjaxRequest())
                 return PartialView(products);
             return View();
@@ -170,12 +169,12 @@ GROUP BY a.LinkId";
             }
             List<Cliver.ProductIdentifier.ProductLink> filtered_product_links = null;
 
-            public static IdenticalProductList GetMovingToNextRange(ProductLinksController controller, int[] product1_ids, int company2_id, string[] keyword2s, int range_size, bool forward, out bool is_CurrentProductLinks_changed)
+            public static IdenticalProductList GetMovingToNextRange(ProductLinksController controller, int[] product1_ids, int company2_id, string[] keyword2s, string category2, int range_size, bool forward, out bool is_CurrentProductLinks_changed)
             {
                 product1_ids = product1_ids.Distinct().ToArray();
 
                 IdenticalProductList ipl = get_from_session(controller, product1_ids, company2_id);
-                ipl.set_pls_filtered_by_keyword2s(keyword2s);
+                ipl.set_pls_filtered(keyword2s, category2);
                 is_CurrentProductLinks_changed = ipl.CurrentProductLinkRangeStartIndex == INITIAL_INDEX && ipl.CurrentProductLinkRangeEndIndex == INITIAL_INDEX;
 
                 if (forward)
@@ -202,14 +201,14 @@ GROUP BY a.LinkId";
             public int CurrentProductLinkRangeEndIndex = INITIAL_INDEX;
             const int INITIAL_INDEX = -1;
 
-            void set_pls_filtered_by_keyword2s(string[] keyword2s)
+            void set_pls_filtered(string[] keyword2s, string category2)
             {
                 if (keyword2s == null)
                     keyword2s = new string[] { string.Empty };
-                
-                keyword2s = keyword2s.Select(x => x.Trim().ToLower()).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct().OrderBy(x => x).ToArray();                
+
+                keyword2s = keyword2s.Select(x => x.Trim().ToLower()).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct().OrderBy(x => x).ToArray();
                 string keyword2s_ = string.Join(" ", keyword2s).Trim();
-                if (this.keyword2s_ == keyword2s_)
+                if (this.keyword2s_ == keyword2s_ && this.category2 == category2)
                 {
                     if (filtered_product_links == null)
                         filtered_product_links = product_links;
@@ -217,21 +216,27 @@ GROUP BY a.LinkId";
                 }
 
                 this.keyword2s_ = keyword2s_;
+                this.category2 = category2;
                 CurrentProductLinkRangeStartIndex = INITIAL_INDEX;
                 CurrentProductLinkRangeEndIndex = INITIAL_INDEX;
-                if (string.IsNullOrEmpty(keyword2s_))
+                if (keyword2s.Length < 1 && string.IsNullOrEmpty(category2))
                 {
-                    this.keyword2s_ = string.Empty;
                     filtered_product_links = product_links;
                     return;
                 }
+
                 filtered_product_links = new List<Cliver.ProductIdentifier.ProductLink>();
                 List<Regex> rs = new List<Regex>();
-                foreach(string k in keyword2s)
-                    rs.Add(new Regex(Regex.Escape(k), RegexOptions.IgnoreCase| RegexOptions.Singleline));
+                foreach (string k in keyword2s)
+                    rs.Add(new Regex(Regex.Escape(k), RegexOptions.IgnoreCase | RegexOptions.Singleline));
                 foreach (Cliver.ProductIdentifier.ProductLink l in this.product_links)
                 {
                     Cliver.ProductIdentifier.Product p = l.Product2s.Where(x => x.DbProduct.CompanyId == this.Company2Id).First();
+                    
+                    if (!string.IsNullOrEmpty(category2))
+                        if (!p.DbProduct.Category.StartsWith(category2))
+                            continue;
+                    
                     bool match = true;
                     foreach (Regex r in rs)
                     {
@@ -241,11 +246,12 @@ GROUP BY a.LinkId";
                             break;
                         }
                     }
-                    if(match)
+                    if (match)
                         filtered_product_links.Add(l);
                 }
             }
             string keyword2s_ = string.Empty;
+            string category2 = null;
 
             public double ScoreFactor = 1;
 
@@ -310,6 +316,7 @@ GROUP BY a.LinkId";
             [Bind(Prefix = "product1_ids[]")]string[] product1_ids_,
             [Bind(Prefix = "company2_id")]string company2_id_,
             [Bind(Prefix = "keyword2s")]string keyword2s_,
+            string category2,
             int range_size,
             bool forward
             )
@@ -318,7 +325,7 @@ GROUP BY a.LinkId";
             int company2_id = int.Parse(company2_id_);
             string[] keyword2s = keyword2s_.Split(' ');
             bool is_CurrentProductLinks_changed;
-            IdenticalProductList ipl = IdenticalProductList.GetMovingToNextRange(this, product1_ids, company2_id, keyword2s, range_size, forward, out is_CurrentProductLinks_changed);
+            IdenticalProductList ipl = IdenticalProductList.GetMovingToNextRange(this, product1_ids, company2_id, keyword2s, category2, range_size, forward, out is_CurrentProductLinks_changed);
             List<List<object>> pss = new List<List<object>>();
             for (int i = ipl.CurrentProductLinkRangeStartIndex; i <= ipl.CurrentProductLinkRangeEndIndex; i++)
                 pss.Add(get_ProductLink_objects(ipl.CurrentProductLinks[i], i, ipl.ScoreFactor));
@@ -389,32 +396,31 @@ GROUP BY a.LinkId";
             return Json(tree, JsonRequestBehavior.AllowGet);
         }
 
-        Dictionary<string, dynamic> build_tree_from_paths(List<string> category_paths)
+        Dictionary<string, dynamic> build_tree_from_paths(List<string> paths)
         {
             Dictionary<string, dynamic> tree = new Dictionary<string, dynamic>();
-            foreach (string category_path in category_paths)
-                add_path(category_path, tree);
+            foreach (string path in paths)
+                if (path != null)
+                    add_path(path, tree);
             return tree;
         }
 
-        void add_path(string category_path, Dictionary<string, dynamic> tree)
+        void add_path(string path, Dictionary<string, dynamic> tree)
         {
-            Match m = Regex.Match(category_path, "^(.*?)" + Regex.Escape(FhrCrawlerHost.Product.CATEGORY_SEPARATOR) + "+(.+)", RegexOptions.Compiled | RegexOptions.Singleline);
+            Match m = Regex.Match(path, "^(.*?)" + Regex.Escape(FhrCrawlerHost.Product.CATEGORY_SEPARATOR) + "+(.+)", RegexOptions.Compiled | RegexOptions.Singleline);
             if (m.Success)
             {
-                string category_name = m.Groups[1].Value;
+                string name = m.Groups[1].Value;
                 dynamic child_tree;
-                if (!tree.TryGetValue(category_name, out child_tree))
+                if (!tree.TryGetValue(name, out child_tree))
                 {
                     child_tree = new Dictionary<string, object>();
-                    tree[category_name] = child_tree;
+                    tree[name] = child_tree;
                 }
                 add_path(m.Groups[2].Value, child_tree);
             }
             else
-            {
-                tree[category_path] = null;
-            }
+                tree[path] = new Dictionary<string, object>();
         }
 
         protected override void Dispose(bool disposing)

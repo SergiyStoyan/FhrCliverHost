@@ -39,28 +39,11 @@
                                 CurrentCompany2Id = company2_id;
                                 $('#ProductMatchesList table').empty();
                                 $("#Categories").empty();
-                                $("#Keywords").val('');
+                                $("#Keyword2s").val('');
                                 $("#ProductCount").html('');
+                                $('#CategoryTreeViewContent').html('');;
 
                                 get_next_product2_range(true);
-                                                                
-                                ProductMatchesDlg.getContentByAjax(
-                                    {
-                                        type: 'GET',
-                                        data: {
-                                            "company_id": CurrentCompany2Id
-                                        },
-                                        url: "@Url.Action("GetCompanyCategories")"
-                                    },
-                                    function (categories) {
-                                        //var os = categories.join("</option><option>");
-                                        //if(os)
-                                        //    os = "<option>" + os + "</option>";
-                                        //$("#Categories").append("<option></option>" + os);
-                                        console.log(categories);
-                                        alert("1");
-                                    }
-                                );
                             }
                             var ProductMatchesDlg;
                         </script>
@@ -193,11 +176,80 @@
     </div>
 }
 
-    <div id="ProductMatchesContent" style="display:none;">
-    Keyword: <input type="text" name="Keywords" id="Keywords" style="box-sizing:border-box;" /><br />
-    Category: <select id="Categories"></select><br />
+<div id="ProductMatchesContent" style="display:none;">
+    Keyword: <input type="text" name="Keyword2s" id="Keyword2s" style="box-sizing:border-box;" /><br />
+    <a href="#" onclick="javascript: show_CategoryTreeView();">Category:</a> 
+    <a class="button" href="#" onclick='javascript: $("#Category2").val("");'>X</a>
+    <input type="text" id="Category2" name="Category2" style="box-sizing:border-box;" readonly />
+    <br />
+    <link rel="stylesheet" href="https://static.jstree.com/3.2.1/assets/dist/themes/default/style.min.css" />
+    <script src="https://static.jstree.com/3.2.1/assets/dist/jstree.min.js"></script>
+    <script>
+            function show_CategoryTreeView(){
+                if(!CategoryTreeView){
+                    CategoryTreeView = show_ajax_modal_box(
+                        "Picking Category...",
+                        {
+                            "Close":function(){
+                                CategoryTreeView.close();
+                            }
+                        },
+                        "CategoryTreeViewContent"
+                    );
+                }
+                else
+                    CategoryTreeView.dialog("open");
+
+                if($('#CategoryTreeViewContent').html())
+                    return;
+
+                CategoryTreeView.getContentByAjax(
+                    {
+                        type: 'GET',
+                        data: {
+                            "company_id": CurrentCompany2Id
+                        },
+                        url: "@Url.Action("GetCompanyCategories")"
+                    },
+                    function (category_tree) {
+                        
+                        function build_tree_view_from_tree(pn1, pn2_children)
+                        {
+                            for(var name in pn1){
+                                var n2 = {text:name};
+                                pn2_children.push(n2);
+                                if(pn1[name])
+                                {
+                                    n2.children = [];
+                                    build_tree_view_from_tree(pn1[name], n2.children);
+                                }
+                            }
+                        }
+
+                        var tree_view_json = [];
+                        build_tree_view_from_tree(category_tree, tree_view_json);
+
+                        $('#CategoryTreeViewContent').jstree({
+                            core : {
+                                data : tree_view_json
+                            }
+                        });
+
+                        $('#CategoryTreeViewContent').on('select_node.jstree', function (e, data) {
+                            var path = $('#CategoryTreeViewContent').jstree(true).get_path(data.node, "@Html.Raw(ViewBag.CATEGORY_SEPARATOR)");
+                            $("#Category2").val(path);
+                            $('#CategoryTreeViewContent').jstree(true).toggle_node(data.node);
+                            //CategoryTreeView.close();
+                        })
+                    }
+                );
+            }
+        var CategoryTreeView;
+    </script>
+
+    <div id="CategoryTreeViewContent" style="display:none;"></div>
     @*<b><a href="#" onclick="javascript: $('#ProductMatchesList table').empty(); get_next_product2_range(true);">Refine</a></b>
-    <hr />*@
+        <hr />*@
     Range Size: <input type="text" name="RangeSize" id="RangeSize" style="box-sizing:border-box;width:50px;" value="50" maxlength="3" />
     @*Accumulate pages: <input type="checkbox" style="" checked
                                  onchange="javascript: if(checked) {$('#page_by_page_navigation').css('display', 'none'); $('#accumulate_pages_navigation').css('display', 'inline');} else {$('#page_by_page_navigation').css('display', 'inline'); $('#accumulate_pages_navigation').css({'display':'none'});}" />
@@ -212,9 +264,9 @@
     Product Count: <span id="ProductCount"></span>
     <hr />
 
-        <div id="ProductMatchesList" style="overflow: auto;">
-            <table style="word-wrap: break-word;"></table>
-        </div>
+    <div id="ProductMatchesList" style="overflow: auto;">
+        <table style="word-wrap: break-word;"></table>
+    </div>
 </div>
 <style>
 .ProductMatch_selected{
@@ -236,24 +288,21 @@
             $("input[name='ProductId']").each(function () {
                 product1_ids.push($(this).val());
             });
-
-            var keyword2s = $('#Keywords').val();
-            var range_size = $('#RangeSize').val();
-
+            
             ProductMatchesDlg.getContentByAjax(
                 {
                     type: 'GET',
                     data: {
                         "product1_ids": product1_ids,
                         "company2_id": CurrentCompany2Id,
-                        "keyword2s": keyword2s,
-                        "range_size": range_size,
+                        "keyword2s": $('#Keyword2s').val(),
+                        "category2": $('#Category2').val(),
+                        "range_size": $('#RangeSize').val(),
                         "forward": forward || forward == undefined ? true : false
                     },
                     url: "@Url.Action("GetNextProductLinks")"
                 },
                 function (data) {
-                    //console.log(data);
                     if(data.Is_CurrentProductLinks_Changed)
                         $('#ProductMatchesList table').empty();
                     var product2_matches = data.Product2s;
