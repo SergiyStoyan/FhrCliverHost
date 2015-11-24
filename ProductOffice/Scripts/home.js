@@ -277,9 +277,46 @@ function show_table_row_editor(content_url, ok_button_text, on_success) {
     return e;
 }
 
-function init_table(server_side, id_column_id, new_button_text, details_button_text, edit_button_text, delete_button_text, path, invisible_column_ids, prefix) {
-    if (!prefix)
-        prefix = "";
+var options = {
+    menu: {
+        above: [
+            { text: "New", onclick: "default_new" },
+            { text: "Start Group", onclick: function () { }, style: null }
+        ],
+        left: [
+            { text: "Delete", onclick: "default_delete", style: "default_delete" },
+            { text: "Add to Group", onclick: function () { } }
+        ],
+        right: [
+            { text: "Details", onclick: "default_details" },
+            { text: "Edit", onclick: "default_edit" }
+        ]
+    }
+};
+
+var options = {
+    server_side: true,
+    id_column_id:0,
+    invisible_column_ids:[],
+    default_actions_prefix:null,
+    menu: {
+        above: [
+            { text: "New", onclick: "default_new" },
+        ],
+        left: [
+            { text: "Delete", onclick: "default_delete", style: "default_delete" },
+        ],
+        right: [
+            { text: "Details", onclick: "default_details" },
+            { text: "Edit", onclick: "default_edit" }
+        ]
+    }
+};
+
+function init_table(options) {
+    if (!options.default_actions_prefix)
+        options.default_actions_prefix = '';
+
     var definition = {
         "scrollX": true,
         "processing": true,
@@ -307,24 +344,24 @@ function init_table(server_side, id_column_id, new_button_text, details_button_t
             $(row).html(h);
         }
     };
-    if (server_side) {
+    if (options.server_side) {
         definition["serverSide"] = true;
         definition["ajax"] = {
-            "url": path + "/TableJson" + prefix,
+            "url": options.request_path + "/TableJson" + options.default_actions_prefix,
             "type": 'POST',
         };
     }
-    if (invisible_column_ids) {
+    if (options.invisible_column_ids) {
         definition["columnDefs"] = Array();
-        for (var i = invisible_column_ids.length - 1; i >= 0; i--)
-            definition["columnDefs"].push({ "visible": false, "targets": invisible_column_ids[i] });
+        for (var i = options.invisible_column_ids.length - 1; i >= 0; i--)
+            definition["columnDefs"].push({ "visible": false, "targets": options.invisible_column_ids[i] });
     }
 
     var table = $("table:last").dataTable(definition);
-    
+
     //table.columns[id_column_id].visible(show_id_column);
 
-    if (server_side) {
+    if (options.server_side) {
         var search_box = table.parent().find(".dataTables_filter").find("input");
         //search_box.keyup(function () {
         search_box.on('keyup', function (event) {
@@ -334,85 +371,102 @@ function init_table(server_side, id_column_id, new_button_text, details_button_t
         });
     }
 
-    var left_menu_html = '<div class="table_floating_menu" style="visibility: hidden; position: absolute;"></div>';
-    var left_menu = $(left_menu_html);
-    $("body").append(left_menu);
-    var right_menu_html = '<div class="table_floating_menu" style="visibility: hidden; position: absolute;"></div>';
-    var right_menu = $(right_menu_html);
-    $("body").append(right_menu);
-    if (new_button_text) {
-        var buttons = $("<p></p>");
-        table.parents(".dataTables_wrapper").before(buttons);
-        var b = $('<a href="#" class="button">' + new_button_text + '</a>');
-        buttons.append(b);
+    var defaults = {
+        onclicks: {
+            default_new: function () {
+                table.modalBox = show_table_row_editor(options.request_path + "/Create" + options.default_actions_prefix, "Create", function () {
+                    if (options.server_side)
+                        table.api().draw();
+                    else
+                        location.reload();
+                });
+            },
+            default_delete: function () {
+                if (!table.$('tr.selected').is("tr")) {
+                    show_message("No row selected!", "Warning");
+                    return false;
+                }
+                var id = table.fnGetData(table.$('tr.selected'))[options.id_column_id];
 
-        b.click(function () {
-            table.modalBox = show_table_row_editor(path + "/Create" + prefix, "Create", function () {
-                if (server_side)
-                    table.api().draw();
-                else
-                    location.reload();
-            });
-        });
-    }
-    if (details_button_text) {
-        var b = $('<a href="#" class="button">' + details_button_text + '</a>');
-        right_menu.append(b);
+                table.modalBox = show_table_row_editor(options.request_path + "/Delete" + options.default_actions_prefix + "?Id=" + id, "Delete", function () {
+                    if (options.server_side)
+                        table.api().draw();
+                    else
+                        location.reload();
+                });
+            },
+            default_details: function () {
+                if (!table.$('tr.selected').is("tr")) {
+                    show_message("No row selected!", "Warning");
+                    return false;
+                }
+                var id = table.fnGetData(table.$('tr.selected'))[options.id_column_id];
 
-        b.click(function () {
-            if (!table.$('tr.selected').is("tr")) {
-                show_message("No row selected!", "Warning");
-                return false;
+                table.modalBox = show_table_row_editor(options.request_path + "/Details" + options.default_actions_prefix + "?Id=" + id, "OK");
+            },
+            default_edit: function () {
+                if (!table.$('tr.selected').is("tr")) {
+                    show_message("No row selected!", "Warning");
+                    return false;
+                }
+                var id = table.fnGetData(table.$('tr.selected'))[options.id_column_id];
+
+                table.modalBox = show_table_row_editor(options.request_path + "/Edit" + options.default_actions_prefix + "?Id=" + id, "Save", function () {
+                    if (options.server_side)
+                        table.api().draw();
+                    else
+                        location.reload();
+                });
             }
-            var id = table.fnGetData(table.$('tr.selected'))[id_column_id];
+        },
+        styles: {
+            default_delete: "color:#f00;"
+        }
+    };
 
-            table.modalBox = show_table_row_editor(path + "/Details" + prefix + "?Id=" + id, "OK");
-        });
+    var menus = {};
+    if (options.menu.above && options.menu.above.length) {
+        var above_menu = $("<p></p>");
+        table.parents(".dataTables_wrapper").before(above_menu);
+        for (var i in options.menu.above) {
+            var style = defaults.styles[options.menu.above[i].style];
+            if (!style)
+                style = options.menu.above[i].style;
+            var b = $('<a href="#" class="button" style=' + style + '>' + options.menu.above[i].text + '</a>');
+            above_menu.append(b);
+            if (defaults.onclicks[options.menu.above[i].onclick])
+                b.click(defaults.onclicks[options.menu.above[i].onclick]);
+        }
     }
-    if (edit_button_text) {
-        var b = $('<a href="#" class="button">' + edit_button_text + '</a>');
-        right_menu.append(b);
-
-        b.click(function () {
-            if (!table.$('tr.selected').is("tr")) {
-                show_message("No row selected!", "Warning");
-                return false;
-            }
-            var id = table.fnGetData(table.$('tr.selected'))[id_column_id];
-
-            table.modalBox = show_table_row_editor(path + "/Edit" + prefix + "?Id=" + id, "Save", function () {
-                if (server_side)
-                    table.api().draw();
-                else
-                    location.reload();
-            });
-        });
+    var right_menu;
+    if (options.menu.right && options.menu.right.length) {
+        var right_menu = $('<div class="table_floating_menu" style="visibility: hidden; position: absolute;"></div>');
+        $("body").append(right_menu);
+        for (var i in options.menu.right) {
+            var style = defaults.styles[options.menu.right[i].style];
+            if (!style)
+                style = options.menu.right[i].style;
+            var b = $('<a href="#" class="button" style=' + style + '>' + options.menu.right[i].text + '</a>');
+            right_menu.append(b);
+            if (defaults.onclicks[options.menu.right[i].onclick])
+                b.click(defaults.onclicks[options.menu.right[i].onclick]);
+        }
     }
-    if (delete_button_text) {
-        //var b = $('<a href="#">' + delete_button_text + '</a>');
-        var b = $('<a href="#" class="button" style="color:#f00;">' + 'X' + '</a>');
-        left_menu.append(b);
-
-        b.click(function () {
-            if (!table.$('tr.selected').is("tr")) {
-                show_message("No row selected!", "Warning");
-                return false;
-            }
-            var id = table.fnGetData(table.$('tr.selected'))[id_column_id];
-
-            table.modalBox = show_table_row_editor(path + "/Delete" + prefix + "?Id=" + id, delete_button_text, function () {
-                if (server_side)
-                    table.api().draw();
-                else
-                    location.reload();
-            });
-        });
+    var left_menu;
+    if (options.menu.left && options.menu.left.length) {
+        left_menu = $('<div class="table_floating_menu" style="visibility: hidden; position: absolute;"></div>');
+        $("body").append(left_menu);
+        for (var i in options.menu.left) {
+            var style = defaults.styles[options.menu.left[i].style];
+            if (!style)
+                style = options.menu.left[i].style;
+            var b = $('<a href="#" class="button" style=' + style + '>' + options.menu.left[i].text + '</a>');
+            left_menu.append(b);
+            if (defaults.onclicks[options.menu.left[i].onclick])
+                b.click(defaults.onclicks[options.menu.left[i].onclick]);
+        }
     }
-    if (!left_menu.html())
-        left_menu = null;
-    if (!right_menu.html())
-        right_menu = null;
-    if (left_menu || right_menu) {        
+    if (left_menu || right_menu) {
         table.find('tbody').on('click', 'tr', function () {
             var row = $(this);
             if (row.hasClass('selected')) {
@@ -427,14 +481,14 @@ function init_table(server_side, id_column_id, new_button_text, details_button_t
                 var r = table.parents(".dataTables_wrapper");
                 if (left_menu) {
                     left_menu.css('visibility', 'visible');
-                    left_menu.offset({'top': t, 'left': r.offset().left - left_menu.outerWidth()});
+                    left_menu.offset({ 'top': t, 'left': r.offset().left - left_menu.outerWidth() });
                     left_menu.css("padding-top", row.find('td:first').css("padding-top"));
                     left_menu.css("padding-bottom", row.find('td:first').css("padding-bottom"));
                     left_menu.innerHeight(row.innerHeight());
                 }
                 if (right_menu) {
-                    right_menu.css('visibility', 'visible'); 
-                    right_menu.offset({ 'top': t, 'left': r.offset().left + r.outerWidth(true)});
+                    right_menu.css('visibility', 'visible');
+                    right_menu.offset({ 'top': t, 'left': r.offset().left + r.outerWidth(true) });
                     right_menu.css("padding-top", row.find('td:first').css("padding-top"));
                     right_menu.css("padding-bottom", row.find('td:first').css("padding-bottom"));
                     right_menu.innerHeight(row.innerHeight());
@@ -457,4 +511,3 @@ function init_table(server_side, id_column_id, new_button_text, details_button_t
 
     return table;
 }
-

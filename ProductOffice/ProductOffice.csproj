@@ -213,6 +213,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\ProductIdentifierConfigurationController.cs" />
+    <Compile Include="Controllers\ProductGroupingController.cs" />
     <Compile Include="Controllers\SqlController.cs" />
     <Compile Include="Controllers\SettingsController.cs" />
     <Compile Include="Controllers\ProductLinksController.cs" />
@@ -251,9 +252,6 @@
       <DependentUpon>ProductOffice.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Product.cs">
-      <DependentUpon>ProductOffice.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\ProductIdentifierData.cs">
       <DependentUpon>ProductOffice.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Report.cs" />
@@ -432,6 +430,11 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Views\ProductIdentifierConfiguration\Edit2.cshtml" />
+    <Content Include="Views\ProductGrouping\Create.cshtml" />
+    <Content Include="Views\ProductGrouping\Delete.cshtml" />
+    <Content Include="Views\ProductGrouping\Details.cshtml" />
+    <Content Include="Views\ProductGrouping\Edit.cshtml" />
+    <Content Include="Views\ProductGrouping\Index.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

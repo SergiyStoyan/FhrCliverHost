@@ -1,4 +1,4 @@
-﻿// T4 code generation is enabled for model 'd:\_d\_PROJECTS\FHR(for Andreas Chermak)\CliverHost\ProductOffice#Fhr_development\Models\ProductOffice.edmx'. 
+﻿// T4 code generation is enabled for model 'd:\_d\_PROJECTS\FHR(for Andreas Chermak)\FhrCliverHost#development\ProductOffice\Models\ProductOffice.edmx'. 
 // To enable legacy code generation, change the value of the 'Code Generation Strategy' designer
 // property to 'Legacy ObjectContext'. This property is available in the Properties Window when the model
 // is open in the designer.

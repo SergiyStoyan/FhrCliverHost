@@ -31,6 +31,5 @@ namespace Cliver.ProductOffice.Models
         public virtual DbSet<Price> Prices { get; set; }
         public virtual DbSet<LinkCategory> LinkCategories { get; set; }
         public virtual DbSet<Product> Products { get; set; }
-        public virtual DbSet<ProductIdentifierData> ProductIdentifierDatas { get; set; }
     }
 }

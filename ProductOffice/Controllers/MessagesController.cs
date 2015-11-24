@@ -67,19 +67,12 @@ namespace Cliver.ProductOffice.Controllers
                 if (!String.IsNullOrEmpty(Convert.ToString(r[1])))
                     r[1] = ((Cliver.Bot.Log.MessageType)r[1]).ToString();
                 if (!String.IsNullOrEmpty(Convert.ToString(r[4])))
-                    r[4] = trim(r[4], 100);
+                    r[4] = PrepareField.Trim(r[4], 100);
                 if (!String.IsNullOrEmpty(Convert.ToString(r[5])))
-                    r[5] = trim(r[5], 50);
+                    r[5] = PrepareField.Trim(r[5], 50);
             }
             return jr;
-        }                                                       
-        
-        string trim(string s, int length)
-        {
-            if (s.Length <= length)
-                return s;
-            return s.Substring(0, length) + "...";
-        }
+        }                                                               
 
         public ActionResult Details(int id)
         {         

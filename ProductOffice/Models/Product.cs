@@ -34,6 +34,7 @@ namespace Cliver.ProductOffice.Models
         public Nullable<int> LinkId { get; set; }
         public string Source { get; set; }
         public Nullable<decimal> Stock { get; set; }
+        public int MainProductId { get; set; }
     
         public virtual Company Company { get; set; }
         public virtual ICollection<Price> Prices { get; set; }

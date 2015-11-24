@@ -57,14 +57,6 @@
           <Property Name="CurrencyId" Type="int" Nullable="false" />
           <Property Name="Time" Type="datetime" Nullable="false" />
         </EntityType>
-        <EntityType Name="ProductIdentifierData">
-          <Key>
-            <PropertyRef Name="CompanyId" />
-          </Key>
-          <Property Name="CompanyId" Type="int" Nullable="false" />
-          <Property Name="WordWeights" Type="ntext" Nullable="false" />
-          <Property Name="Synonyms" Type="ntext" Nullable="false" />
-        </EntityType>
         <EntityType Name="Products">
           <Key>
             <PropertyRef Name="Id" />
@@ -84,6 +76,7 @@
           <Property Name="LinkId" Type="int" />
           <Property Name="Source" Type="nvarchar" MaxLength="200" Nullable="false" />
           <Property Name="Stock" Type="numeric" Precision="18" Scale="5" />
+          <Property Name="MainProductId" Type="int" Nullable="false" />
         </EntityType>
         <Association Name="FK_ImportMaps_To_Company">
           <End Role="Companies" Type="Self.Companies" Multiplicity="1" />
@@ -151,7 +144,6 @@
           <EntitySet Name="ImportMaps" EntityType="Self.ImportMaps" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="LinkCategories" EntityType="Self.LinkCategories" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Prices" EntityType="Self.Prices" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="ProductIdentifierData" EntityType="Self.ProductIdentifierData" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Products" EntityType="Self.Products" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_ImportMaps_To_Company" Association="Self.FK_ImportMaps_To_Company">
             <End Role="Companies" EntitySet="Companies" />
@@ -215,7 +207,6 @@
             <End Role="Product" EntitySet="Products" />
             <End Role="Price" EntitySet="Prices" />
           </AssociationSet>
-          <EntitySet Name="ProductIdentifierDatas" EntityType="ProductOfficeModel.ProductIdentifierData" />
           </EntityContainer>
         <EntityType Name="Company">
           <Key>
@@ -322,6 +313,7 @@
           <Property Name="LinkId" Type="Int32" />
           <Property Name="Source" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
           <Property Name="Stock" Type="Decimal" Precision="18" Scale="5" />
+          <Property Name="MainProductId" Type="Int32" Nullable="false" />
           <NavigationProperty Name="Company" Relationship="ProductOfficeModel.FK_Products_To_Companies" FromRole="Product" ToRole="Company" />
           <NavigationProperty Name="Prices" Relationship="ProductOfficeModel.FK_Prices_To_Products" FromRole="Product" ToRole="Price" />
         </EntityType>
@@ -349,14 +341,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="ProductIdentifierData">
-          <Key>
-            <PropertyRef Name="CompanyId" />
-          </Key>
-          <Property Name="CompanyId" Type="Int32" Nullable="false" />
-          <Property Name="WordWeights" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Synonyms" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
-        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -423,6 +407,7 @@
           <EntitySetMapping Name="Products">
             <EntityTypeMapping TypeName="ProductOfficeModel.Product">
               <MappingFragment StoreEntitySet="Products">
+                <ScalarProperty Name="MainProductId" ColumnName="MainProductId" />
                 <ScalarProperty Name="Stock" ColumnName="Stock" />
                 <ScalarProperty Name="Source" ColumnName="Source" />
                 <ScalarProperty Name="LinkId" ColumnName="LinkId" />
@@ -438,15 +423,6 @@
                 <ScalarProperty Name="ExternalId" ColumnName="ExternalId" />
                 <ScalarProperty Name="CompanyId" ColumnName="CompanyId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="ProductIdentifierDatas">
-            <EntityTypeMapping TypeName="ProductOfficeModel.ProductIdentifierData">
-              <MappingFragment StoreEntitySet="ProductIdentifierData">
-                <ScalarProperty Name="Synonyms" ColumnName="Synonyms" />
-                <ScalarProperty Name="WordWeights" ColumnName="WordWeights" />
-                <ScalarProperty Name="CompanyId" ColumnName="CompanyId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

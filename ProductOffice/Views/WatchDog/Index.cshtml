@@ -31,7 +31,18 @@ Refresh data every @RefreshSpanInSecs seconds
     </tbody>
 </table>
 <script type="text/javascript">
-    var table = init_table(true, 0, null, null, null, null, "@Request.Path", false);
+    var table = init_table({
+        server_side: true,
+        id_column_id: 0,
+        request_path: "@Request.Path",
+        invisible_column_ids: [0],
+        default_actions_prefix: null,
+        menu: {
+            above: [],
+            left: [],
+            right: [],
+        }
+    });
 
     table.on( 'draw.dt', function (s, d) {
         var rds = table.api().rows().data();

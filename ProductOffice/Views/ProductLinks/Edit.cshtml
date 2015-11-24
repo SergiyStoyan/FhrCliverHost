@@ -337,7 +337,7 @@
 
                             var name = '<a href="' + product.Url + '" target="_blank">' + product.Name + '</a>';
                
-                            var label = "[" + product._Index + "] Score: " + Math.round(product._Score * 10000) + "/" + Math.round(product._CategoryScore * 10000) + "/" + Math.round(product._NameScore * 10000) + "/" + Math.round(product._SecondaryScore * 10000);
+                            var label = product._Index + " - Score: " + Math.round(product._Score * 10000) + "/" + Math.round(product._CategoryScore * 10000) + "/" + Math.round(product._NameScore * 10000) + "/" + Math.round(product._SecondaryScore * 10000);
                         
                             var product_html = "<tr><td>" + image_urls + "</td><td>" + name + "</td><td>" + label + "</td><td><a href='#' onclick='javascript: add_product2s_to_LinkedProductsTable(ProductIds2LinkedProducts[" + product.Id + "]); ProductMatchesDlg.close();'>link</a></td></tr>";
                             var r = $(product_html);

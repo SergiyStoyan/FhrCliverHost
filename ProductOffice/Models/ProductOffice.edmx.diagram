@@ -13,10 +13,9 @@
         <EntityTypeShape EntityType="ProductOfficeModel.Price" Width="1.5" PointX="7.625" PointY="1.625" />
         <AssociationConnector Association="ProductOfficeModel.FK_Prices_To_Currencies" />
         <EntityTypeShape EntityType="ProductOfficeModel.LinkCategory" Width="1.5" PointX="10.625" PointY="3.125" />
-        <EntityTypeShape EntityType="ProductOfficeModel.Product" Width="1.5" PointX="5.375" PointY="1.125" />
+        <EntityTypeShape EntityType="ProductOfficeModel.Product" Width="1.5" PointX="5.375" PointY="0.75" />
         <AssociationConnector Association="ProductOfficeModel.FK_Products_To_Companies" />
         <AssociationConnector Association="ProductOfficeModel.FK_Prices_To_Products" />
-        <EntityTypeShape EntityType="ProductOfficeModel.ProductIdentifierData" Width="1.5" PointX="3.375" PointY="6.75" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

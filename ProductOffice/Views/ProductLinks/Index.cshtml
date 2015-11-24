@@ -21,5 +21,16 @@
 
 </table>
 <script type="text/javascript">
-    var ProductLinksTable = init_table(true, 0, null, null, "Edit", null, "@Request.Path", [0]);
+    var ProductLinksTable = init_table({
+        server_side: true,
+        id_column_id: 0,
+        request_path: "@Request.Path",
+        invisible_column_ids: [0],
+        default_actions_prefix: null,
+        menu: {
+            right: [
+                { text: "Edit", onclick: "default_edit" }
+            ]
+        }
+    });
 </script>
