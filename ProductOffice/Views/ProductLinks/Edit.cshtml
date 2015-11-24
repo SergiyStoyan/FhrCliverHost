@@ -28,7 +28,11 @@
                                             }
                                         },
                                         "ProductMatchesContent"
-                                    );
+                                    );  
+                                    ProductLinksTable.modalBox.on('dialogclose', function(event) {
+                                        ProductMatchesDlg = null;
+                                        CurrentCompany2Id = null;
+                                    });
                                 }
                                 else 
                                     ProductMatchesDlg.dialog("open");
@@ -41,8 +45,7 @@
                                 $("#Categories").empty();
                                 $("#Keyword2s").val('');
                                 $("#ProductCount").html('');
-                                //$('#CategoryTreeViewContent').html('');
-                                $("#CategoryTreeViewContent").jstree("destroy");
+                                CategoryTreeView = null;
                                 $("#Category2").val("");
 
                                 get_next_product2_range(true);

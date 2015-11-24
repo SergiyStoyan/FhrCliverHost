@@ -71,7 +71,7 @@ namespace Cliver.ProductIdentifier
         }
 
         /// <summary>
-        /// If a product was not yet linked, its LinkId = -Id to differ from all other LinkId's);
+        /// If a product is not linked, its LinkId == null or < 0 (LinkId may be -Id to differ from all other LinkId's);
         /// </summary>
         /// <param name="dbc"></param>
         /// <returns></returns>

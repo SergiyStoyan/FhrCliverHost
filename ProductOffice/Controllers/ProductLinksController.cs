@@ -367,9 +367,9 @@ GROUP BY a.LinkId";
                     Price = (from r in p.Prices orderby r.Time descending select (string)r.Currency.Symbol + r.Value.ToString()).FirstOrDefault(),
                     //_MatchedWords = (from x in pl.Product1s select new { x.DbProduct.Id, pl.Get(x.DbProduct.Id, p.Id).MatchedWords }).ToDictionary(x => x.Id, x => x.MatchedWords),
                     _Index = index,
-                    _Score = pl.Score * score_factor,
-                    _CategoryScore = pl.CategoryScore * score_factor,
-                    _NameScore = pl.NameScore * score_factor,
+                    _Score = (!double.IsNaN(pl.Score) ? pl.Score : 1) * score_factor,
+                    _CategoryScore = (!double.IsNaN(pl.CategoryScore) ? pl.CategoryScore : 1) * score_factor,
+                    _NameScore = (!double.IsNaN(pl.NameScore) ? pl.NameScore : 1) * score_factor,
                     _SecondaryScore = (!double.IsNaN(pl.SecondaryScore) ? pl.SecondaryScore : 1) * score_factor,
                 };
                 d = Cliver.PrepareField.Html.GetDbObject(d);

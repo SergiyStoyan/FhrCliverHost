@@ -89,13 +89,11 @@ function arrange_modal_window(e) {
     }
 }
 
+//content_div_id may be not specified
 function show_ajax_modal_box(title, buttons, content_div_id) {
     if (content_div_id) {
-        if (!$('#' + content_div_id).length)
-            alert("ERROR: content_div_id '" + content_div_id + "' does not exist!");
-        if ($('#' + content_div_id).attr("opened"))
-            alert("ERROR: content_div_id '" + content_div_id + "' is already used in a modal box!");
-        $('#' + content_div_id).attr("opened", "true");
+        if ($('#' + content_div_id).parent().hasClass('ui-dialog-content'))
+            $('#' + content_div_id).parent().dialog("destroy");
     }
             
     //if (!title)
