@@ -284,6 +284,7 @@ function show_table_row_editor(content_url, ok_button_text, on_success) {
 //    invisible_column_ids: [],
 //    default_actions_prefix: null,
 //    rowCallback: "default_rowCallback",
+//    on_raw_clicked: null,
 //    menu: {
 //        above: [
 //            { text: "New", onclick: "default_new" },
@@ -360,8 +361,41 @@ function init_table(options) {
                 return "<a href=\"" + m + "\">" + m + "</a>";
             });
             $(row).html(h);
+        },
+        default_row_clicked: function (row) {
+            if (row.hasClass('selected')) {
+                row.removeClass('selected');
+            }
+            else {
+                table.$('tr.selected').removeClass('selected');
+                row.addClass('selected');
+            }
+            if (row.hasClass('selected')) {
+                var t = row.offset().top;
+                var r = table.parents(".dataTables_wrapper");
+                if (left_menu) {
+                    left_menu.css('visibility', 'visible');
+                    left_menu.offset({ 'top': t, 'left': r.offset().left - left_menu.outerWidth() });
+                    left_menu.css("padding-top", row.find('td:first').css("padding-top"));
+                    left_menu.css("padding-bottom", row.find('td:first').css("padding-bottom"));
+                    left_menu.innerHeight(row.innerHeight());
+                }
+                if (right_menu) {
+                    right_menu.css('visibility', 'visible');
+                    right_menu.offset({ 'top': t, 'left': r.offset().left + r.outerWidth(true) });
+                    right_menu.css("padding-top", row.find('td:first').css("padding-top"));
+                    right_menu.css("padding-bottom", row.find('td:first').css("padding-bottom"));
+                    right_menu.innerHeight(row.innerHeight());
+                }
+            }
+            else {
+                if (left_menu)
+                    left_menu.css('visibility', 'hidden');
+                if (right_menu)
+                    right_menu.css('visibility', 'hidden');
+            }
         }
-    };
+    }
 
     if (!options.default_actions_prefix)
         options.default_actions_prefix = '';
@@ -416,7 +450,7 @@ function init_table(options) {
             }
         });
     }
-    
+
     var menus = {};
     if (options.menu.above && options.menu.above.length) {
         var above_menu = $("<p></p>");
@@ -429,6 +463,8 @@ function init_table(options) {
             above_menu.append(b);
             if (defaults.onclicks[options.menu.above[i].onclick])
                 b.click(defaults.onclicks[options.menu.above[i].onclick]);
+            else
+                b.click(options.menu.above[i].onclick);
         }
     }
     var right_menu;
@@ -443,6 +479,8 @@ function init_table(options) {
             right_menu.append(b);
             if (defaults.onclicks[options.menu.right[i].onclick])
                 b.click(defaults.onclicks[options.menu.right[i].onclick]);
+            else
+                b.click(options.menu.right[i].onclick);
         }
     }
     var left_menu;
@@ -457,50 +495,23 @@ function init_table(options) {
             left_menu.append(b);
             if (defaults.onclicks[options.menu.left[i].onclick])
                 b.click(defaults.onclicks[options.menu.left[i].onclick]);
+            else
+                b.click(options.menu.left[i].onclick);
         }
     }
-    if (left_menu || right_menu) {
-        table.find('tbody').on('click', 'tr', function () {
-            var row = $(this);
-            if (row.hasClass('selected')) {
-                row.removeClass('selected');
-            }
-            else {
-                table.$('tr.selected').removeClass('selected');
-                row.addClass('selected');
-            }
-            if (row.hasClass('selected')) {
-                var t = row.offset().top;
-                var r = table.parents(".dataTables_wrapper");
-                if (left_menu) {
-                    left_menu.css('visibility', 'visible');
-                    left_menu.offset({ 'top': t, 'left': r.offset().left - left_menu.outerWidth() });
-                    left_menu.css("padding-top", row.find('td:first').css("padding-top"));
-                    left_menu.css("padding-bottom", row.find('td:first').css("padding-bottom"));
-                    left_menu.innerHeight(row.innerHeight());
-                }
-                if (right_menu) {
-                    right_menu.css('visibility', 'visible');
-                    right_menu.offset({ 'top': t, 'left': r.offset().left + r.outerWidth(true) });
-                    right_menu.css("padding-top", row.find('td:first').css("padding-top"));
-                    right_menu.css("padding-bottom", row.find('td:first').css("padding-bottom"));
-                    right_menu.innerHeight(row.innerHeight());
-                }
-            }
-            else {
-                if (left_menu)
-                    left_menu.css('visibility', 'hidden');
-                if (right_menu)
-                    right_menu.css('visibility', 'hidden');
-            }
-        });
-        table.on('draw.dt', function () {
-            if (left_menu)
-                left_menu.css('visibility', 'hidden');
-            if (right_menu)
-                right_menu.css('visibility', 'hidden');
-        });
-    }
+
+    table.find('tbody').on('click', 'tr', function () {
+        defaults.default_row_clicked($(this));
+        if (options.on_raw_clicked)
+            options.on_raw_clicked();
+    });
+
+    table.on('draw.dt', function () {
+        if (left_menu)
+            left_menu.css('visibility', 'hidden');
+        if (right_menu)
+            right_menu.css('visibility', 'hidden');
+    });
 
     return table;
 }

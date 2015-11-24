@@ -1,0 +1,33 @@
+﻿@model IEnumerable<Cliver.ProductOffice.Models.Product>
+
+<h2>Product Group</h2>
+
+<a href="#" onclick="">Remove All</a>
+<div id="Group">
+
+</div>
+
+<script>
+    var products_table = init_table({
+        server_side: true,
+        id_column_id: 0,
+        request_path: "@Request.Path",
+        invisible_column_ids: [0],
+        default_actions_prefix: null,
+        rowCallback: "default_rowCallback",
+        on_raw_clicked: on_main_table_raw_clicked,
+        menu: {
+            above: [
+                { text: "Start Grouping", onclick: function () { alert("2"); } }
+            ],
+            left: [
+                { text: "Show Group", onclick: function () { alert("1"); } }
+            ],
+            right: [
+                { text: "Details", onclick: "default_details" }
+            ]
+        }
+    });
+</script>
+
+

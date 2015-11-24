@@ -435,6 +435,7 @@
     <Content Include="Views\ProductGrouping\Details.cshtml" />
     <Content Include="Views\ProductGrouping\Edit.cshtml" />
     <Content Include="Views\ProductGrouping\Index.cshtml" />
+    <Content Include="Views\ProductGrouping\Group.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
