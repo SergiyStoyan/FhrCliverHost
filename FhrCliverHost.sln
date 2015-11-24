@@ -21,7 +21,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "unionrepair.com", "Crawlers
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FhrCrawlerHostManager", "FhrCrawlerHostManager\FhrCrawlerHostManager.csproj", "{7D9E434D-1666-4464-B745-EFDB06DD538C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FhrDbCleaner", "FhrDbCleaner\FhrDbCleaner.csproj", "{2AF8FDFD-FD6B-4BBD-B31C-524464550342}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FhrCleaner", "FhrCleaner\FhrCleaner.csproj", "{2AF8FDFD-FD6B-4BBD-B31C-524464550342}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FhrDbReplicator", "FhrDbReplicator\FhrDbReplicator.csproj", "{93690F6D-131C-4D59-A3C0-C8A8060811C8}"
 EndProject

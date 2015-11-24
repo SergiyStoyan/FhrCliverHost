@@ -7,8 +7,8 @@
     <ProjectGuid>{2AF8FDFD-FD6B-4BBD-B31C-524464550342}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Cliver.FhrDbCleaner</RootNamespace>
-    <AssemblyName>FhrDbCleaner</AssemblyName>
+    <RootNamespace>Cliver.FhrCleaner</RootNamespace>
+    <AssemblyName>FhrCleaner</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

@@ -8,7 +8,7 @@ using Cliver.FhrCrawlerHost;
 using Cliver.Bot;
 using System.Text.RegularExpressions;
 
-namespace Cliver.FhrDbCleaner
+namespace Cliver.FhrCleaner
 {
     class Program
     {
