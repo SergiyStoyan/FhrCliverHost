@@ -32,7 +32,7 @@
                 @Html.DisplayNameFor(model => model.UpdateTime)
             </th>
             <th>
-                @:Image
+                Image
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Name)
@@ -46,9 +46,6 @@
             <th>
                 @Html.DisplayNameFor(model => model.Url)
             </th>
-            <th>
-                Group
-            </th>
         </tr>
     </thead>
 
@@ -60,6 +57,7 @@
         request_path: "@Request.Path",
         invisible_column_ids: [0],
         default_actions_prefix: null,
+        rowCallback: "default_rowCallback",
         menu: {
             above: [
             ],

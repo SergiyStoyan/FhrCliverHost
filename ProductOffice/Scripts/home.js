@@ -277,100 +277,29 @@ function show_table_row_editor(content_url, ok_button_text, on_success) {
     return e;
 }
 
-var options = {
-    menu: {
-        above: [
-            { text: "New", onclick: "default_new" },
-            { text: "Start Group", onclick: function () { }, style: null }
-        ],
-        left: [
-            { text: "Delete", onclick: "default_delete", style: "default_delete" },
-            { text: "Add to Group", onclick: function () { } }
-        ],
-        right: [
-            { text: "Details", onclick: "default_details" },
-            { text: "Edit", onclick: "default_edit" }
-        ]
-    }
-};
-
-var options = {
-    server_side: true,
-    id_column_id:0,
-    invisible_column_ids:[],
-    default_actions_prefix:null,
-    menu: {
-        above: [
-            { text: "New", onclick: "default_new" },
-        ],
-        left: [
-            { text: "Delete", onclick: "default_delete", style: "default_delete" },
-        ],
-        right: [
-            { text: "Details", onclick: "default_details" },
-            { text: "Edit", onclick: "default_edit" }
-        ]
-    }
-};
-
+//init_table options sample:
+//var options = {
+//    server_side: true,
+//    id_column_id: 0,
+//    invisible_column_ids: [],
+//    default_actions_prefix: null,
+//    rowCallback: "default_rowCallback",
+//    menu: {
+//        above: [
+//            { text: "New", onclick: "default_new" },
+//            { text: "Start Group", onclick: function () { }, style: null }
+//        ],
+//        left: [
+//            { text: "X", onclick: "default_delete", style: "default_delete" },
+//            { text: "Add to Group", onclick: function () { } }
+//        ],
+//        right: [
+//            { text: "Details", onclick: "default_details" },
+//            { text: "Edit", onclick: "default_edit" }
+//        ]
+//    }
+//};
 function init_table(options) {
-    if (!options.default_actions_prefix)
-        options.default_actions_prefix = '';
-
-    var definition = {
-        "scrollX": true,
-        "processing": true,
-        "language": {
-            "processing": '<img src="/Images/ajax-loader.gif" style="z-index:1;position:relative"/>'
-        },
-        "paging": true,
-        //"columnDefs": [
-        //    { "visible": false, "targets": 0 },
-        //],
-        //"columns": [
-        //  { "visible": false },
-        //  null,
-        //  null,
-        //],
-        //"stateSave": true,
-        "rowCallback": function (row, data, index) {
-            h = $(row).html().replace(/(\d{4}\-\d{2}\-\d{2})T(\d{2}\:\d{2}:\d{2})(\.\d+)?/i, "$1 $2");
-            h = h.replace(/(<a\s.*?<\/a\s*>|https?\:\/\/[^\s<>\'\"]*)/i, function (m) {
-                if (m[0] == "<") {
-                    return m;
-                }
-                return "<a href=\"" + m + "\">" + m + "</a>";
-            });
-            $(row).html(h);
-        }
-    };
-    if (options.server_side) {
-        definition["serverSide"] = true;
-        definition["ajax"] = {
-            "url": options.request_path + "/TableJson" + options.default_actions_prefix,
-            "type": 'POST',
-        };
-    }
-    if (options.invisible_column_ids) {
-        definition["columnDefs"] = Array();
-        for (var i = options.invisible_column_ids.length - 1; i >= 0; i--)
-            definition["columnDefs"].push({ "visible": false, "targets": options.invisible_column_ids[i] });
-    }
-
-    var table = $("table:last").dataTable(definition);
-
-    //table.columns[id_column_id].visible(show_id_column);
-
-    if (options.server_side) {
-        var search_box = table.parent().find(".dataTables_filter").find("input");
-        //search_box.keyup(function () {
-        search_box.on('keyup', function (event) {
-            if (event.keyCode == 13) {
-                table.api().search(search_box.val()).draw();
-            }
-        });
-    }
-
     var defaults = {
         onclicks: {
             default_new: function () {
@@ -421,9 +350,73 @@ function init_table(options) {
         },
         styles: {
             default_delete: "color:#f00;"
+        },
+        default_rowCallback: function (row, data, index) {
+            console.log(row);
+            h = $(row).html().replace(/(\d{4}\-\d{2}\-\d{2})T(\d{2}\:\d{2}:\d{2})(\.\d+)?/ig, "$1 $2");
+            h = h.replace(/(<a\s.*?<\/a\s*>|<img\s.*?>|https?\:\/\/[^\s<>\'\"]*)/ig, function (m) {
+                if (m[0] == "<")
+                    return m;
+                return "<a href=\"" + m + "\">" + m + "</a>";
+            });
+            $(row).html(h);
         }
     };
 
+    if (!options.default_actions_prefix)
+        options.default_actions_prefix = '';
+
+    var definition = {
+        "scrollX": true,
+        "processing": true,
+        "language": {
+            "processing": '<img src="/Images/ajax-loader.gif" style="z-index:1;position:relative"/>'
+        },
+        "paging": true,
+        //"columnDefs": [
+        //    { "visible": false, "targets": 0 },
+        //],
+        //"columns": [
+        //  { "visible": false },
+        //  null,
+        //  null,
+        //],
+        //"stateSave": true,
+        //initComplete: function (settings, json) { alert(json);}
+    };
+    if (options.rowCallback) {
+        if (defaults[options.rowCallback])
+            definition["rowCallback"] = defaults[options.rowCallback];
+        else
+            definition["rowCallback"] = options.rowCallback;
+    }
+    if (options.server_side) {
+        definition["serverSide"] = true;
+        definition["ajax"] = {
+            "url": options.request_path + "/TableJson" + options.default_actions_prefix,
+            "type": 'POST',
+        };
+    }
+    if (options.invisible_column_ids) {
+        definition["columnDefs"] = Array();
+        for (var i = options.invisible_column_ids.length - 1; i >= 0; i--)
+            definition["columnDefs"].push({ "visible": false, "targets": options.invisible_column_ids[i] });
+    }
+
+    var table = $("table:last").dataTable(definition);
+
+    //table.columns[id_column_id].visible(show_id_column);
+
+    if (options.server_side) {
+        var search_box = table.parent().find(".dataTables_filter").find("input");
+        //search_box.keyup(function () {
+        search_box.on('keyup', function (event) {
+            if (event.keyCode == 13) {
+                table.api().search(search_box.val()).draw();
+            }
+        });
+    }
+    
     var menus = {};
     if (options.menu.above && options.menu.above.length) {
         var above_menu = $("<p></p>");

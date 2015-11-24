@@ -47,6 +47,7 @@ Company related settings:
         request_path: "@Request.Path",
         invisible_column_ids: [0],
         default_actions_prefix: null,
+        rowCallback: "default_rowCallback",
         menu: {
             right: [
                 { text: "Edit", onclick: "default_edit" }
@@ -80,6 +81,7 @@ Company-to-company related settings:
         request_path: "@Request.Path",
         invisible_column_ids: [0],
         default_actions_prefix: "2",
+        rowCallback: "default_rowCallback",
         menu: {
             right: [
                 { text: "Edit", onclick: "default_edit" }

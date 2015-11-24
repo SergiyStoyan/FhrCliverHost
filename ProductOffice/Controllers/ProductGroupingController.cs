@@ -50,13 +50,13 @@ namespace Cliver.ProductOffice.Controllers
             JsonResult jr = JqueryDataTable.Index(request, db.Database.Connection, "FROM Products", fields);
             foreach (var r in ((dynamic)jr.Data).Data)
             {
-                string s = Convert.ToString(r[1]);
-                if (!String.IsNullOrEmpty(s))
-                    r[1] = "<img src='" + Regex.Replace(s, @"[\r\n].*", "", RegexOptions.Singleline) + "' />";
+                string s = Convert.ToString(r[2]);
+                if (s != null)
+                    r[2] = "<img src='" + Regex.Replace(s, @"[\r\n].*", "", RegexOptions.Singleline) + "'/>";
                 s = Convert.ToString(r[6]);
-                if (!String.IsNullOrEmpty(s))
-                    r[6] = "<a href='" + s + "'>Site</a>";
-                r[7] = "<a href='#' onclick='javascript: add_product_to_group(" + r[0] + ")'>Group</a>";
+                if (s != null)
+                    r[6] = "<a href='" + s + "' target='_blank'>Site</a>";
+                //r[7] = "<a href='#' onclick='javascript: add_product_to_group(" + r[0] + ")'>Group</a>";
             }
             return jr;
         }
