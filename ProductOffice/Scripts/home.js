@@ -280,6 +280,7 @@ function show_table_row_editor(content_url, ok_button_text, on_success) {
 //init_table options sample:
 var options = {
     server: {
+        do_not_get_data: false,
         request_path: "@Request.Path",
         actions_prefix: null,
     },
@@ -355,7 +356,6 @@ function init_table(options) {
             default_delete: "color:#f00;"
         },
         default_rowCallback: function (row, data, index) {
-            console.log(row);
             h = $(row).html().replace(/(\d{4}\-\d{2}\-\d{2})T(\d{2}\:\d{2}:\d{2})(\.\d+)?/ig, "$1 $2");
             h = h.replace(/(<a\s.*?<\/a\s*>|<img\s.*?>|https?\:\/\/[^\s<>\'\"]*)/ig, function (m) {
                 if (m[0] == "<")
@@ -426,7 +426,7 @@ function init_table(options) {
         else
             definition["rowCallback"] = options.rowCallback;
     }
-    if (options.server) {
+    if (!options.server.do_not_get_data) {
         definition["serverSide"] = true;
         definition["ajax"] = {
             "url": options.server.request_path + "/TableJson" + options.server.actions_prefix,
