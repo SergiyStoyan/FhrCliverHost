@@ -47,21 +47,16 @@ Refresh data every @RefreshSpanInSecs seconds
 </table>
 
 <script type="text/javascript">
-    var table =
-        init_table({
-            server: {
-                request_path: "@Request.Path",
-                actions_prefix: null,
-            },
-            id_column_id: 0,
-            invisible_column_ids: [0],
-            rowCallback: "default_rowCallback",
-            menu: {
-                right: [
-                    { text: "Details", onclick: "default_details" },
-                ]
-            }
-        });
+    var table = init_table({
+        server: {
+            request_path: "@Request.Path",
+        },
+        menu:{
+            top:false,
+            left:false,
+            right:[{default:"details"}],
+        }
+    });
 
     var fields2select_pattern = {
         "CrawlerId": null,

@@ -33,23 +33,7 @@ Refresh data every @RefreshSpanInSecs seconds
     var table = init_table({
         server: {
             request_path: "@Request.Path",
-            actions_prefix: null,
         },
-        id_column_id: 0,
-        invisible_column_ids: [0],
-        rowCallback: "default_rowCallback",
-        menu: {
-            above: [
-                { text: "New", onclick: "default_new" },
-            ],
-            left: [
-                { text: "X", onclick: "default_delete", style: "default_delete" },
-            ],
-            right: [
-                { text: "Details", onclick: "default_details" },
-                { text: "Edit", onclick: "default_edit" }
-            ]
-        }
     });
 
     var refresh_timer = null;

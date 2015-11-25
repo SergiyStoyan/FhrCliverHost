@@ -31,46 +31,29 @@ Refresh data every @RefreshSpanInSecs seconds
 </table>
 
 <script type="text/javascript">
-    var table =
-        init_table({
+    var table = init_table({
             server: {
                 request_path: "@Request.Path",
-                actions_prefix: null,
             },
-            id_column_id: 0,
-            invisible_column_ids: [0],
-            rowCallback: "default_rowCallback",
-            menu: {
-                above: [
-                    { text: "New", onclick: "default_new" },
-                ],
-                left: [
-                    { text: "X", onclick: "default_delete", style: "default_delete" },
-                ],
-                right: [
-                    { text: "Details", onclick: "default_details" },
-                    { text: "Edit", onclick: "default_edit" }
-                ]
-            }
         });
 
-    var refresh_timer = null;
-    function RefreshTable(run){
-        if(run)
-        {
-            if(!refresh_timer )
-                refresh_timer = setInterval(function () {
-                    table.api().draw();
-                }, 1000 * @RefreshSpanInSecs);
-        }
-        else
-        {
-            if(refresh_timer )
+        var refresh_timer = null;
+        function RefreshTable(run){
+            if(run)
             {
-                clearInterval(refresh_timer);
-                refresh_timer = null;
+                if(!refresh_timer )
+                    refresh_timer = setInterval(function () {
+                        table.api().draw();
+                    }, 1000 * @RefreshSpanInSecs);
+            }
+            else
+            {
+                if(refresh_timer )
+                {
+                    clearInterval(refresh_timer);
+                    refresh_timer = null;
+                }
             }
         }
-    }
 
 </script>

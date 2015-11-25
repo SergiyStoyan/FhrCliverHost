@@ -11,24 +11,21 @@
     var products_table = init_table({
         server: {
             request_path: "@Request.Path",
-            actions_prefix: null,
         },
-        id_column_id: 0,
-        invisible_column_ids: [0],
-        rowCallback: "default_rowCallback",
-        on_raw_clicked: on_main_table_raw_clicked,
         menu: {
-            above: [
+            top: [
                 { text: "Start Grouping", onclick: function () { alert("2"); } }
             ],
             left: [
                 { text: "Show Group", onclick: function () { alert("1"); } }
             ],
             right: [
-                { text: "Details", onclick: "default_details" }
+                { default:"details" }
             ]
-        }
+        },
     });
+    products_table.find('tbody').on('click', 'tr', function () { products_table.definition.on_row_clicked($(this)); });
+
 </script>
 
 

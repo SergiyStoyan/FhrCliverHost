@@ -44,14 +44,10 @@ Company related settings:
     var table1 = init_table({
         server: {
             request_path: "@Request.Path",
-            actions_prefix: null,
         },
-        id_column_id: 0,
-        invisible_column_ids: [0],
-        rowCallback: "default_rowCallback",
         menu: {
             right: [
-                { text: "Edit", onclick: "default_edit" }
+                { default:"edit" }
             ]
         }
     });
@@ -81,12 +77,9 @@ Company-to-company related settings:
             request_path: "@Request.Path",
             actions_prefix: "2",
         },
-        id_column_id: 0,
-        invisible_column_ids: [0],
-        rowCallback: "default_rowCallback",
         menu: {
             right: [
-                { text: "Edit", onclick: "default_edit" }
+                { "default":"edit" }
             ]
         }
     });

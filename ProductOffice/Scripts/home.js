@@ -99,7 +99,7 @@ function show_ajax_modal_box(title, buttons, content_div_id) {
     //if (!title)
     //    title = '&nbsp;';
 
-    var html = '<div><div class="_loading" style="height:100%;width:100%;position:absolute;z-index:10;"><img src="/Images/ajax-loader.gif" style="display:block;margin:auto;position:relative;top:50%;transform:translateY(-50%);"/></div></div>';
+    var html = '<div><div class="_loading" style="height:100%;width:100%;position:absolute;z-index:10;display:none;"><img src="/Images/ajax-loader.gif" style="display:block;margin:auto;position:relative;top:50%;transform:translateY(-50%);"/></div></div>';
     var e = $(html);
     $("body").append(e);
 
@@ -207,164 +207,115 @@ function show_ajax_modal_box(title, buttons, content_div_id) {
     return e;
 }
 
-function show_table_row_editor(content_url, ok_button_text, on_success) {
-    var e;
-    
-    var buttons = {};
-    if (on_success) {
-        buttons[ok_button_text] = function () {
-            if (!e.find("form").valid())
-                return;
-
-            e.processing();
-
-            $.ajax({
-                type: e.find("form").attr('method'),
-                url: e.find("form").attr('action'),
-                data: e.find("form").serialize(),
-                success: function (data) {
-                    if (!data || data.redirect) {
-                        e.remove();
-                        on_success();
-                        return;
-                    }
-                    e.processing(false);
-                    e.content(data);
+function init_table(definition) {
+    if (!definition.server.actions_prefix)
+        definition.server.actions_prefix = '';
+    var default_definition = {
+        server: {
+            request_path: "!",
+            actions_prefix: '',
+        },
+        table: {
+            id_column_id: 0,
+            invisible_column_ids: [0],
+        },
+        menu: {
+            top: [
+                {
+                    text: "New",
+                    onclick: function () {
+                        table.modalBox = definition.show_row_editor(definition.server.request_path + "/Create" + definition.server.actions_prefix, "Create", function () {
+                            if (definition.server)
+                                table.api().draw();
+                            else
+                                location.reload();
+                        });
+                    },
+                    default: "new",
                 },
-                error: function (xhr, error) {
-                    e.processing(false);
-                    show_error(xhr.responseText);
+            ],
+            left: [
+                {
+                    text: "X",
+                    onclick: function () {
+                        if (!table.$('tr.selected').is("tr")) {
+                            show_message("No row selected!", "Warning");
+                            return false;
+                        }
+                        var id = table.fnGetData(table.$('tr.selected'))[definition.table.id_column_id];
+
+                        table.modalBox = definition.show_row_editor(definition.server.request_path + "/Delete" + definition.server.actions_prefix + "?Id=" + id, "Delete", function () {
+                            if (definition.server)
+                                table.api().draw();
+                            else
+                                location.reload();
+                        });
+                    },
+                    style: "color:#f00;",
+                    default: "delete",
                 }
-            });
-        };
-        buttons["Cancel"] = function () {
-            e.remove();
-        }
-    }
-    else {
-        buttons[ok_button_text] = function () {
-            e.remove();
-        }
-    }
-    
-    e = show_ajax_modal_box(null, buttons);
+            ],
+            right: [
+                {
+                    text: "Details",
+                    onclick: function () {
+                        if (!table.$('tr.selected').is("tr")) {
+                            show_message("No row selected!", "Warning");
+                            return false;
+                        }
+                        var id = table.fnGetData(table.$('tr.selected'))[definition.table.id_column_id];
 
-    e.getContentByAjax(
-        {
-            type: "GET",
-            url: content_url,
+                        table.modalBox = definition.show_row_editor(definition.server.request_path + "/Details" + definition.server.actions_prefix + "?Id=" + id, "OK");
+                    },
+                    default: "details",
+                },
+                {
+                    text: "Edit",
+                    onclick: function () {
+                        if (!table.$('tr.selected').is("tr")) {
+                            show_message("No row selected!", "Warning");
+                            return false;
+                        }
+                        var id = table.fnGetData(table.$('tr.selected'))[definition.table.id_column_id];
+
+                        table.modalBox = definition.show_row_editor(definition.server.request_path + "/Edit" + definition.server.actions_prefix + "?Id=" + id, "Save", function () {
+                            if (definition.server)
+                                table.api().draw();
+                            else
+                                location.reload();
+                        });
+                    },
+                    default: "edit",
+                }
+            ]
         },
-        function (data) {
-            var title;
-            var r = /\<h2\s*[^>]*\>([^]*)\<\/h2\s*[^>]*\>/mi;
-            var m = r.exec(data);
-            if (m) {
-                title = m[1];
-                data = data.replace(r, "");
-            }
-            e.title(title);
-
-            e.content(data);
-            e.find("form").find("input[type='submit']").parent().hide();
-
-            e.find("form").validate();//does not work properly
-                //$.getScript("/Scripts/jquery.validate.js");
-                //$.getScript("/Scripts/jquery.validate.unobtrusive.js");
-            //e.find("form").valid();
-        }
-    );
-
-    return e;
-}
-
-//init_table options sample:
-var options = {
-    server: {
-        do_not_get_data: false,
-        request_path: "@Request.Path",
-        actions_prefix: null,
-    },
-    id_column_id: 0,
-    invisible_column_ids: [],
-    rowCallback: "default_rowCallback",
-    on_raw_clicked: null,
-    menu: {
-        above: [
-            { text: "New", onclick: "default_new" },
-            { text: "Start Group", onclick: function () { }, style: null }
-        ],
-        left: [
-            { text: "X", onclick: "default_delete", style: "default_delete" },
-            { text: "Add to Group", onclick: function () { } }
-        ],
-        right: [
-            { text: "Details", onclick: "default_details" },
-            { text: "Edit", onclick: "default_edit" }
-        ]
-    }
-};
-function init_table(options) {
-    var defaults = {
-        onclicks: {
-            default_new: function () {
-                table.modalBox = show_table_row_editor(options.server.request_path + "/Create" + options.server.actions_prefix, "Create", function () {
-                    if (options.server)
-                        table.api().draw();
-                    else
-                        location.reload();
-                });
+        datatable: {
+            serverSide: true,
+            ajax: {
+                url: definition.server.request_path + "/TableJson" + definition.server.actions_prefix,
+                type: 'POST',
             },
-            default_delete: function () {
-                if (!table.$('tr.selected').is("tr")) {
-                    show_message("No row selected!", "Warning");
-                    return false;
-                }
-                var id = table.fnGetData(table.$('tr.selected'))[options.id_column_id];
-
-                table.modalBox = show_table_row_editor(options.server.request_path + "/Delete" + options.server.actions_prefix + "?Id=" + id, "Delete", function () {
-                    if (options.server)
-                        table.api().draw();
-                    else
-                        location.reload();
-                });
+            scrollX: true,
+            processing: true,
+            language: {
+                processing: '<img src="/Images/ajax-loader.gif" style="z-index:1;position:relative"/>'
             },
-            default_details: function () {
-                if (!table.$('tr.selected').is("tr")) {
-                    show_message("No row selected!", "Warning");
-                    return false;
-                }
-                var id = table.fnGetData(table.$('tr.selected'))[options.id_column_id];
-
-                table.modalBox = show_table_row_editor(options.server.request_path + "/Details" + options.server.actions_prefix + "?Id=" + id, "OK");
-            },
-            default_edit: function () {
-                if (!table.$('tr.selected').is("tr")) {
-                    show_message("No row selected!", "Warning");
-                    return false;
-                }
-                var id = table.fnGetData(table.$('tr.selected'))[options.id_column_id];
-
-                table.modalBox = show_table_row_editor(options.server.request_path + "/Edit" + options.server.actions_prefix + "?Id=" + id, "Save", function () {
-                    if (options.server)
-                        table.api().draw();
-                    else
-                        location.reload();
-                });
-            }
+            rowCallback: definition.on_row_filled,
+            paging: true,
+            //ordering: false,
+            //info: false 
+            //"columnDefs": [
+            //    { "visible": false, "targets": 0 },
+            //],
+            //"columns": [
+            //  { "visible": false },
+            //  null,
+            //  null,
+            //],
+            //"stateSave": true,
+            //initComplete: function (settings, json) { alert(json);}
         },
-        styles: {
-            default_delete: "color:#f00;"
-        },
-        default_rowCallback: function (row, data, index) {
-            h = $(row).html().replace(/(\d{4}\-\d{2}\-\d{2})T(\d{2}\:\d{2}:\d{2})(\.\d+)?/ig, "$1 $2");
-            h = h.replace(/(<a\s.*?<\/a\s*>|<img\s.*?>|https?\:\/\/[^\s<>\'\"]*)/ig, function (m) {
-                if (m[0] == "<")
-                    return m;
-                return "<a href=\"" + m + "\">" + m + "</a>";
-            });
-            $(row).html(h);
-        },
-        default_row_clicked: function (row) {
+        on_row_clicked: function (row) {
             if (row.hasClass('selected')) {
                 row.removeClass('selected');
             }
@@ -375,75 +326,135 @@ function init_table(options) {
             if (row.hasClass('selected')) {
                 var t = row.offset().top;
                 var r = table.parents(".dataTables_wrapper");
-                if (left_menu) {
-                    left_menu.css('visibility', 'visible');
-                    left_menu.offset({ 'top': t, 'left': r.offset().left - left_menu.outerWidth() });
-                    left_menu.css("padding-top", row.find('td:first').css("padding-top"));
-                    left_menu.css("padding-bottom", row.find('td:first').css("padding-bottom"));
-                    left_menu.innerHeight(row.innerHeight());
+                if (table.left_menu) {
+                    table.left_menu.css('visibility', 'visible');
+                    table.left_menu.offset({ 'top': t, 'left': r.offset().left - table.left_menu.outerWidth() });
+                    table.left_menu.css("padding-top", row.find('td:first').css("padding-top"));
+                    table.left_menu.css("padding-bottom", row.find('td:first').css("padding-bottom"));
+                    table.left_menu.innerHeight(row.innerHeight());
                 }
-                if (right_menu) {
-                    right_menu.css('visibility', 'visible');
-                    right_menu.offset({ 'top': t, 'left': r.offset().left + r.outerWidth(true) });
-                    right_menu.css("padding-top", row.find('td:first').css("padding-top"));
-                    right_menu.css("padding-bottom", row.find('td:first').css("padding-bottom"));
-                    right_menu.innerHeight(row.innerHeight());
+                if (table.right_menu) {
+                    table.right_menu.css('visibility', 'visible');
+                    table.right_menu.offset({ 'top': t, 'left': r.offset().left + r.outerWidth(true) });
+                    table.right_menu.css("padding-top", row.find('td:first').css("padding-top"));
+                    table.right_menu.css("padding-bottom", row.find('td:first').css("padding-bottom"));
+                    table.right_menu.innerHeight(row.innerHeight());
                 }
             }
             else {
-                if (left_menu)
-                    left_menu.css('visibility', 'hidden');
-                if (right_menu)
-                    right_menu.css('visibility', 'hidden');
+                if (table.left_menu)
+                    table.left_menu.css('visibility', 'hidden');
+                if (table.right_menu)
+                    table.right_menu.css('visibility', 'hidden');
             }
-        }
-    }
-
-    if (!options.server.actions_prefix)
-        options.server.actions_prefix = '';
-
-    var definition = {
-        "scrollX": true,
-        "processing": true,
-        "language": {
-            "processing": '<img src="/Images/ajax-loader.gif" style="z-index:1;position:relative"/>'
         },
-        "paging": true,
-        //"columnDefs": [
-        //    { "visible": false, "targets": 0 },
-        //],
-        //"columns": [
-        //  { "visible": false },
-        //  null,
-        //  null,
-        //],
-        //"stateSave": true,
-        //initComplete: function (settings, json) { alert(json);}
+        on_row_filled: function (row, data, index) {
+            h = $(row).html().replace(/(\d{4}\-\d{2}\-\d{2})T(\d{2}\:\d{2}:\d{2})(\.\d+)?/ig, "$1 $2");
+            h = h.replace(/(<a\s.*?<\/a\s*>|<img\s.*?>|https?\:\/\/[^\s<>\'\"]*)/ig, function (m) {
+                if (m[0] == "<")
+                    return m;
+                return "<a href=\"" + m + "\">" + m + "</a>";
+            });
+            $(row).html(h);
+        },
+        show_row_editor: function (content_url, ok_button_text, on_success) {
+            var e;
+
+            var buttons = {};
+            if (on_success) {
+                buttons[ok_button_text] = function () {
+                    if (!e.find("form").valid())
+                        return;
+
+                    e.processing();
+
+                    $.ajax({
+                        type: e.find("form").attr('method'),
+                        url: e.find("form").attr('action'),
+                        data: e.find("form").serialize(),
+                        success: function (data) {
+                            if (!data || data.redirect) {
+                                e.remove();
+                                on_success();
+                                return;
+                            }
+                            e.processing(false);
+                            e.content(data);
+                        },
+                        error: function (xhr, error) {
+                            e.processing(false);
+                            show_error(xhr.responseText);
+                        }
+                    });
+                };
+                buttons["Cancel"] = function () {
+                    e.remove();
+                }
+            }
+            else {
+                buttons[ok_button_text] = function () {
+                    e.remove();
+                }
+            }
+
+            e = show_ajax_modal_box(null, buttons);
+
+            e.getContentByAjax(
+                {
+                    type: "GET",
+                    url: content_url,
+                },
+                function (data) {
+                    var title;
+                    var r = /\<h2\s*[^>]*\>([^]*)\<\/h2\s*[^>]*\>/mi;
+                    var m = r.exec(data);
+                    if (m) {
+                        title = m[1];
+                        data = data.replace(r, "");
+                    }
+                    e.title(title);
+
+                    e.content(data);
+                    e.find("form").find("input[type='submit']").parent().hide();
+
+                    e.find("form").validate();//does not work properly
+                    //$.getScript("/Scripts/jquery.validate.js");
+                    //$.getScript("/Scripts/jquery.validate.unobtrusive.js");
+                    //e.find("form").valid();
+                }
+            );
+
+            return e;
+        },
     };
-    if (options.rowCallback) {
-        if (defaults[options.rowCallback])
-            definition["rowCallback"] = defaults[options.rowCallback];
-        else
-            definition["rowCallback"] = options.rowCallback;
-    }
-    if (!options.server.do_not_get_data) {
-        definition["serverSide"] = true;
-        definition["ajax"] = {
-            "url": options.server.request_path + "/TableJson" + options.server.actions_prefix,
-            "type": 'POST',
-        };
-    }
-    if (options.invisible_column_ids) {
-        definition["columnDefs"] = Array();
-        for (var i = options.invisible_column_ids.length - 1; i >= 0; i--)
-            definition["columnDefs"].push({ "visible": false, "targets": options.invisible_column_ids[i] });
-    }
+    for (var i in definition.menu)
+        for (var j in definition.menu[i])
+            if (definition.menu[i][j].default)
+            {
+                for (var k in default_definition.menu)
+                    for (var l in default_definition.menu[k])
+                        if (default_definition.menu[k][l].default == definition.menu[i][j].default)
+                        {
+                            for (var n in default_definition.menu[k][l])
+                                if(!definition.menu[i][j][n])
+                                    definition.menu[i][j][n] = default_definition.menu[k][l][n];
+                        }
+            }
 
-    var table = $("table:last").dataTable(definition);
+    definition = $.extend(default_definition, definition);
 
-    //table.columns[id_column_id].visible(show_id_column);
+    if (!definition.datatable.serverSide)
+        definition.datatable.ajax = false;
 
-    if (options.server) {
+    if (definition.table.invisible_column_ids) {
+        definition.datatable["columnDefs"] = Array();
+        for (var i = definition.table.invisible_column_ids.length - 1; i >= 0; i--)
+            definition.datatable["columnDefs"].push({ "visible": false, "targets": definition.table.invisible_column_ids[i] });
+    }
+    
+    var table = $("table:last").dataTable(definition.datatable);
+
+    if (definition.datatable.serverSide) {
         var search_box = table.parent().find(".dataTables_filter").find("input");
         //search_box.keyup(function () {
         search_box.on('keyup', function (event) {
@@ -454,59 +465,38 @@ function init_table(options) {
     }
 
     var menus = {};
-    if (options.menu.above && options.menu.above.length) {
-        var above_menu = $("<p></p>");
-        table.parents(".dataTables_wrapper").before(above_menu);
-        for (var i in options.menu.above) {
-            var style = defaults.styles[options.menu.above[i].style];
-            if (!style)
-                style = options.menu.above[i].style;
-            var b = $('<a href="#" class="button" style=' + style + '>' + options.menu.above[i].text + '</a>');
-            above_menu.append(b);
-            if (defaults.onclicks[options.menu.above[i].onclick])
-                b.click(defaults.onclicks[options.menu.above[i].onclick]);
-            else
-                b.click(options.menu.above[i].onclick);
+    if (definition.menu.top && definition.menu.top.length) {
+        var top_menu = $("<p></p>");
+        table.parents(".dataTables_wrapper").before(top_menu);
+        for (var i in definition.menu.top) {
+            var b = $('<a href="#" class="button" style=' + definition.menu.top[i].style + '>' + definition.menu.top[i].text + '</a>');
+            top_menu.append(b);
+            b.click(definition.menu.top[i].onclick);
         }
     }
     var right_menu;
-    if (options.menu.right && options.menu.right.length) {
+    if (definition.menu.right && definition.menu.right.length) {
         var right_menu = $('<div class="table_floating_menu" style="visibility: hidden; position: absolute;"></div>');
         $("body").append(right_menu);
-        for (var i in options.menu.right) {
-            var style = defaults.styles[options.menu.right[i].style];
-            if (!style)
-                style = options.menu.right[i].style;
-            var b = $('<a href="#" class="button" style=' + style + '>' + options.menu.right[i].text + '</a>');
+        for (var i in definition.menu.right) {
+            var b = $('<a href="#" class="button" style=' + definition.menu.right[i].style + '>' + definition.menu.right[i].text + '</a>');
             right_menu.append(b);
-            if (defaults.onclicks[options.menu.right[i].onclick])
-                b.click(defaults.onclicks[options.menu.right[i].onclick]);
-            else
-                b.click(options.menu.right[i].onclick);
+            b.click(definition.menu.right[i].onclick);
         }
     }
     var left_menu;
-    if (options.menu.left && options.menu.left.length) {
+    if (definition.menu.left && definition.menu.left.length) {
         left_menu = $('<div class="table_floating_menu" style="visibility: hidden; position: absolute;"></div>');
         $("body").append(left_menu);
-        for (var i in options.menu.left) {
-            var style = defaults.styles[options.menu.left[i].style];
-            if (!style)
-                style = options.menu.left[i].style;
-            var b = $('<a href="#" class="button" style=' + style + '>' + options.menu.left[i].text + '</a>');
+        for (var i in definition.menu.left) {
+            var b = $('<a href="#" class="button" style=' + definition.menu.left[i].style + '>' + definition.menu.left[i].text + '</a>');
             left_menu.append(b);
-            if (defaults.onclicks[options.menu.left[i].onclick])
-                b.click(defaults.onclicks[options.menu.left[i].onclick]);
-            else
-                b.click(options.menu.left[i].onclick);
+            b.click(definition.menu.left[i].onclick);
         }
     }
 
-    table.find('tbody').on('click', 'tr', function () {
-        defaults.default_row_clicked($(this));
-        if (options.on_raw_clicked)
-            options.on_raw_clicked();
-    });
+    if (definition.on_row_clicked)
+        table.find('tbody').on('click', 'tr', function () { definition.on_row_clicked($(this)); });
 
     table.on('draw.dt', function () {
         if (left_menu)
@@ -514,6 +504,11 @@ function init_table(options) {
         if (right_menu)
             right_menu.css('visibility', 'hidden');
     });
+
+    table.top_menu = top_menu;
+    table.left_menu = left_menu;
+    table.right_menu = right_menu;
+    table.definition = definition;
 
     return table;
 }

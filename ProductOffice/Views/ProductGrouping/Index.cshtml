@@ -8,7 +8,7 @@
 
 
 
-<div id="GroupContent" style="display:none;">
+<div id="GroupContent" style="display:none;" class="content-wrapper clear-fix">
     <a href="#" onclick="" class="button">Remove All</a>
     <table>
         <thead>
@@ -51,33 +51,36 @@
         if (!GroupTable) {
             GroupTable = init_table({
                 server: {
-                    do_not_get_data: true,
                     request_path: "@Request.Path",
-                    actions_prefix: null,
                 },
-                id_column_id: 0,
-                invisible_column_ids: [0],
-                rowCallback: "default_rowCallback",
-                on_raw_clicked: null,
+                datatable: {
+                    serverSide: false,
+                    paging: false,
+                   // info: false,
+                },
                 menu: {
-                    above: [
-                    ],
+                    top: false,
                     left: [
-                        { text: "X", onclick: "default_delete" },
+                        { default: "delete" },
                         { text: "Ungroup", onclick: function () { } }
                     ],
                     right: [
-                        { text: "Details", onclick: "default_details" },
-                        { text: "Edit", onclick: "default_edit" }
                     ]
-                }
+                },
             });
         }
 
-        console.log("row");
-        console.log(row);
-        var r = "<tr><td>" + row.join("</td><td>") + "</td></tr>";
-        group_table.find("tbody").append(r);
+        //console.log("row");
+        //console.log(row.find('td'));
+        //var r = "<tr>";
+        //row.find('td').each(function () { r += "<td>" + $(this).html() + "</td>"; });
+        //r += "</tr>";
+        //console.log(r);
+        //GroupTable.find("tbody").append(r);
+
+        r = ['1'];
+        row.find('td').each(function () { r.push($(this).html()); });
+        GroupTable.api().row.add(r).draw(false);
     }
 </script>
 
@@ -120,25 +123,20 @@
     var products_table = init_table({
         server: {
             request_path: "@Request.Path",
-            actions_prefix: null,
         },
-        id_column_id: 0,
-        invisible_column_ids: [0],
-        rowCallback: "default_rowCallback",
-        on_raw_clicked: null,
         menu: {
-            above: [
+            top: [
                 { text: "Start Grouping", onclick: function () { alert("2"); } }
             ],
             left: [
-                { text: "Add To Group", onclick: function () { add_raw_to_group(products_table.$('tr.selected')); } }
+                { text: "Add", onclick: function () { add_raw_to_group(products_table.$('tr.selected')); } }
             ],
             right: [
-                { text: "Details", onclick: "default_details" },
-                { text: "Show Group", onclick: function () { alert("1"); } }
+                { default: "details" }
             ]
-        }
+        },
     });
+    //products_table.find('tbody').on('click', 'tr', function () { products_table.definition.on_row_clicked($(this)); });
 
     function select_in_products_table(field, pattern) {
         if (pattern > -1)
