@@ -50,11 +50,7 @@
             GroupDlg.dialog("open");
         if (!GroupTable) {
             GroupTable = init_table({
-                server: {
-                    do_not_get_data: true,
-                    request_path: "@Request.Path",
-                    actions_prefix: null,
-                },
+                server: false,
                 id_column_id: 0,
                 invisible_column_ids: [0],
                 rowCallback: "default_rowCallback",
