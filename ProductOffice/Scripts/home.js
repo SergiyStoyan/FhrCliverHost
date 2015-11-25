@@ -278,34 +278,36 @@ function show_table_row_editor(content_url, ok_button_text, on_success) {
 }
 
 //init_table options sample:
-//var options = {
-//    server_side: true,
-//    id_column_id: 0,
-//    invisible_column_ids: [],
-//    default_actions_prefix: null,
-//    rowCallback: "default_rowCallback",
-//    on_raw_clicked: null,
-//    menu: {
-//        above: [
-//            { text: "New", onclick: "default_new" },
-//            { text: "Start Group", onclick: function () { }, style: null }
-//        ],
-//        left: [
-//            { text: "X", onclick: "default_delete", style: "default_delete" },
-//            { text: "Add to Group", onclick: function () { } }
-//        ],
-//        right: [
-//            { text: "Details", onclick: "default_details" },
-//            { text: "Edit", onclick: "default_edit" }
-//        ]
-//    }
-//};
+var options = {
+    server: {
+        request_path: "@Request.Path",
+        actions_prefix: null,
+    },
+    id_column_id: 0,
+    invisible_column_ids: [],
+    rowCallback: "default_rowCallback",
+    on_raw_clicked: null,
+    menu: {
+        above: [
+            { text: "New", onclick: "default_new" },
+            { text: "Start Group", onclick: function () { }, style: null }
+        ],
+        left: [
+            { text: "X", onclick: "default_delete", style: "default_delete" },
+            { text: "Add to Group", onclick: function () { } }
+        ],
+        right: [
+            { text: "Details", onclick: "default_details" },
+            { text: "Edit", onclick: "default_edit" }
+        ]
+    }
+};
 function init_table(options) {
     var defaults = {
         onclicks: {
             default_new: function () {
-                table.modalBox = show_table_row_editor(options.request_path + "/Create" + options.default_actions_prefix, "Create", function () {
-                    if (options.server_side)
+                table.modalBox = show_table_row_editor(options.server.request_path + "/Create" + options.server.actions_prefix, "Create", function () {
+                    if (options.server)
                         table.api().draw();
                     else
                         location.reload();
@@ -318,8 +320,8 @@ function init_table(options) {
                 }
                 var id = table.fnGetData(table.$('tr.selected'))[options.id_column_id];
 
-                table.modalBox = show_table_row_editor(options.request_path + "/Delete" + options.default_actions_prefix + "?Id=" + id, "Delete", function () {
-                    if (options.server_side)
+                table.modalBox = show_table_row_editor(options.server.request_path + "/Delete" + options.server.actions_prefix + "?Id=" + id, "Delete", function () {
+                    if (options.server)
                         table.api().draw();
                     else
                         location.reload();
@@ -332,7 +334,7 @@ function init_table(options) {
                 }
                 var id = table.fnGetData(table.$('tr.selected'))[options.id_column_id];
 
-                table.modalBox = show_table_row_editor(options.request_path + "/Details" + options.default_actions_prefix + "?Id=" + id, "OK");
+                table.modalBox = show_table_row_editor(options.server.request_path + "/Details" + options.server.actions_prefix + "?Id=" + id, "OK");
             },
             default_edit: function () {
                 if (!table.$('tr.selected').is("tr")) {
@@ -341,8 +343,8 @@ function init_table(options) {
                 }
                 var id = table.fnGetData(table.$('tr.selected'))[options.id_column_id];
 
-                table.modalBox = show_table_row_editor(options.request_path + "/Edit" + options.default_actions_prefix + "?Id=" + id, "Save", function () {
-                    if (options.server_side)
+                table.modalBox = show_table_row_editor(options.server.request_path + "/Edit" + options.server.actions_prefix + "?Id=" + id, "Save", function () {
+                    if (options.server)
                         table.api().draw();
                     else
                         location.reload();
@@ -397,8 +399,8 @@ function init_table(options) {
         }
     }
 
-    if (!options.default_actions_prefix)
-        options.default_actions_prefix = '';
+    if (!options.server.actions_prefix)
+        options.server.actions_prefix = '';
 
     var definition = {
         "scrollX": true,
@@ -424,10 +426,10 @@ function init_table(options) {
         else
             definition["rowCallback"] = options.rowCallback;
     }
-    if (options.server_side) {
+    if (options.server) {
         definition["serverSide"] = true;
         definition["ajax"] = {
-            "url": options.request_path + "/TableJson" + options.default_actions_prefix,
+            "url": options.server.request_path + "/TableJson" + options.server.actions_prefix,
             "type": 'POST',
         };
     }
@@ -441,7 +443,7 @@ function init_table(options) {
 
     //table.columns[id_column_id].visible(show_id_column);
 
-    if (options.server_side) {
+    if (options.server) {
         var search_box = table.parent().find(".dataTables_filter").find("input");
         //search_box.keyup(function () {
         search_box.on('keyup', function (event) {

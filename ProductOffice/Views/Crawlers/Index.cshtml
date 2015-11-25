@@ -33,11 +33,12 @@ Refresh data every @RefreshSpanInSecs seconds
 <script type="text/javascript">
     var table =
         init_table({
-            server_side: true,
+            server: {
+                request_path: "@Request.Path",
+                actions_prefix: null,
+            },
             id_column_id: 0,
-            request_path:"@Request.Path",
             invisible_column_ids: [0],
-            default_actions_prefix: null,
             rowCallback: "default_rowCallback",
             menu: {
                 above: [
