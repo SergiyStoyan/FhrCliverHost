@@ -46,9 +46,12 @@ Company related settings:
             request_path: "@Request.Path",
         },
         menu: {
-            right: [
-                { default:"edit" }
-            ]
+            top: false,
+            left: false,
+            right: {
+                edit: true,
+                details: false,
+            },
         }
     });
 </script>
@@ -78,9 +81,12 @@ Company-to-company related settings:
             actions_prefix: "2",
         },
         menu: {
-            right: [
-                { "default":"edit" }
-            ]
+            top: false,
+            left: false,
+            right: {
+                edit: true,
+                details: false,
+            },
         }
     });
 

@@ -26,9 +26,12 @@
             request_path: "@Request.Path",
         },
         menu: {
-            right: [
-                {default:"edit" }
-            ]
+            top: false,
+            left: false,
+            right: {
+                edit: true,
+                details: false,
+            },
         }
     });
 </script>

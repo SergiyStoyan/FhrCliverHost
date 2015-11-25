@@ -217,77 +217,78 @@ function init_table(definition) {
         },
         table: {
             id_column_id: 0,
-            invisible_column_ids: [0],
         },
         menu: {
-            top: [
-                {
-                    text: "New",
-                    onclick: function () {
-                        table.modalBox = definition.show_row_editor(definition.server.request_path + "/Create" + definition.server.actions_prefix, "Create", function () {
-                            if (definition.server)
-                                table.api().draw();
-                            else
-                                location.reload();
-                        });
-                    },
-                    default: "new",
-                },
-            ],
-            left: [
-                {
-                    text: "X",
-                    onclick: function () {
-                        if (!table.$('tr.selected').is("tr")) {
-                            show_message("No row selected!", "Warning");
-                            return false;
-                        }
-                        var id = table.fnGetData(table.$('tr.selected'))[definition.table.id_column_id];
-
-                        table.modalBox = definition.show_row_editor(definition.server.request_path + "/Delete" + definition.server.actions_prefix + "?Id=" + id, "Delete", function () {
-                            if (definition.server)
-                                table.api().draw();
-                            else
-                                location.reload();
-                        });
-                    },
-                    style: "color:#f00;",
-                    default: "delete",
+            top: {
+                new: true,            
+            },
+            left: {
+                delete: true,
+            },
+            right: {
+                details: true,
+                edit: true,
+            }
+        },
+        menu_processors: {
+            new: {
+                text: "New",
+                onclick: function () {
+                    table.modalBox = definition.show_row_editor(definition.server.request_path + "/Create" + definition.server.actions_prefix, "Create", function () {
+                        if (definition.server)
+                            table.api().draw();
+                        else
+                            location.reload();
+                    });
                 }
-            ],
-            right: [
-                {
-                    text: "Details",
-                    onclick: function () {
-                        if (!table.$('tr.selected').is("tr")) {
-                            show_message("No row selected!", "Warning");
-                            return false;
-                        }
-                        var id = table.fnGetData(table.$('tr.selected'))[definition.table.id_column_id];
+            },
+            details: {
+                text: "Details",
+                onclick: function () {
+                    if (!table.$('tr.selected').is("tr")) {
+                        show_message("No row selected!", "Warning");
+                        return false;
+                    }
+                    var id = table.fnGetData(table.$('tr.selected'))[definition.table.id_column_id];
 
-                        table.modalBox = definition.show_row_editor(definition.server.request_path + "/Details" + definition.server.actions_prefix + "?Id=" + id, "OK");
-                    },
-                    default: "details",
+                    table.modalBox = definition.show_row_editor(definition.server.request_path + "/Details" + definition.server.actions_prefix + "?Id=" + id, "OK");
                 },
-                {
-                    text: "Edit",
-                    onclick: function () {
-                        if (!table.$('tr.selected').is("tr")) {
-                            show_message("No row selected!", "Warning");
-                            return false;
-                        }
-                        var id = table.fnGetData(table.$('tr.selected'))[definition.table.id_column_id];
+            },
+            edit: {
+                text: "Edit",
+                onclick: function () {
+                    if (!table.$('tr.selected').is("tr")) {
+                        show_message("No row selected!", "Warning");
+                        return false;
+                    }
+                    var id = table.fnGetData(table.$('tr.selected'))[definition.table.id_column_id];
 
-                        table.modalBox = definition.show_row_editor(definition.server.request_path + "/Edit" + definition.server.actions_prefix + "?Id=" + id, "Save", function () {
-                            if (definition.server)
-                                table.api().draw();
-                            else
-                                location.reload();
-                        });
-                    },
-                    default: "edit",
-                }
-            ]
+                    table.modalBox = definition.show_row_editor(definition.server.request_path + "/Edit" + definition.server.actions_prefix + "?Id=" + id, "Save", function () {
+                        if (definition.server)
+                            table.api().draw();
+                        else
+                            location.reload();
+                    });
+                },
+            },
+            delete: {
+                text: "X",
+                onclick: function () {
+                    if (!table.$('tr.selected').is("tr")) {
+                        show_message("No row selected!", "Warning");
+                        return false;
+                    }
+                    var id = table.fnGetData(table.$('tr.selected'))[definition.table.id_column_id];
+
+                    table.modalBox = definition.show_row_editor(definition.server.request_path + "/Delete" + definition.server.actions_prefix + "?Id=" + id, "Delete", function () {
+                        if (definition.server)
+                            table.api().draw();
+                        else
+                            location.reload();
+                    });
+                },
+                style: "color:#f00;",
+            },
         },
         datatable: {
             serverSide: true,
@@ -295,6 +296,12 @@ function init_table(definition) {
                 url: definition.server.request_path + "/TableJson" + definition.server.actions_prefix,
                 type: 'POST',
             },
+            columnDefs:[
+                {
+                    visible: false, 
+                    targets: 0
+                },
+            ],
             scrollX: true,
             processing: true,
             language: {
@@ -326,26 +333,26 @@ function init_table(definition) {
             if (row.hasClass('selected')) {
                 var t = row.offset().top;
                 var r = table.parents(".dataTables_wrapper");
-                if (table.left_menu) {
-                    table.left_menu.css('visibility', 'visible');
-                    table.left_menu.offset({ 'top': t, 'left': r.offset().left - table.left_menu.outerWidth() });
-                    table.left_menu.css("padding-top", row.find('td:first').css("padding-top"));
-                    table.left_menu.css("padding-bottom", row.find('td:first').css("padding-bottom"));
-                    table.left_menu.innerHeight(row.innerHeight());
+                if (table.menu.left) {
+                    table.menu.left.css('visibility', 'visible');
+                    table.menu.left.offset({ 'top': t, 'left': r.offset().left - table.menu.left.outerWidth() });
+                    table.menu.left.css("padding-top", row.find('td:first').css("padding-top"));
+                    table.menu.left.css("padding-bottom", row.find('td:first').css("padding-bottom"));
+                    table.menu.left.innerHeight(row.innerHeight());
                 }
-                if (table.right_menu) {
-                    table.right_menu.css('visibility', 'visible');
-                    table.right_menu.offset({ 'top': t, 'left': r.offset().left + r.outerWidth(true) });
-                    table.right_menu.css("padding-top", row.find('td:first').css("padding-top"));
-                    table.right_menu.css("padding-bottom", row.find('td:first').css("padding-bottom"));
-                    table.right_menu.innerHeight(row.innerHeight());
+                if (table.menu.right) {
+                    table.menu.right.css('visibility', 'visible');
+                    table.menu.right.offset({ 'top': t, 'left': r.offset().left + r.outerWidth(true) });
+                    table.menu.right.css("padding-top", row.find('td:first').css("padding-top"));
+                    table.menu.right.css("padding-bottom", row.find('td:first').css("padding-bottom"));
+                    table.menu.right.innerHeight(row.innerHeight());
                 }
             }
             else {
-                if (table.left_menu)
-                    table.left_menu.css('visibility', 'hidden');
-                if (table.right_menu)
-                    table.right_menu.css('visibility', 'hidden');
+                if (table.menu.left)
+                    table.menu.left.css('visibility', 'hidden');
+                if (table.menu.right)
+                    table.menu.right.css('visibility', 'hidden');
             }
         },
         on_row_filled: function (row, data, index) {
@@ -427,30 +434,34 @@ function init_table(definition) {
             return e;
         },
     };
+        
+    function overwrite(f, s) {
+        for (var i in s) {
+            if ($.type(s[i]) != 'object' && $.type(s[i]) != 'array')
+                f[i] = s[i];
+            else {
+                if (f[i] == undefined) {
+                    if ($.type(s[i]) == 'object')
+                        f[i] = {};
+                    else
+                        f[i] = [];
+                }
+                overwrite(f[i], s[i]);
+            }
+        }
+        return f;
+    }
+    definition = overwrite(default_definition, definition);
+    
     for (var i in definition.menu)
         for (var j in definition.menu[i])
-            if (definition.menu[i][j].default)
-            {
-                for (var k in default_definition.menu)
-                    for (var l in default_definition.menu[k])
-                        if (default_definition.menu[k][l].default == definition.menu[i][j].default)
-                        {
-                            for (var n in default_definition.menu[k][l])
-                                if(!definition.menu[i][j][n])
-                                    definition.menu[i][j][n] = default_definition.menu[k][l][n];
-                        }
-            }
-
-    definition = $.extend(default_definition, definition);
+            if (definition.menu[i][j] === true)
+                definition.menu[i][j] = definition.menu_processors[j];
+            else if (definition.menu[i][j] === false)
+                delete definition.menu[i][j];
 
     if (!definition.datatable.serverSide)
         definition.datatable.ajax = false;
-
-    if (definition.table.invisible_column_ids) {
-        definition.datatable["columnDefs"] = Array();
-        for (var i = definition.table.invisible_column_ids.length - 1; i >= 0; i--)
-            definition.datatable["columnDefs"].push({ "visible": false, "targets": definition.table.invisible_column_ids[i] });
-    }
     
     var table = $("table:last").dataTable(definition.datatable);
 
@@ -464,33 +475,31 @@ function init_table(definition) {
         });
     }
 
-    var menus = {};
-    if (definition.menu.top && definition.menu.top.length) {
-        var top_menu = $("<p></p>");
-        table.parents(".dataTables_wrapper").before(top_menu);
+    var menu = {};
+    if (!$.isEmptyObject(definition.menu.top)) {
+        menu.top = $("<p></p>");
+        table.parents(".dataTables_wrapper").before(menu.top);
         for (var i in definition.menu.top) {
             var b = $('<a href="#" class="button" style=' + definition.menu.top[i].style + '>' + definition.menu.top[i].text + '</a>');
-            top_menu.append(b);
+            menu.top.append(b);
             b.click(definition.menu.top[i].onclick);
         }
     }
-    var right_menu;
-    if (definition.menu.right && definition.menu.right.length) {
-        var right_menu = $('<div class="table_floating_menu" style="visibility: hidden; position: absolute;"></div>');
-        $("body").append(right_menu);
+    if (!$.isEmptyObject(definition.menu.right)) {
+        menu.right = $('<div class="table_floating_menu" style="visibility: hidden; position: absolute;"></div>');
+        table.append(menu.right);
         for (var i in definition.menu.right) {
             var b = $('<a href="#" class="button" style=' + definition.menu.right[i].style + '>' + definition.menu.right[i].text + '</a>');
-            right_menu.append(b);
+            menu.right.append(b);
             b.click(definition.menu.right[i].onclick);
         }
     }
-    var left_menu;
-    if (definition.menu.left && definition.menu.left.length) {
-        left_menu = $('<div class="table_floating_menu" style="visibility: hidden; position: absolute;"></div>');
-        $("body").append(left_menu);
+    if (!$.isEmptyObject(definition.menu.left)) {
+        menu.left = $('<div class="table_floating_menu" style="visibility: hidden; position: absolute;"></div>');
+        table.append(menu.left);
         for (var i in definition.menu.left) {
             var b = $('<a href="#" class="button" style=' + definition.menu.left[i].style + '>' + definition.menu.left[i].text + '</a>');
-            left_menu.append(b);
+            menu.left.append(b);
             b.click(definition.menu.left[i].onclick);
         }
     }
@@ -499,15 +508,13 @@ function init_table(definition) {
         table.find('tbody').on('click', 'tr', function () { definition.on_row_clicked($(this)); });
 
     table.on('draw.dt', function () {
-        if (left_menu)
-            left_menu.css('visibility', 'hidden');
-        if (right_menu)
-            right_menu.css('visibility', 'hidden');
+        if (menu.left)
+            menu.left.css('visibility', 'hidden');
+        if (menu.right)
+            menu.right.css('visibility', 'hidden');
     });
 
-    table.top_menu = top_menu;
-    table.left_menu = left_menu;
-    table.right_menu = right_menu;
+    table.menu = menu;
     table.definition = definition;
 
     return table;

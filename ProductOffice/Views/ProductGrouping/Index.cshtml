@@ -9,7 +9,7 @@
 
 
 <div id="GroupContent" style="display:none;" class="content-wrapper clear-fix">
-    <a href="#" onclick="" class="button">Remove All</a>
+    @*<a href="#" onclick="" class="button">Remove All</a>*@
     <table>
         <thead>
             <tr>
@@ -45,7 +45,16 @@
 
     function add_raw_to_group(row) {
         if (!GroupDlg)
-            GroupDlg = show_ajax_modal_box("Product Group", { Save: function () { } }, "GroupContent");
+            GroupDlg = show_ajax_modal_box("Product Group", { 
+                Clear: function () {
+                    GroupTable.api().rows().remove().draw();
+                },
+                Cancel: function () {
+                    GroupDlg.dialog("close");
+                },
+                Save: function () {
+                },
+            }, "GroupContent");
         else
             GroupDlg.dialog("open");
         if (!GroupTable) {
@@ -56,31 +65,28 @@
                 datatable: {
                     serverSide: false,
                     paging: false,
-                   // info: false,
+                    info: false,
+                    searching: false,
                 },
                 menu: {
                     top: false,
-                    left: [
-                        { default: "delete" },
-                        { text: "Ungroup", onclick: function () { } }
-                    ],
-                    right: [
-                    ]
+                    left: {
+                        delete: true,
+                        ungroup: { text: "Ungroup", onclick: function () { } },
+                    },
+                    right: false,                    
                 },
             });
         }
 
-        //console.log("row");
-        //console.log(row.find('td'));
-        //var r = "<tr>";
-        //row.find('td').each(function () { r += "<td>" + $(this).html() + "</td>"; });
-        //r += "</tr>";
-        //console.log(r);
-        //GroupTable.find("tbody").append(r);
+        var exists;
+        GroupTable.api().rows().data().each(function (value, index) {
+            if (value[0] == row.data()[0]) { exists = true; return; }
+        });
+        if (exists)
+            return;            
 
-        r = ['1'];
-        row.find('td').each(function () { r.push($(this).html()); });
-        GroupTable.api().row.add(r).draw(false);
+        GroupTable.api().row.add(row.data()).draw(false);
     }
 </script>
 
@@ -125,15 +131,17 @@
             request_path: "@Request.Path",
         },
         menu: {
-            top: [
-                { text: "Start Grouping", onclick: function () { alert("2"); } }
-            ],
-            left: [
-                { text: "Add", onclick: function () { add_raw_to_group(products_table.$('tr.selected')); } }
-            ],
-            right: [
-                { default: "details" }
-            ]
+            top: {
+                start: { text: "Start Grouping", onclick: function () { alert("2"); } }
+            },
+            left: {
+                delete:false,
+                add: { text: "Add", onclick: function () { add_raw_to_group(products_table.api().row('.selected')); } }
+            },
+            right: {
+                details: true,
+                edit: false,
+            },
         },
     });
     //products_table.find('tbody').on('click', 'tr', function () { products_table.definition.on_row_clicked($(this)); });
