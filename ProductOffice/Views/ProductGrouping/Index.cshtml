@@ -39,6 +39,16 @@
     </table>
 </div>
 
+<style>
+    tr.MainInGroup{
+        font-weight:bold;
+        background-color:lightgreen !important;
+    }
+    tr.MainInGroup .selected{
+        background-color:darkgreen !important;
+    }
+</style>
+
 <script>
     var GroupTable;
     var GroupDlg;
@@ -53,6 +63,13 @@
                     GroupDlg.dialog("close");
                 },
                 Save: function () {
+                    GroupDlg.getContentByAjax(
+                        {
+                        },
+                        function () {
+                            GroupTable.api().rows().remove();
+                            GroupDlg.dialog("close");
+                    });
                 },
             }, "GroupContent");
         else
@@ -72,9 +89,25 @@
                     top: false,
                     left: {
                         delete: true,
-                        ungroup: { text: "Ungroup", onclick: function () { } },
+                        ungroup: {
+                            text: "Ungroup", onclick: function () {
+                                GroupTable.api().row('.selected').remove().draw();
+                            }
+                        },
                     },
-                    right: false,                    
+                    right: {
+                        main: {
+                            text: "Main", onclick: function () {
+                                GroupTable.$('tr').removeClass('MainInGroup');
+                                GroupTable.$('tr.selected').addClass('MainInGroup');
+                                //GroupTable.api().rows().every(function () {
+                                //    $(this).removeClass('MainInGroup');
+                                //});
+                                //GroupTable.api().row('.selected').addClass('MainInGroup');
+                            } 
+                        },
+                        edit: true,
+                    },
                 },
             });
         }
