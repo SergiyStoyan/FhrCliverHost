@@ -83,7 +83,6 @@ function arrange_modal_window(e) {
     var s = $(e).parent().offset().left + $(e).parent().outerWidth() - $(window).width();
     if (s + 2 > 0) {
         var w = $(e).outerWidth() - $(e).parent().offset().left;
-        //alert(w);
         $(e).width(w);
         e.dialog({ "position": { my: "center", at: "center", of: window, collision: 'fit' } });
     }
@@ -208,120 +207,8 @@ function show_ajax_modal_box(title, buttons, content_div_id) {
 }
 
 function init_table(definition) {
-    if (!definition.server.actions_prefix)
-        definition.server.actions_prefix = '';
-    var default_definition = {
-        server: {
-            request_path: "!",
-            actions_prefix: '',
-        },
-        table: {
-            id_column_id: 0,
-        },
-        menu: {
-            top: {
-                new: true,            
-            },
-            left: {
-                delete: true,
-            },
-            right: {
-                details: true,
-                edit: true,
-            }
-        },
-        menu_processors: {
-            new: {
-                text: "New",
-                onclick: function () {
-                    table.modalBox = definition.show_row_editor(definition.server.request_path + "/Create" + definition.server.actions_prefix, "Create", function () {
-                        if (definition.server)
-                            table.api().draw();
-                        else
-                            location.reload();
-                    });
-                }
-            },
-            details: {
-                text: "Details",
-                onclick: function () {
-                    if (!table.$('tr.selected').is("tr")) {
-                        show_message("No row selected!", "Warning");
-                        return false;
-                    }
-                    var id = table.fnGetData(table.$('tr.selected'))[definition.table.id_column_id];
-
-                    table.modalBox = definition.show_row_editor(definition.server.request_path + "/Details" + definition.server.actions_prefix + "?Id=" + id, "OK");
-                },
-            },
-            edit: {
-                text: "Edit",
-                onclick: function () {
-                    if (!table.$('tr.selected').is("tr")) {
-                        show_message("No row selected!", "Warning");
-                        return false;
-                    }
-                    var id = table.fnGetData(table.$('tr.selected'))[definition.table.id_column_id];
-
-                    table.modalBox = definition.show_row_editor(definition.server.request_path + "/Edit" + definition.server.actions_prefix + "?Id=" + id, "Save", function () {
-                        if (definition.server)
-                            table.api().draw();
-                        else
-                            location.reload();
-                    });
-                },
-            },
-            delete: {
-                text: "X",
-                onclick: function () {
-                    if (!table.$('tr.selected').is("tr")) {
-                        show_message("No row selected!", "Warning");
-                        return false;
-                    }
-                    var id = table.fnGetData(table.$('tr.selected'))[definition.table.id_column_id];
-
-                    table.modalBox = definition.show_row_editor(definition.server.request_path + "/Delete" + definition.server.actions_prefix + "?Id=" + id, "Delete", function () {
-                        if (definition.server)
-                            table.api().draw();
-                        else
-                            location.reload();
-                    });
-                },
-                style: "color:#f00;",
-            },
-        },
-        datatable: {
-            serverSide: true,
-            ajax: {
-                url: definition.server.request_path + "/TableJson" + definition.server.actions_prefix,
-                type: 'POST',
-            },
-            columnDefs:[
-                {
-                    visible: false, 
-                    targets: 0
-                },
-            ],
-            scrollX: true,
-            processing: true,
-            language: {
-                processing: '<img src="/Images/ajax-loader.gif" style="z-index:1;position:relative"/>'
-            },
-            rowCallback: definition.on_row_filled,
-            paging: true,
-            //ordering: false,
-            //info: false 
-            //"columnDefs": [
-            //    { "visible": false, "targets": 0 },
-            //],
-            //"columns": [
-            //  { "visible": false },
-            //  null,
-            //  null,
-            //],
-            //"stateSave": true,
-            //initComplete: function (settings, json) { alert(json);}
-        },
+    //no context dependent a part of definition that can be used outside this function
+    var default_definition1 = {
         on_row_clicked: function (row) {
             if (row.hasClass('selected')) {
                 row.removeClass('selected');
@@ -340,6 +227,13 @@ function init_table(definition) {
                     table.menu.left.css("padding-bottom", row.find('td:first').css("padding-bottom"));
                     table.menu.left.innerHeight(row.innerHeight());
                 }
+                if (table.menu.over) {
+                    table.menu.over.css('visibility', 'visible');
+                    table.menu.over.offset({ 'top': t, 'left': r.offset().over });
+                    table.menu.over.css("padding-top", row.find('td:first').css("padding-top"));
+                    table.menu.over.css("padding-bottom", row.find('td:first').css("padding-bottom"));
+                    table.menu.over.innerHeight(row.innerHeight());
+                }
                 if (table.menu.right) {
                     table.menu.right.css('visibility', 'visible');
                     table.menu.right.offset({ 'top': t, 'left': r.offset().left + r.outerWidth(true) });
@@ -353,16 +247,23 @@ function init_table(definition) {
                     table.menu.left.css('visibility', 'hidden');
                 if (table.menu.right)
                     table.menu.right.css('visibility', 'hidden');
+                if (table.menu.over)
+                    table.menu.over.css('visibility', 'hidden');
             }
         },
-        on_row_filled: function (row, data, index) {
-            h = $(row).html().replace(/(\d{4}\-\d{2}\-\d{2})T(\d{2}\:\d{2}:\d{2})(\.\d+)?/ig, "$1 $2");
-            h = h.replace(/(<a\s.*?<\/a\s*>|<img\s.*?>|https?\:\/\/[^\s<>\'\"]*)/ig, function (m) {
-                if (m[0] == "<")
-                    return m;
-                return "<a href=\"" + m + "\">" + m + "</a>";
-            });
-            $(row).html(h);
+        on_row_filling: function (row, cs, index) {
+            for (i in cs) {
+                if ($.type(cs[i]) == 'string') {
+                    var h = cs[i].replace(/(\d{4}\-\d{2}\-\d{2})T(\d{2}\:\d{2}:\d{2})(\.\d+)?/ig, "$1 $2");
+                    h = h.replace(/(<a\s.*?<\/a\s*>|<img\s.*?>|https?\:\/\/[^\s<>\'\"]*)/ig, function (m) {
+                        if (m[0] == "<")
+                            return m;
+                        return "<a href=\"" + m + "\">" + m + "</a>";
+                    });
+                    cs[i] = h;
+                }
+            }
+            table.api().row(index).data(cs);
         },
         show_row_editor: function (content_url, ok_button_text, on_success) {
             var e;
@@ -433,8 +334,128 @@ function init_table(definition) {
 
             return e;
         },
+    }; 
+    if (!definition)
+        return default_definition1;
+
+    if (!definition.server.actions_prefix)
+        definition.server.actions_prefix = '';
+    var default_definition2 = {
+        server: {
+            request_path: "!",
+            actions_prefix: '',
+        },
+        id_column_id: 0,
+        menu: {
+            top: {
+                new: true,
+            },
+            left: {
+                delete: true,
+            },
+            right: {
+                details: true,
+                edit: true,
+            }
+        },
+        menu_processors: {
+            new: {
+                text: "New",
+                onclick: function () {
+                    table.modalBox = definition.show_row_editor(definition.server.request_path + "/Create" + definition.server.actions_prefix, "Create", function () {
+                        if (definition.server)
+                            table.api().draw();
+                        else
+                            location.reload();
+                    });
+                }
+            },
+            details: {
+                text: "Details",
+                onclick: function () {
+                    if (!table.$('tr.selected').is("tr")) {
+                        show_message("No row selected!", "Warning");
+                        return false;
+                    }
+                    var id = table.fnGetData(table.$('tr.selected'))[definition.id_column_id];
+
+                    table.modalBox = definition.show_row_editor(definition.server.request_path + "/Details" + definition.server.actions_prefix + "?Id=" + id, "OK");
+                },
+            },
+            edit: {
+                text: "Edit",
+                onclick: function () {
+                    if (!table.$('tr.selected').is("tr")) {
+                        show_message("No row selected!", "Warning");
+                        return false;
+                    }
+                    var id = table.fnGetData(table.$('tr.selected'))[definition.id_column_id];
+
+                    table.modalBox = definition.show_row_editor(definition.server.request_path + "/Edit" + definition.server.actions_prefix + "?Id=" + id, "Save", function () {
+                        if (definition.server)
+                            table.api().draw();
+                        else
+                            location.reload();
+                    });
+                },
+            },
+            delete: {
+                text: "X",
+                onclick: function () {
+                    if (!table.$('tr.selected').is("tr")) {
+                        show_message("No row selected!", "Warning");
+                        return false;
+                    }
+                    var id = table.fnGetData(table.$('tr.selected'))[definition.id_column_id];
+
+                    table.modalBox = definition.show_row_editor(definition.server.request_path + "/Delete" + definition.server.actions_prefix + "?Id=" + id, "Delete", function () {
+                        if (definition.server)
+                            table.api().draw();
+                        else
+                            location.reload();
+                    });
+                },
+                style: "color:#f00;",
+            },
+        },
+        datatable: {
+            serverSide: true,
+            ajax: {
+                url: definition.server.request_path + "/TableJson" + definition.server.actions_prefix,
+                type: 'POST',
+            },
+            //ajax: function (data, callback, settings) {
+            //    callback(data);
+            //},
+            columnDefs: [
+                {
+                    visible: false,
+                    targets: 0
+                },
+            ],
+            scrollX: true,
+            processing: true,
+            language: {
+                processing: '<img src="/Images/ajax-loader.gif" style="z-index:1;position:relative"/>'
+            },
+            createdRow: definition.on_row_filling,
+            //rowCallback: definition.on_row_filling,
+            paging: true,
+            //ordering: false,
+            //info: false 
+            //"columnDefs": [
+            //    { "visible": false, "targets": 0 },
+            //],
+            //"columns": [
+            //  { "visible": false },
+            //  null,
+            //  null,
+            //],
+            //"stateSave": true,
+            //initComplete: function (settings, json) { alert(json);}
+        },
     };
-        
+
     function overwrite(f, s) {
         for (var i in s) {
             if ($.type(s[i]) != 'object' && $.type(s[i]) != 'array')
@@ -451,8 +472,9 @@ function init_table(definition) {
         }
         return f;
     }
+    default_definition = overwrite(default_definition2, default_definition1);
     definition = overwrite(default_definition, definition);
-    
+        
     for (var i in definition.menu)
         for (var j in definition.menu[i])
             if (definition.menu[i][j] === true)
@@ -462,9 +484,9 @@ function init_table(definition) {
 
     if (!definition.datatable.serverSide)
         definition.datatable.ajax = false;
-    
-    var table = $("table:last").dataTable(definition.datatable);
 
+    var table = $("table:last").dataTable(definition.datatable);
+    
     if (definition.datatable.serverSide) {
         var search_box = table.parent().find(".dataTables_filter").find("input");
         //search_box.keyup(function () {
@@ -503,6 +525,15 @@ function init_table(definition) {
             b.click(definition.menu.left[i].onclick);
         }
     }
+    if (!$.isEmptyObject(definition.menu.over)) {
+        menu.over = $('<div class="table_floating_menu" style="visibility: hidden; position: absolute;"></div>');
+        table.append(menu.over);
+        for (var i in definition.menu.over) {
+            var b = $('<a href="#" class="button" style=' + definition.menu.over[i].style + '>' + definition.menu.over[i].text + '</a>');
+            menu.over.append(b);
+            b.click(definition.menu.over[i].onclick);
+        }
+    }
 
     if (definition.on_row_clicked)
         table.find('tbody').on('click', 'tr', function () { definition.on_row_clicked($(this)); });
@@ -512,6 +543,8 @@ function init_table(definition) {
             menu.left.css('visibility', 'hidden');
         if (menu.right)
             menu.right.css('visibility', 'hidden');
+        if (menu.over)
+            menu.over.css('visibility', 'hidden');
     });
 
     table.menu = menu;

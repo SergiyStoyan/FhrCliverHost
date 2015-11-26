@@ -44,21 +44,40 @@ namespace Cliver.ProductOffice.Controllers
                 new JqueryDataTable.Field("Category"),
                 new JqueryDataTable.Field("Sku", true),
                 new JqueryDataTable.Field("Url"),
-                //new JqueryDataTable.Field("CheckBox", false, 0, "")
             };
 
-            JsonResult jr = JqueryDataTable.Index(request, db.Database.Connection, "FROM Products", fields);
-            foreach (var r in ((dynamic)jr.Data).Data)
-            {
-                string s = Convert.ToString(r[2]);
-                if (s != null)
-                    r[2] = "<img src='" + Regex.Replace(s, @"[\r\n].*", "", RegexOptions.Singleline) + "'/>";
-                s = Convert.ToString(r[6]);
-                if (s != null)
-                    r[6] = "<a href='" + s + "' target='_blank'>Site</a>";
-                //r[7] = "<a href='#' onclick='javascript: add_product_to_group(" + r[0] + ")'>Group</a>";
-            }
+            string from_sql;
+            string explode_groups_info = request.Columns.ToList()[1].Search.Value;
+            if (explode_groups_info!=null && Regex.IsMatch(explode_groups_info, @"ExplodeGroups\s*=\s*true", RegexOptions.Singleline| RegexOptions.IgnoreCase))
+                from_sql = "FROM Products";
+            else
+                from_sql = "FROM Products WHERE MainProductId<0";
+
+            JsonResult jr = JqueryDataTable.Index(request, db.Database.Connection, from_sql, fields);
+            //foreach (var r in ((dynamic)jr.Data).Data)
+            //{
+            //    string s = Convert.ToString(r[2]);
+            //    if (s != null)
+            //        r[2] = "<img src='" + Regex.Replace(s, @"[\r\n].*", "", RegexOptions.Singleline) + "'/>";
+            //    s = Convert.ToString(r[6]);
+            //    if (s != null)
+            //        r[6] = "<a href='" + s + "' target='_blank'>Site</a>";
+            //}
             return jr;
+        }
+
+        public ActionResult GroupProducts(int[] product_ids, int? main_product_id)
+        {
+            if (product_ids == null)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "product_ids == null");
+            if (main_product_id == null)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "main_product_id == null");
+            if (null == db.Products.Where(p => p.Id == main_product_id).FirstOrDefault())
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Product Id=" + main_product_id + " does not exist");
+            product_ids = product_ids.Where(i => i != main_product_id).ToArray();
+            db.Products.Where(p => product_ids.Contains(p.Id)).ToList().ForEach((p) => { p.MainProductId = (int)main_product_id; });
+            db.SaveChanges();
+            return PartialView(null);
         }
 
         // GET: Products/Details/5
