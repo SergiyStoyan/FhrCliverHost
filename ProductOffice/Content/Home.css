@@ -110,8 +110,8 @@ td.table-editor {
     padding:5px;
 }
 
-tr.selected{
-    background-color:#f63 !important;
+table.my tbody tr.selected{
+    background-color:#f63 ;
 }
 
 tr.odd{
@@ -197,3 +197,19 @@ border-right: none;
 .ProductLink_table tr:first-child td{
 border-top: none;
 }
+
+   table.my tbody tr.MainInGroup.odd{
+        font-weight:bold;
+        background-color:lightgreen;
+    }
+   table.my tbody tr.MainInGroup.even{
+        font-weight:bold;
+        background-color:lightgreen;
+    }
+   
+   table.my tbody tr.SubordinateInGroup .odd{
+        background-color:lightgray;
+    }
+   table.my tbody tr.SubordinateInGroup .even{
+        background-color:gray;
+    }

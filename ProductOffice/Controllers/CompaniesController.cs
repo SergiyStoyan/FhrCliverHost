@@ -149,8 +149,8 @@ namespace Cliver.ProductOffice.Controllers
                 return PartialView("_Notifications");
             }
             db.Companies.Remove(company);
-            db.Products.RemoveRange(db.Products.Where(p => p.CompanyId == id));
-            db.SaveChanges();
+            foreach(var p in db.Products.Where(p => p.CompanyId == id))
+                ProductOffice.DataApi.Products.Delete(db, p.Id);
             if (Request.IsAjaxRequest())
                 return Content(null);
             return RedirectToAction("Index");

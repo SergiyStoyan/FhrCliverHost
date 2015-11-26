@@ -58,5 +58,18 @@ namespace Cliver.FhrCrawlerHost.Properties {
                 return ((string)(this["ProductOfficeConnectionString2"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=(localdb)\\MSSQLLocalDB;AttachDbFilename=\"D:\\_d\\_PROJECTS\\FHR(for Andr" +
+            "eas Chermak)\\FhrCliverHost#development\\_data\\ProductOffice.mdf\";Integrated Secur" +
+            "ity=True;MultipleActiveResultSets=True;Connect Timeout=30;Application Name=Entit" +
+            "yFramework")]
+        public string ProductOfficeConnectionString3 {
+            get {
+                return ((string)(this["ProductOfficeConnectionString3"]));
+            }
+        }
     }
 }

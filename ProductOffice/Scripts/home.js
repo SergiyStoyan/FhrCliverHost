@@ -368,7 +368,8 @@ function init_table(definition) {
                         else
                             location.reload();
                     });
-                }
+                },
+                style: "display:inline-block;margin-right:30px;",
             },
             details: {
                 text: "Details",
@@ -381,6 +382,7 @@ function init_table(definition) {
 
                     table.modalBox = definition.show_row_editor(definition.server.request_path + "/Details" + definition.server.actions_prefix + "?Id=" + id, "OK");
                 },
+                style: "display:inline-block;margin-right:3px;",
             },
             edit: {
                 text: "Edit",
@@ -398,6 +400,7 @@ function init_table(definition) {
                             location.reload();
                     });
                 },
+                style: "display:inline-block;margin-right:3px;",
             },
             delete: {
                 text: "X",

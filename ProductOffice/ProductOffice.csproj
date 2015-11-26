@@ -213,7 +213,6 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\ProductIdentifierConfigurationController.cs" />
-    <Compile Include="Controllers\ProductGroupingController.cs" />
     <Compile Include="Controllers\SqlController.cs" />
     <Compile Include="Controllers\SettingsController.cs" />
     <Compile Include="Controllers\ProductLinksController.cs" />
@@ -229,6 +228,7 @@
     <Compile Include="Controllers\ProductsController.cs" />
     <Compile Include="Controllers\CompaniesController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
+    <Compile Include="DataApi.cs" />
     <Compile Include="Filters\AllActionsFilter.cs" />
     <Compile Include="Filters\InitializeSimpleMembershipAttribute.cs" />
     <Compile Include="Global.asax.cs">
@@ -389,7 +389,7 @@
     <Content Include="Views\Products\Delete.cshtml" />
     <Content Include="Views\Products\Details.cshtml" />
     <Content Include="Views\Products\Edit.cshtml" />
-    <Content Include="Views\Products\Index.cshtml" />
+    <Content Include="Views\Products\Index2.cshtml" />
     <Content Include="Views\ImportMaps\Create.cshtml" />
     <Content Include="Views\ImportMaps\Delete.cshtml" />
     <Content Include="Views\ImportMaps\Details.cshtml" />
@@ -430,12 +430,7 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Views\ProductIdentifierConfiguration\Edit2.cshtml" />
-    <Content Include="Views\ProductGrouping\Create.cshtml" />
-    <Content Include="Views\ProductGrouping\Delete.cshtml" />
-    <Content Include="Views\ProductGrouping\Details.cshtml" />
-    <Content Include="Views\ProductGrouping\Edit.cshtml" />
-    <Content Include="Views\ProductGrouping\Index.cshtml" />
-    <Content Include="Views\ProductGrouping\Group.cshtml" />
+    <Content Include="Views\Products\Index.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

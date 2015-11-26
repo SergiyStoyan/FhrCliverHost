@@ -124,11 +124,7 @@ namespace Cliver.FhrDbReplicator
                             Log.Warning("Could not find Product [CompanyId=" + company.Id + "CompanyProductId=" + (string)record["Id"] + "] while deleting.");
                         else
                         {
-                            foreach (FhrCrawlerHost.Db2.Price p in product.Prices)
-                                db2_api.Context.Prices.DeleteOnSubmit(p);
-
-                            db2_api.Context.Products.DeleteOnSubmit(product);
-                            db2_api.Context.SubmitChanges();
+                            ProductOffice.DataApi.Products.Delete(db2_api.Context, product.Id);
 
                             int u = DbApi.Connection["DELETE FROM " + products_table + " WHERE Id=@Id"].Execute("@Id", (string)record["Id"]);
                             if (u < 1)

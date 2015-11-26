@@ -45,7 +45,7 @@ namespace Cliver.FhrCrawlerHost.Db2
     #endregion
 		
 		public ProductOfficeDataContext() : 
-				base(global::Cliver.FhrCrawlerHost.Properties.Settings.Default.ProductOfficeConnectionString2, mappingSource)
+				base(global::Cliver.FhrCrawlerHost.Properties.Settings.Default.ProductOfficeConnectionString3, mappingSource)
 		{
 			OnCreated();
 		}
@@ -707,6 +707,8 @@ namespace Cliver.FhrCrawlerHost.Db2
 		
 		private System.Nullable<decimal> _Stock;
 		
+		private int _MainProductId;
+		
 		private EntitySet<Price> _Prices;
 		
 		private EntityRef<Company> _Company;
@@ -745,6 +747,8 @@ namespace Cliver.FhrCrawlerHost.Db2
     partial void OnSourceChanged();
     partial void OnStockChanging(System.Nullable<decimal> value);
     partial void OnStockChanged();
+    partial void OnMainProductIdChanging(int value);
+    partial void OnMainProductIdChanged();
     #endregion
 		
 		public Product()
@@ -1054,6 +1058,26 @@ namespace Cliver.FhrCrawlerHost.Db2
 					this._Stock = value;
 					this.SendPropertyChanged("Stock");
 					this.OnStockChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MainProductId", DbType="Int NOT NULL")]
+		public int MainProductId
+		{
+			get
+			{
+				return this._MainProductId;
+			}
+			set
+			{
+				if ((this._MainProductId != value))
+				{
+					this.OnMainProductIdChanging(value);
+					this.SendPropertyChanging();
+					this._MainProductId = value;
+					this.SendPropertyChanged("MainProductId");
+					this.OnMainProductIdChanged();
 				}
 			}
 		}
