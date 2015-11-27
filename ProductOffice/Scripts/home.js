@@ -70,6 +70,8 @@ function show_error(content, title) {
 }
 
 function arrange_modal_window(e) {
+    if (!$(e).dialog("isOpen"))
+        return;
     var h = $(e).parent().height() - $(window).height();
     if (h > 0)
         $(e).height($(e).height() - h - 10);
@@ -208,7 +210,7 @@ function show_dialog(definition) {
         e.processing();
         $.ajax(ajax_config);
     }
-
+    
     e.close = definition.on_close;
     e.definition = definition;
 

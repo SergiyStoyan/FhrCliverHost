@@ -59,29 +59,33 @@
                                         },
                                         url: "@Url.Action("DeleteGroup")"
                                     },
-                                    function () {
+                                    function (data) {
+                                        GroupTable.api().rows().remove();
                                         GroupDlg.dialog("close");
-                                    });
-                                GroupTable.api().rows().remove();
+                                    }
+                                );
                             }
                         },
                         Close: function () {
                             GroupDlg.dialog("close");
                         },
                         Save: function () {
+                            var product_ids = $.map(GroupTable.api().rows().data(), function (cells) { return cells[0]; });
+                            console.log(product_ids);
                             GroupDlg.getContentByAjax(
                                 {
                                     type: 'GET',
                                     data: {
-                                        product_ids: $.map(GroupTable.api().rows().data(), function (cells) { return cells[0]; }),
+                                        product_ids: product_ids,
                                         main_product_id: GroupTable.api().rows('.MainInGroup').data()[0][0],
                                     },
-                                    url: "@Url.Action("SaveGroup")"
+                                    url: '@Url.Action("SaveGroup")'
                                 },
                                 function () {
-                                    GroupTable.api().rows().remove();
+                                    GroupTable.api().rows().remove().draw();
                                     GroupDlg.dialog("close");
-                                });
+                                }
+                            );
                         },
                     },
                 },            

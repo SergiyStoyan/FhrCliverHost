@@ -74,18 +74,18 @@ namespace Cliver.ProductOffice.Controllers
         {
             int[] product_ids;
             if (product_ids_ != null)
-                product_ids = (from x in product_ids_ where !string.IsNullOrWhiteSpace(x) select int.Parse(x)).Where(i => i != main_product_id).ToArray();
+                product_ids = (from x in product_ids_ where !string.IsNullOrWhiteSpace(x) select int.Parse(x)).ToArray();
             else
                 product_ids = new int[] { };
             if (main_product_id == null)
-                return Content("main_product_id == null");
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "main_product_id == null");
             if (!product_ids.Contains((int)main_product_id))
-                return Content("main_product_id is not within product_ids");
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "main_product_id is not within product_ids");
             if (null == db.Products.Where(p => p.Id == main_product_id).FirstOrDefault())
-                return Content("Product Id=" + main_product_id + " does not exist");
-            //product_ids = product_ids.Where(i => i != main_product_id).ToArray();
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Product Id=" + main_product_id + " does not exist");
             db.Products.Where(p => p.MainProductId == main_product_id).ToList().ForEach((p) => { p.MainProductId = -1; });
-            db.Products.Where(p => product_ids.Contains(p.Id)).ToList().ForEach((p) => { p.MainProductId = (int)main_product_id; });
+            if (product_ids.Length > 1)
+                db.Products.Where(p => product_ids.Contains(p.Id)).ToList().ForEach((p) => { p.MainProductId = (int)main_product_id; });
             try
             {
                 db.Configuration.ValidateOnSaveEnabled = false;
@@ -107,10 +107,10 @@ namespace Cliver.ProductOffice.Controllers
         public ActionResult GetGroup(int? product_id)
         {
             if (product_id == null)
-                return Content("product_id == null");
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "product_id == null");
             int? main_product_id = db.Products.Where(p => p.Id == product_id).Select(p => p.MainProductId < 0 ? p.Id : p.MainProductId).FirstOrDefault();
             if (main_product_id == null)
-                return Content("Product Id:" + product_id + "  does not exist.");
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Product Id:" + product_id + "  does not exist.");
             List<Product> ps = db.Products.Where(p => p.MainProductId == main_product_id || p.Id == main_product_id).ToList();
             List<object[]> rs = new List<object[]>();
             foreach(Product p in ps)
