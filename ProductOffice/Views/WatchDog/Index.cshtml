@@ -39,9 +39,10 @@ Refresh data every @RefreshSpanInSecs seconds
             top: false,
             left: false,
             right: false,
+            over: false,
         }
     });
-
+    
     table.on( 'draw.dt', function (s, d) {
         var rds = table.api().rows().data();
         for(var i = 0; i < rds.length; i++){
@@ -57,14 +58,14 @@ Refresh data every @RefreshSpanInSecs seconds
             }
         }
     } );
-
+    
     var refresh_timer = null;
     function RefreshTable(run){
         if(run)
         {
             if(!refresh_timer )
                 refresh_timer = setInterval(function () {
-                    table.api().draw();
+                    table.api().ajax.reload();
                 }, 1000 * @RefreshSpanInSecs);
         }
         else

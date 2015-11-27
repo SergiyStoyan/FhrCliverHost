@@ -10,7 +10,7 @@
 
 <div id="GroupContent" style="display:none;" class1="content-wrapper clear-fix">
     @*<a href="#" onclick="" class="button">Remove All</a>*@
-    <table class="my">
+    <table id="GroupTable" class="my">
         <thead>
             <tr>
                 <th>
@@ -49,7 +49,10 @@
                 dialog: {
                     title: "Product Group",
                     buttons: {
-                        "Ungroup All": function () {
+                        "Delete All": function () {
+                            alert("TBD");
+                        },
+                        "Ungroup": function () {
                             if (GroupTable.$('tr.MainInGroup').length) {
                                 GroupDlg.getContentByAjax(
                                     {
@@ -62,16 +65,16 @@
                                     function (data) {
                                         GroupTable.api().rows().remove();
                                         GroupDlg.dialog("close");
+                                        ProductsTable.api().ajax.reload(null, false);
                                     }
                                 );
-                            }
+                                }
                         },
-                        Close: function () {
+                        Hide: function () {
                             GroupDlg.dialog("close");
                         },
                         Save: function () {
                             var product_ids = $.map(GroupTable.api().rows().data(), function (cells) { return cells[0]; });
-                            console.log(product_ids);
                             GroupDlg.getContentByAjax(
                                 {
                                     type: 'GET',
@@ -82,99 +85,103 @@
                                     url: '@Url.Action("SaveGroup")'
                                 },
                                 function () {
-                                    GroupTable.api().rows().remove().draw();
+                                    GroupTable.api().rows().remove();
                                     GroupDlg.dialog("close");
+                                    ProductsTable.api().ajax.reload(null, false);
                                 }
                             );
                         },
                     },
-                },            
+                },
                 content_div_id: "GroupContent",
             });
-        else
-            GroupDlg.dialog("open");
-        if (!GroupTable) {
-            GroupTable = init_table({
-                server: {
-                    request_path: "@Request.Path",
-                },
-                datatable: {
-                    serverSide: false,
-                    paging: false,
-                    info: false,
-                    searching: false,
-                },
-                menu: {
-                    top: false,
-                    right: false,
-                    left: false,
-                    over: {
-                        delete: true,
-                        ungroup: {
-                            text: "Ungroup",
-                            onclick: function () {
-                                GroupTable.api().row('.selected').remove().draw();
-                                if (!GroupTable.$('tr.MainInGroup').length)
-                                    GroupTable.$('tr:first()').addClass('MainInGroup');
+            else
+                GroupDlg.dialog("open");
+
+            if (!GroupTable) {
+                GroupTable = init_table(
+                    {
+                        table_id: "GroupTable",
+                        server: {
+                            request_path: "@Request.Path",
+                        },
+                        datatable: {
+                            serverSide: false,
+                            paging: false,
+                            info: false,
+                            searching: false,
+                        },
+                        menu: {
+                            top: false,
+                            right: false,
+                            left: false,
+                            over: {
+                                delete: true,
+                                ungroup: {
+                                    text: "Ungroup",
+                                    onclick: function () {
+                                        GroupTable.api().row('.selected').remove().draw();
+                                        if (!GroupTable.$('tr.MainInGroup').length)
+                                            GroupTable.$('tr:first()').addClass('MainInGroup');
+                                    },
+                                    style: "display:inline-block;margin-right:3px;",
+                                },
+                                main: {
+                                    text: "Main",
+                                    onclick: function () {
+                                        GroupTable.$('tr').removeClass('MainInGroup');
+                                        GroupTable.$('tr.selected').addClass('MainInGroup');
+                                    },
+                                    style: "display:inline-block;margin-right:3px;",
+                                },
+                                details: true,
+                                edit: true,
                             },
-                            style: "display:inline-block;margin-right:3px;",
-                        },
-                        main: {
-                            text: "Main",
-                            onclick: function () {
-                                GroupTable.$('tr').removeClass('MainInGroup');
-                                GroupTable.$('tr.selected').addClass('MainInGroup');
+                            _templates: {
+                                details: {
+                                    style: "display:inline-block;margin-right:3px;",
+                                },
+                                edit: {
+                                    style: "display:inline-block;margin-right:3px;",
+                                },
                             },
-                            style: "display:inline-block;margin-right:3px;",
                         },
-                        details: true,
-                        edit: true,
-                    },
-                    _templates: {
-                        details: {
-                            style: "display:inline-block;margin-right:3px;",
-                        },
-                        edit: {
-                            style: "display:inline-block;margin-right:3px;",
-                        },
-                    },
-                },
+                    }
+                );
+            }
+            if (clear)
+                GroupTable.api().rows().remove();
+
+            var product_id = row.data()[0];
+
+            var exists;
+            GroupTable.api().rows().data().each(function (value, index) {
+                if (value[0] == product_id) { exists = true; return; }
             });
+            if (exists)
+                return;
+
+            GroupDlg.getContentByAjax(
+                {
+                    type: 'GET',
+                    data: {
+                        product_id: product_id,
+                    },
+                    url: '@Url.Action("GetGroup")'
+                },
+                function (products) {
+                    for (var i in products) {
+                        var cs = products[i];
+                        cs[2] = "<img src='" + cs[2].replace(/[\r\n].*/ig, "") + "'/>";
+                        if (cs[6])
+                            cs[6] = "<a href='" + cs[6] + "' target='_blank'>Site</a>";
+                        GroupTable.api().row.add(cs);
+                        if (!GroupTable.$('tr.MainInGroup').length)
+                            GroupTable.$('tr:last()').addClass('MainInGroup');
+                    }
+                    GroupTable.api().draw(false);
+                });
         }
-
-        if (clear)
-            GroupTable.api().rows().remove();
-
-        var product_id = row.data()[0];
-
-        var exists;
-        GroupTable.api().rows().data().each(function (value, index) {
-            if (value[0] == product_id) { exists = true; return; }
-        });
-        if (exists)
-            return;            
-                
-        GroupDlg.getContentByAjax(
-            {
-                type: 'GET',
-                data: {
-                    product_id: product_id,
-                },
-                url: '@Url.Action("GetGroup")'
-            },
-            function (products) {
-                for (var i in products) {
-                    var cs = products[i];
-                    cs[2] = "<img src='" + cs[2].replace(/[\r\n].*/ig, "") + "'/>";
-                    if (cs[6])
-                        cs[6] = "<a href='" + cs[6] + "' target='_blank'>Site</a>";
-                    GroupTable.api().row.add(cs);
-                    if (!GroupTable.$('tr.MainInGroup').length)
-                        GroupTable.$('tr:last()').addClass('MainInGroup');
-                }
-                GroupTable.api().draw(false);
-            });
-    }
 </script>
 
 
@@ -183,9 +190,9 @@
 
     <div id="filters" class="col-md-10"     style="display:inline-block;margin-right:30px;">
     Filter by company: &nbsp; @Html.DropDownList("CompanyId", null, htmlAttributes: new { @class = "form-control", onchange = "javascript:select_in_products_table();", style = "display:inline-block;margin-right:30px;" })
-    Explode groups: @Html.CheckBox("ExplodeGroups", false, htmlAttributes: new { @class = "form-control", onchange = "javascript:select_in_products_table();", style = "display:inline-block;margin-right:30px;" })
+    Explode groups: @Html.CheckBox("ExpandGroups", false, htmlAttributes: new { @class = "form-control", onchange = "javascript:select_in_products_table();", style = "display:inline-block;margin-right:30px;" })
 </div>
-<table class="my">
+<table id="ProductsTable" class="my">
     <thead>
         <tr>
             <th>
@@ -214,46 +221,65 @@
 
 </table>
 <script type="text/javascript">
-    var default_definition = init_table();
-    var products_table = init_table({
-        server: {
-            request_path: "@Request.Path",
-        },
-        menu: {
-            top: {
-                //start: { text: "Start Grouping", onclick: function () { alert("2"); } }
+    var definition = 
+        {
+            table_id: "ProductsTable",
+            server: {
+                request_path: "@Request.Path",
             },
-            left: {
-                delete: false,
-                add: { text: "Add", onclick: function () { add_raw_to_group_dlg(products_table.api().row('.selected')); } },
-                open: { text: "Open", onclick: function () { add_raw_to_group_dlg(products_table.api().row('.selected'), true); } }
+            menu: {
+                top: {
+                    //start: { text: "Start Grouping", onclick: function () { alert("2"); } }
+                },
+                over: {
+                    delete: false,
+                    edit: true,
+                    details: true,
+                    add: { text: "Group", onclick: function () { add_raw_to_group_dlg(ProductsTable.api().row('.selected')); } },
+                    open: { text: "Expand", onclick: function () { add_raw_to_group_dlg(ProductsTable.api().row('.selected'), true); } },                    
+                    @*ungroup: {
+                        text: "Ungroup",
+                        onclick: function () {
+                            ProductsTable.show_processing(true);
+                            $.ajax({
+                                type: 'GET',
+                                url: "@Request.Path/DeleteGroup",
+                                data: {
+                                    main_product_id: ProductsTable.api().row('.selected').data()[0],
+                                },
+                                success: function (r) {
+                                    ProductsTable.api().ajax.reload(null, false);
+                                },
+                                error: function (xhr, error) {
+                                    show_error(xhr.responseText);
+                                    ProductsTable.show_processing(false);
+                                }
+                            });
+                        },
+                    },*@
+                },
             },
-            right: {
-                details: true,
-                edit: false,
-            },
-        },
-        datatable: {
-            createdRow: function (row, cs, index) {
-                cs[2] = "<img src='" + cs[2].replace(/[\r\n].*/ig, "") + "'/>";
-                if (cs[6])
-                    cs[6] = "<a href='" + cs[6] + "' target='_blank'>Site</a>";
-                default_definition.on_row_filling(row, cs, index);
-            },
-        }
-    });
-    products_table.menu.top.append($("#filters"));
+            datatable: {
+                createdRow: function (row, cs, index) {
+                    cs[2] = "<img src='" + cs[2].replace(/[\r\n].*/ig, "") + "'/>";
+                    if (cs[6])
+                        cs[6] = "<a href='" + cs[6] + "' target='_blank'>Site</a>";
+                    definition.on_row_filling(row, cs, index);
+                },
+            }
+        };
+    var ProductsTable = init_table(definition);
+    ProductsTable.menu.top.append($("#filters"));
 
     function select_in_products_table() {
-        products_table.api().columns(1).search("ExplodeGroups=" + $("#ExplodeGroups").is(":checked"));//it is how filter parameters are passed due to to bad manual!
+        ProductsTable.api().columns(1).search("ExpandGroups=" + $("#ExpandGroups").is(":checked"));//it is how filter parameters are passed due to to bad manual!
         var pattern = $("#CompanyId").val();
         if (pattern > -1)
-            products_table.api().columns(0).search("CompanyId=" + pattern);//it is how filter parameters are passed due to to bad manual!
+            ProductsTable.api().columns(0).search("CompanyId=" + pattern);//it is how filter parameters are passed due to to bad manual!
         else
-            products_table.api().columns(0).search(null);//it is how filter parameters are passed due to to bad manual!
-        products_table.api().draw();
+            ProductsTable.api().columns(0).search(null);//it is how filter parameters are passed due to to bad manual!
+        ProductsTable.api().draw();
     }
-
 </script>
 
 

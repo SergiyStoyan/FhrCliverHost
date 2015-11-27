@@ -15,18 +15,20 @@ namespace Cliver.ProductOffice
             //    return new ProductOffice.Models.ProductOfficeEntities();
             //}
 
-            public static void Delete(ProductOfficeEntities db, int product_id)
+            public static void Delete(ProductOfficeEntities db, int product_id, bool delete_group = false)
             {
-                db.Products.Where(i => i.MainProductId == product_id).ToList().ForEach((i) => { i.MainProductId = -1; });
                 db.Prices.RemoveRange(db.Prices.Where(i => i.ProductId == product_id));
+                if (delete_group)
+                    db.Products.RemoveRange(db.Products.Where(i => i.MainProductId == product_id));
                 db.Products.RemoveRange(db.Products.Where(i => i.Id == product_id));
                 db.SaveChanges();
             }
 
-            public static void Delete(FhrCrawlerHost.Db2.ProductOfficeDataContext dc, int product_id)
+            public static void Delete(FhrCrawlerHost.Db2.ProductOfficeDataContext dc, int product_id, bool delete_group = false)
             {
-                dc.Products.Where(i => i.MainProductId == product_id).ToList().ForEach((i) => { i.MainProductId = -1; });
                 dc.Prices.DeleteAllOnSubmit(dc.Prices.Where(i => i.ProductId == product_id));
+                if (delete_group)
+                    dc.Products.DeleteAllOnSubmit(dc.Products.Where(i => i.MainProductId == product_id));
                 dc.Products.DeleteAllOnSubmit(dc.Products.Where(i => i.Id == product_id));                            
                 dc.SubmitChanges();
             }

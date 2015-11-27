@@ -91,16 +91,18 @@ function arrange_modal_window(e) {
 }
 
 function show_dialog(definition) {
-    var default_definition = {
+    var definition_ = {
         content_div_id: false,
         dialog:{
-            close: definition.on_close,
+            //close: definition_.on_close,
             //open: function (event, ui) {
             //},
             create: function (event, ui) {
+                var e = definition_._e;
                 arrange_modal_window(e);
             },
             resizeStop: function (event, ui) {
+                var e = definition_._e;
                 //e.dialog({ "position": { my: "center", at: "center", of: window, collision: 'fit' } });
             },
             title: "&nbsp;",
@@ -123,7 +125,8 @@ function show_dialog(definition) {
             }
         },
         on_close: function (event, ui) {
-            if (content_div_id)
+            var e = definition_._e;
+            if (e.definition.content_div_id)
                 //content_e = $("#" + content_div_id);
                 //content_e.hide();
                 //$("body").append(content_e);
@@ -131,24 +134,35 @@ function show_dialog(definition) {
             else
                 e.remove();
         },
+        _e:"!!!",
     };
-    function overwrite(f, s) {
+    if (!definition)
+        return definition_;
+
+    function merge(f, s, overwrite) {
         for (var i in s) {
-            if ($.type(s[i]) != 'object' && $.type(s[i]) != 'array')
-                f[i] = s[i];
+            if ($.type(s[i]) != 'object' && $.type(s[i]) != 'array') {
+                if (overwrite || f[i] == undefined)
+                    f[i] = s[i];
+            }
             else {
-                if (f[i] == undefined) {
+                if (!f[i]) {
                     if ($.type(s[i]) == 'object')
                         f[i] = {};
                     else
                         f[i] = [];
                 }
-                overwrite(f[i], s[i]);
+                merge(f[i], s[i], overwrite);
             }
         }
         return f;
     }
-    definition = overwrite(default_definition, definition);
+    //be sure that the output definition has come as init_table parameter! 
+    //If using an internal object as definition, it will bring to buggy confusing when several dialogs are on the same page
+    definition = merge(definition, definition_);
+
+    if (!definition.dialog.close)
+        definition.dialog.close = definition.on_close;
     
     if (definition.content_div_id) {
         if ($('#' + definition.content_div_id).parent().hasClass('ui-dialog-content'))
@@ -157,6 +171,8 @@ function show_dialog(definition) {
 
     var html = '<div><div class="_loading" style="height:100%;width:100%;position:absolute;z-index:10;display:none;"><img src="/Images/ajax-loader.gif" style="display:block;margin:auto;position:relative;top:50%;transform:translateY(-50%);"/></div></div>';
     var e = $(html);
+    e.definition = definition;
+    definition_._e = e;
     $("body").append(e);
 
     var content_e;
@@ -172,8 +188,8 @@ function show_dialog(definition) {
             
     e.dialog(definition.dialog);
 
-    e.processing = function (show) {
-        if (show || show == undefined) {
+    e.show_processing = function (show) {
+        if (show || show === undefined) {
             e.find("._loading").show();
             e.find("._content").css('visibility', 'hidden');
         }
@@ -199,15 +215,15 @@ function show_dialog(definition) {
         if (ajax_config["type"] == undefined)
             ajax_config["type"] = "POST";
         ajax_config["success"] = function (response) {
-            e.processing(false);
+            e.show_processing(false);
             on_success(response);
             arrange_modal_window(e);
         };
         ajax_config["error"] = function (xhr, error) {
-            e.processing(false);
+            e.show_processing(false);
             show_error(xhr.responseText, error);
         };
-        e.processing();
+        e.show_processing();
         $.ajax(ajax_config);
     }
     
@@ -218,9 +234,9 @@ function show_dialog(definition) {
 }
 
 function init_table(definition) {
-    //no context dependent a part of definition that can be used outside this function
-    var default_definition1 = {
+    var definition_ = {
         on_row_clicked: function (row) {
+            var table = definition_._table;
             if (row.hasClass('selected')) {
                 row.removeClass('selected');
             }
@@ -274,6 +290,7 @@ function init_table(definition) {
                     cs[i] = h;
                 }
             }
+            var table = definition_._table;
             table.api().row(index).data(cs);
         },
         show_row_editor: function (content_url, ok_button_text, on_success) {
@@ -285,7 +302,7 @@ function init_table(definition) {
                     if (!e.find("form").valid())
                         return;
 
-                    e.processing();
+                    e.show_processing();
 
                     $.ajax({
                         type: e.find("form").attr('method'),
@@ -297,11 +314,11 @@ function init_table(definition) {
                                 on_success();
                                 return;
                             }
-                            e.processing(false);
+                            e.show_processing(false);
                             e.content(data);
                         },
                         error: function (xhr, error) {
-                            e.processing(false);
+                            e.show_processing(false);
                             show_error(xhr.responseText);
                         }
                     });
@@ -345,15 +362,9 @@ function init_table(definition) {
 
             return e;
         },
-    }; 
-    if (!definition)
-        return default_definition1;
-
-    if (!definition.server.actions_prefix)
-        definition.server.actions_prefix = '';
-    var default_definition2 = {
+        table_id: null,
         server: {
-            request_path: "!",
+            request_path: "!!!",
             actions_prefix: '',
         },
         id_column_id: 0,
@@ -362,18 +373,24 @@ function init_table(definition) {
                 new: true,
             },
             left: {
-                delete: true,
+                //delete: true,
             },
             right: {
-                details: true,
+                //details: true,
+                //edit: true,
+            },
+            over: {
+                delete: true,
                 edit: true,
+                details: true,
             },
             _templates: {
                 new: {
                     text: "New",
                     onclick: function () {
-                        table.modalBox = definition.show_row_editor(definition.server.request_path + "/Create" + definition.server.actions_prefix, "Create", function () {
-                            if (definition.server)
+                        var table = definition_._table;
+                        table.modalBox = table.definition.show_row_editor(table.definition.server.request_path + "/Create" + table.definition.server.actions_prefix, "Create", function () {
+                            if (table.definition.server)
                                 table.api().draw();
                             else
                                 location.reload();
@@ -384,27 +401,29 @@ function init_table(definition) {
                 details: {
                     text: "Details",
                     onclick: function () {
+                        var table = definition_._table;
                         if (!table.$('tr.selected').is("tr")) {
                             show_message("No row selected!", "Warning");
                             return false;
                         }
-                        var id = table.fnGetData(table.$('tr.selected'))[definition.id_column_id];
+                        var id = table.fnGetData(table.$('tr.selected'))[table.definition.id_column_id];
 
-                        table.modalBox = definition.show_row_editor(definition.server.request_path + "/Details" + definition.server.actions_prefix + "?Id=" + id, "OK");
+                        table.modalBox = table.definition.show_row_editor(table.definition.server.request_path + "/Details" + table.definition.server.actions_prefix + "?Id=" + id, "OK");
                     },
                     style: "display:inline-block;margin-right:3px;",
                 },
                 edit: {
                     text: "Edit",
                     onclick: function () {
+                        var table = definition_._table;
                         if (!table.$('tr.selected').is("tr")) {
                             show_message("No row selected!", "Warning");
                             return false;
                         }
-                        var id = table.fnGetData(table.$('tr.selected'))[definition.id_column_id];
+                        var id = table.fnGetData(table.$('tr.selected'))[table.definition.id_column_id];
 
-                        table.modalBox = definition.show_row_editor(definition.server.request_path + "/Edit" + definition.server.actions_prefix + "?Id=" + id, "Save", function () {
-                            if (definition.server)
+                        table.modalBox = table.definition.show_row_editor(table.definition.server.request_path + "/Edit" + table.definition.server.actions_prefix + "?Id=" + id, "Save", function () {
+                            if (table.definition.server)
                                 table.api().draw();
                             else
                                 location.reload();
@@ -413,16 +432,17 @@ function init_table(definition) {
                     style: "display:inline-block;margin-right:3px;",
                 },
                 delete: {
-                    text: "X",
+                    text: "Delete",
                     onclick: function () {
+                        var table = definition_._table;
                         if (!table.$('tr.selected').is("tr")) {
                             show_message("No row selected!", "Warning");
                             return false;
                         }
-                        var id = table.fnGetData(table.$('tr.selected'))[definition.id_column_id];
+                        var id = table.fnGetData(table.$('tr.selected'))[table.definition.id_column_id];
 
-                        table.modalBox = definition.show_row_editor(definition.server.request_path + "/Delete" + definition.server.actions_prefix + "?Id=" + id, "Delete", function () {
-                            if (definition.server)
+                        table.modalBox = table.definition.show_row_editor(table.definition.server.request_path + "/Delete" + table.definition.server.actions_prefix + "?Id=" + id, "Delete", function () {
+                            if (table.definition.server)
                                 table.api().draw();
                             else
                                 location.reload();
@@ -435,7 +455,7 @@ function init_table(definition) {
         datatable: {
             serverSide: true,
             ajax: {
-                url: definition.server.request_path + "/TableJson" + definition.server.actions_prefix,
+                url: null,
                 type: 'POST',
             },
             //ajax: function (data, callback, settings) {
@@ -452,7 +472,7 @@ function init_table(definition) {
             language: {
                 processing: '<img src="/Images/ajax-loader.gif" style="z-index:1;position:relative"/>'
             },
-            createdRow: definition.on_row_filling,
+            createdRow: null,
             //rowCallback: definition.on_row_filling,
             paging: true,
             //ordering: false,
@@ -468,27 +488,40 @@ function init_table(definition) {
             //"stateSave": true,
             //initComplete: function (settings, json) { alert(json);}
         },
+        _table: "!!!",
     };
+    if (!definition)
+        return definition_;
 
-    function overwrite(f, s) {
+    function merge(f, s, overwrite) {
         for (var i in s) {
-            if ($.type(s[i]) != 'object' && $.type(s[i]) != 'array')
-                f[i] = s[i];
+            if ($.type(s[i]) != 'object' && $.type(s[i]) != 'array') {
+                if (overwrite || f[i] == undefined)
+                    f[i] = s[i];
+            }
             else {
-                if (f[i] == undefined) {
+                if (!f[i]) {
                     if ($.type(s[i]) == 'object')
                         f[i] = {};
                     else
                         f[i] = [];
                 }
-                overwrite(f[i], s[i]);
+                merge(f[i], s[i], overwrite);
             }
         }
         return f;
     }
-    default_definition = overwrite(default_definition2, default_definition1);
-    definition = overwrite(default_definition, definition);
-        
+    //be sure that the output definition has come as init_table parameter! 
+    //If using an internal object as definition, it will bring to buggy confusing when several datatables on the same page
+    var definition = merge(definition, definition_);
+
+    if (!definition.server.actions_prefix)
+        definition.server.actions_prefix = '';    
+    if (!definition.datatable.ajax.url)
+        definition.datatable.ajax.url = definition.server.request_path + "/TableJson" + definition.server.actions_prefix;
+    if (!definition.datatable.createdRow)
+        definition.datatable.createdRow = definition.on_row_filling;
+
     for (var i in definition.menu)
         for (var j in definition.menu[i])
             if (definition.menu[i][j] === true)
@@ -499,8 +532,14 @@ function init_table(definition) {
     if (!definition.datatable.serverSide)
         definition.datatable.ajax = false;
 
-    var table = $("table:last").dataTable(definition.datatable);
-    
+    var table;
+    if (definition.table_id)
+        table = $("#" + definition.table_id).dataTable(definition.datatable);
+    else
+        table = $("table:last").dataTable(definition.datatable);
+    //actually defintion's functions are using the object where they are defined, so table is set there!
+    definition_._table = table;
+
     if (definition.datatable.serverSide) {
         var search_box = table.parent().find(".dataTables_filter").find("input");
         //search_box.keyup(function () {
@@ -560,6 +599,14 @@ function init_table(definition) {
         if (menu.over)
             menu.over.css('visibility', 'hidden');
     });
+
+    table.show_processing = function (show) {
+        var e = $('.dataTables_processing', table.closest('.dataTables_wrapper'));
+        if (show || show === undefined)
+            e.show();
+        else
+            e.hide();
+    }
 
     table.menu = menu;
     table.definition = definition;

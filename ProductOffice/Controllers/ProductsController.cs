@@ -46,25 +46,21 @@ namespace Cliver.ProductOffice.Controllers
                 new JqueryDataTable.Field("Url"),
                 //new JqueryDataTable.Field("Url", false, 1, "CASE MainProductId<0 THEN Id ELSE MainProductId"),
             };
-
+            
             string from_sql;
-            string explode_groups_info = request.Columns.ToList()[1].Search.Value;
-            if (explode_groups_info != null && Regex.IsMatch(explode_groups_info, @"ExplodeGroups\s*=\s*true", RegexOptions.Singleline | RegexOptions.IgnoreCase))
+            string expand_groups_ = request.Columns.ToList()[1].Search.Value;
+            if (expand_groups_ != null && Regex.IsMatch(expand_groups_, @"ExpandGroups\s*=\s*true", RegexOptions.Singleline | RegexOptions.IgnoreCase))
                 from_sql = "FROM Products";
             else
-                from_sql = "FROM Products WHERE MainProductId<0 OR MainProductId=Id";
+                from_sql = @"FROM Products INNER JOIN 
+(SELECT MIN(Id) AS Gid FROM Products WHERE MainProductId>=0 AND MainProductId NOT IN (SELECT Id AS Gid FROM Products WHERE MainProductId=Id) GROUP BY MainProductId
+UNION
+SELECT Id AS Gid FROM Products WHERE MainProductId=Id
+UNION
+SELECT Id AS Gid FROM Products WHERE MainProductId<0
+) a ON a.Gid=Products.Id";
 
-            JsonResult jr = JqueryDataTable.Index(request, db.Database.Connection, from_sql, fields);
-            //foreach (var r in ((dynamic)jr.Data).Data)
-            //{
-            //    string s = Convert.ToString(r[2]);
-            //    if (s != null)
-            //        r[2] = "<img src='" + Regex.Replace(s, @"[\r\n].*", "", RegexOptions.Singleline) + "'/>";
-            //    s = Convert.ToString(r[6]);
-            //    if (s != null)
-            //        r[6] = "<a href='" + s + "' target='_blank'>Site</a>";
-            //}
-            return jr;
+            return JqueryDataTable.Index(request, db.Database.Connection, from_sql, fields);
         }
 
         public ActionResult SaveGroup(
@@ -103,6 +99,39 @@ namespace Cliver.ProductOffice.Controllers
             }
             return Content(null);
         }
+
+        //public ActionResult AddProduct2Group(
+        //    int? product_id,
+        //    int? main_product_id
+        //    )
+        //{
+        //    if (product_id == null)
+        //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "product_id == null");
+        //    if (main_product_id == null)
+        //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "main_product_id == null");
+        //    if (product_id == main_product_id)
+        //        db.Products.Where(p => p.MainProductId == main_product_id).ToList().ForEach((p) => { p.MainProductId = -1; });
+        //    if (null == db.Products.Where(p => p.Id == main_product_id).FirstOrDefault())
+        //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Product Id=" + main_product_id + " does not exist");
+        //    if (product_ids.Length > 1)
+        //        db.Products.Where(p => product_ids.Contains(p.Id)).ToList().ForEach((p) => { p.MainProductId = (int)main_product_id; });
+        //    try
+        //    {
+        //        db.Configuration.ValidateOnSaveEnabled = false;
+        //        db.SaveChanges();
+        //    }
+        //    catch (System.Data.Entity.Validation.DbEntityValidationException e)
+        //    {
+        //        string m = "";
+        //        foreach (var validationErrors in e.EntityValidationErrors)
+        //        {
+        //            foreach (var validationError in validationErrors.ValidationErrors)
+        //                m += validationError.PropertyName + ": " + validationError.ErrorMessage + "\r\n";
+        //        }
+        //        return PartialView(m);
+        //    }
+        //    return Content(null);
+        //}
 
         public ActionResult GetGroup(int? product_id)
         {
