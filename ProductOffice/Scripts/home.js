@@ -88,23 +88,78 @@ function arrange_modal_window(e) {
     }
 }
 
-//content_div_id may be not specified
-function show_ajax_modal_box(title, buttons, content_div_id) {
-    if (content_div_id) {
-        if ($('#' + content_div_id).parent().hasClass('ui-dialog-content'))
-            $('#' + content_div_id).parent().dialog("destroy");
+function show_dialog(definition) {
+    var default_definition = {
+        content_div_id: false,
+        dialog:{
+            close: definition.on_close,
+            //open: function (event, ui) {
+            //},
+            create: function (event, ui) {
+                arrange_modal_window(e);
+            },
+            resizeStop: function (event, ui) {
+                //e.dialog({ "position": { my: "center", at: "center", of: window, collision: 'fit' } });
+            },
+            title: "&nbsp;",
+            maxHeight: $(window).height() - 10,
+            maxWidth: $(window).width() - 10,
+            closeOnEscape: true,
+            draggable: true,
+            resizable: true,
+            height: 'auto',
+            width: 'auto',
+            modal: true,
+            buttons: null,
+            show: {
+                effect: "fade",
+                duration: 400
+            },
+            hide: {
+                effect: "fade",
+                duration: 400
+            }
+        },
+        on_close: function (event, ui) {
+            if (content_div_id)
+                //content_e = $("#" + content_div_id);
+                //content_e.hide();
+                //$("body").append(content_e);
+                e.dialog("close");
+            else
+                e.remove();
+        },
+    };
+    function overwrite(f, s) {
+        for (var i in s) {
+            if ($.type(s[i]) != 'object' && $.type(s[i]) != 'array')
+                f[i] = s[i];
+            else {
+                if (f[i] == undefined) {
+                    if ($.type(s[i]) == 'object')
+                        f[i] = {};
+                    else
+                        f[i] = [];
+                }
+                overwrite(f[i], s[i]);
+            }
+        }
+        return f;
     }
-            
-    //if (!title)
-    //    title = '&nbsp;';
+    definition = overwrite(default_definition, definition);
+    
+    if (definition.content_div_id) {
+        if ($('#' + definition.content_div_id).parent().hasClass('ui-dialog-content'))
+            $('#' + definition.content_div_id).parent().dialog("destroy");
+    }
 
     var html = '<div><div class="_loading" style="height:100%;width:100%;position:absolute;z-index:10;display:none;"><img src="/Images/ajax-loader.gif" style="display:block;margin:auto;position:relative;top:50%;transform:translateY(-50%);"/></div></div>';
     var e = $(html);
     $("body").append(e);
 
     var content_e;
-    if (content_div_id) {
-        content_e = $("#" + content_div_id);
+    if (definition.content_div_id) {
+        content_e = $("#" + definition.content_div_id);
         content_e.addClass("_content");
         content_e.show();
     }
@@ -112,55 +167,8 @@ function show_ajax_modal_box(title, buttons, content_div_id) {
         content_e = $('<div class="_content"></div>');
     }
     e.append(content_e);
-        
-    var close = function (event, ui) {
-        if (content_div_id)            
-            //content_e = $("#" + content_div_id);
-            //content_e.hide();
-            //$("body").append(content_e);
-            e.dialog("close");
-        else
-            e.remove();
-    };
-    
-    if (!buttons) {
-        var buttons = {};
-        buttons["Cancel"] = null;
-    }
-    $.each(buttons, function (name, value) {
-        if (!value) 
-            buttons[name] = close;
-    });    
-
-    e.dialog({
-        close: close,
-        //open: function (event, ui) {
-        //},
-        create: function (event, ui) {
-            arrange_modal_window(e);
-        },
-        resizeStop: function (event, ui) {
-            //e.dialog({ "position": { my: "center", at: "center", of: window, collision: 'fit' } });
-        },
-        title: title,
-        maxHeight: $(window).height() - 10,
-        maxWidth: $(window).width() - 10,
-        closeOnEscape: true,
-        draggable: true,
-        resizable: true,
-        height: 'auto',
-        width: 'auto',
-        modal: true,
-        buttons: buttons,
-        show: {
-            effect: "fade",
-            duration: 400
-        },
-        hide: {
-            effect: "fade",
-            duration: 400
-        }
-    });
+            
+    e.dialog(definition.dialog);
 
     e.processing = function (show) {
         if (show || show == undefined) {
@@ -201,7 +209,8 @@ function show_ajax_modal_box(title, buttons, content_div_id) {
         $.ajax(ajax_config);
     }
 
-    e.close = close;
+    e.close = definition.on_close;
+    e.definition = definition;
 
     return e;
 }
@@ -305,7 +314,7 @@ function init_table(definition) {
                 }
             }
 
-            e = show_ajax_modal_box(null, buttons);
+            e = show_dialog({ dialog: { buttons: buttons } });
 
             e.getContentByAjax(
                 {
@@ -356,69 +365,69 @@ function init_table(definition) {
             right: {
                 details: true,
                 edit: true,
-            }
-        },
-        menu_processors: {
-            new: {
-                text: "New",
-                onclick: function () {
-                    table.modalBox = definition.show_row_editor(definition.server.request_path + "/Create" + definition.server.actions_prefix, "Create", function () {
-                        if (definition.server)
-                            table.api().draw();
-                        else
-                            location.reload();
-                    });
-                },
-                style: "display:inline-block;margin-right:30px;",
             },
-            details: {
-                text: "Details",
-                onclick: function () {
-                    if (!table.$('tr.selected').is("tr")) {
-                        show_message("No row selected!", "Warning");
-                        return false;
-                    }
-                    var id = table.fnGetData(table.$('tr.selected'))[definition.id_column_id];
-
-                    table.modalBox = definition.show_row_editor(definition.server.request_path + "/Details" + definition.server.actions_prefix + "?Id=" + id, "OK");
+            _templates: {
+                new: {
+                    text: "New",
+                    onclick: function () {
+                        table.modalBox = definition.show_row_editor(definition.server.request_path + "/Create" + definition.server.actions_prefix, "Create", function () {
+                            if (definition.server)
+                                table.api().draw();
+                            else
+                                location.reload();
+                        });
+                    },
+                    style: "display:inline-block;margin-right:30px;",
                 },
-                style: "display:inline-block;margin-right:3px;",
-            },
-            edit: {
-                text: "Edit",
-                onclick: function () {
-                    if (!table.$('tr.selected').is("tr")) {
-                        show_message("No row selected!", "Warning");
-                        return false;
-                    }
-                    var id = table.fnGetData(table.$('tr.selected'))[definition.id_column_id];
+                details: {
+                    text: "Details",
+                    onclick: function () {
+                        if (!table.$('tr.selected').is("tr")) {
+                            show_message("No row selected!", "Warning");
+                            return false;
+                        }
+                        var id = table.fnGetData(table.$('tr.selected'))[definition.id_column_id];
 
-                    table.modalBox = definition.show_row_editor(definition.server.request_path + "/Edit" + definition.server.actions_prefix + "?Id=" + id, "Save", function () {
-                        if (definition.server)
-                            table.api().draw();
-                        else
-                            location.reload();
-                    });
+                        table.modalBox = definition.show_row_editor(definition.server.request_path + "/Details" + definition.server.actions_prefix + "?Id=" + id, "OK");
+                    },
+                    style: "display:inline-block;margin-right:3px;",
                 },
-                style: "display:inline-block;margin-right:3px;",
-            },
-            delete: {
-                text: "X",
-                onclick: function () {
-                    if (!table.$('tr.selected').is("tr")) {
-                        show_message("No row selected!", "Warning");
-                        return false;
-                    }
-                    var id = table.fnGetData(table.$('tr.selected'))[definition.id_column_id];
+                edit: {
+                    text: "Edit",
+                    onclick: function () {
+                        if (!table.$('tr.selected').is("tr")) {
+                            show_message("No row selected!", "Warning");
+                            return false;
+                        }
+                        var id = table.fnGetData(table.$('tr.selected'))[definition.id_column_id];
 
-                    table.modalBox = definition.show_row_editor(definition.server.request_path + "/Delete" + definition.server.actions_prefix + "?Id=" + id, "Delete", function () {
-                        if (definition.server)
-                            table.api().draw();
-                        else
-                            location.reload();
-                    });
+                        table.modalBox = definition.show_row_editor(definition.server.request_path + "/Edit" + definition.server.actions_prefix + "?Id=" + id, "Save", function () {
+                            if (definition.server)
+                                table.api().draw();
+                            else
+                                location.reload();
+                        });
+                    },
+                    style: "display:inline-block;margin-right:3px;",
                 },
-                style: "color:#f00;",
+                delete: {
+                    text: "X",
+                    onclick: function () {
+                        if (!table.$('tr.selected').is("tr")) {
+                            show_message("No row selected!", "Warning");
+                            return false;
+                        }
+                        var id = table.fnGetData(table.$('tr.selected'))[definition.id_column_id];
+
+                        table.modalBox = definition.show_row_editor(definition.server.request_path + "/Delete" + definition.server.actions_prefix + "?Id=" + id, "Delete", function () {
+                            if (definition.server)
+                                table.api().draw();
+                            else
+                                location.reload();
+                        });
+                    },
+                    style: "color:#f00;",
+                },
             },
         },
         datatable: {
@@ -481,7 +490,7 @@ function init_table(definition) {
     for (var i in definition.menu)
         for (var j in definition.menu[i])
             if (definition.menu[i][j] === true)
-                definition.menu[i][j] = definition.menu_processors[j];
+                definition.menu[i][j] = definition.menu._templates[j];
             else if (definition.menu[i][j] === false)
                 delete definition.menu[i][j];
 

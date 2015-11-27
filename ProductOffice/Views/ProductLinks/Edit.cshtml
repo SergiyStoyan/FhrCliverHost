@@ -20,15 +20,15 @@
                         <script>
                             function show_ProductMatchesDlg(company2_id){
                                 if(!ProductMatchesDlg){
-                                    ProductMatchesDlg = show_ajax_modal_box(
-                                        "Product Matches", 
-                                        {
-                                            "Close":function(){
-                                                ProductMatchesDlg.close();
+                                    ProductMatchesDlg = show_dialog({
+                                        title: "Product Matches",
+                                        content_div_id: "ProductMatchesContent",
+                                        dialog: {
+                                            buttons: {
+                                                Close: function () { ProductMatchesDlg.close(); },
                                             }
                                         },
-                                        "ProductMatchesContent"
-                                    );  
+                                    });  
                                     ProductLinksTable.modalBox.on('dialogclose', function(event) {
                                         ProductMatchesDlg = null;
                                         CurrentCompany2Id = null;
@@ -192,15 +192,15 @@
     <script>
             function show_CategoryTreeView(){
                 if(!CategoryTreeView){
-                    CategoryTreeView = show_ajax_modal_box(
-                        "Picking Category...",
-                        {
-                            "Close":function(){
-                                CategoryTreeView.close();
+                    CategoryTreeView = show_dialog({
+                        title: "Picking Category...",
+                        content_div_id: "CategoryTreeViewContent",
+                        dialog: {
+                            buttons: {
+                                Close: function () { CategoryTreeView.close(); },
                             }
                         },
-                        "CategoryTreeViewContent"
-                    );
+                    });
                 }
                 else
                     CategoryTreeView.dialog("open");

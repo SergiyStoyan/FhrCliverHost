@@ -9,7 +9,15 @@ Last autotraining date: @ViewBag.SelfTrainingDate
 <br /><br />
 <script>
     function perform_self_training(){ 
-        var e = show_ajax_modal_box("Self Training", {Close:function(){location.reload();}}, "SelfTrainingContent");
+        var e = show_dialog({ 
+            title: "Self Training",
+            content_div_id: "SelfTrainingContent",
+            dialog: {
+                buttons: {
+                    Close: function(){location.reload();},
+                }
+            },
+        });
         var data = {};
         data.__RequestVerificationToken = $('input[name=__RequestVerificationToken]').val();
         e.getContentByAjax(
