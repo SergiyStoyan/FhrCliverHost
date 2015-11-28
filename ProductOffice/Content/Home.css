@@ -198,13 +198,13 @@ border-right: none;
 border-top: none;
 }
 
-   table.my tbody tr.MainInGroup.odd{
+   table.my tbody tr.MainInGroup{
         font-weight:bold;
         background-color:lightgreen;
     }
-   table.my tbody tr.MainInGroup.even{
+   table.my tbody tr.MainInGroup.selected{
         font-weight:bold;
-        background-color:lightgreen;
+        background-color:#6d5;
     }
    
    table.my tbody tr.SubordinateInGroup .odd{

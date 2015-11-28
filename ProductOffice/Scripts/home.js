@@ -29,7 +29,7 @@ function show_message(content, title) {
         }
     });
     
-    arrange_modal_window(e);
+    arrange_dialog_window(e);
     return e;
 }
 
@@ -65,11 +65,11 @@ function show_error(content, title) {
         }
     });
 
-    arrange_modal_window(e);
+    arrange_dialog_window(e);
     return e;
 }
 
-function arrange_modal_window(e) {
+function arrange_dialog_window(e) {
     if (!$(e).dialog("isOpen"))
         return;
     var h = $(e).parent().height() - $(window).height();
@@ -93,13 +93,14 @@ function arrange_modal_window(e) {
 function show_dialog(definition) {
     var definition_ = {
         content_div_id: false,
+        adjust: true,
         dialog:{
             //close: definition_.on_close,
             //open: function (event, ui) {
             //},
             create: function (event, ui) {
                 var e = definition_._e;
-                arrange_modal_window(e);
+                arrange_dialog_window(e);
             },
             resizeStop: function (event, ui) {
                 var e = definition_._e;
@@ -146,7 +147,7 @@ function show_dialog(definition) {
                     f[i] = s[i];
             }
             else {
-                if (!f[i]) {
+                if (f[i] == undefined) {
                     if ($.type(s[i]) == 'object')
                         f[i] = {};
                     else
@@ -172,6 +173,7 @@ function show_dialog(definition) {
     var html = '<div><div class="_loading" style="height:100%;width:100%;position:absolute;z-index:10;display:none;"><img src="/Images/ajax-loader.gif" style="display:block;margin:auto;position:relative;top:50%;transform:translateY(-50%);"/></div></div>';
     var e = $(html);
     e.definition = definition;
+    //actually defintion's functions are using the object where they are defined, so dialog is to be passed there!
     definition_._e = e;
     $("body").append(e);
 
@@ -217,7 +219,8 @@ function show_dialog(definition) {
         ajax_config["success"] = function (response) {
             e.show_processing(false);
             on_success(response);
-            arrange_modal_window(e);
+            if (e.definition.adjust)
+                arrange_dialog_window(e);
         };
         ajax_config["error"] = function (xhr, error) {
             e.show_processing(false);
@@ -310,7 +313,7 @@ function init_table(definition) {
                         data: e.find("form").serialize(),
                         success: function (data) {
                             if (!data || data.redirect) {
-                                e.remove();
+                                e.close();
                                 on_success();
                                 return;
                             }
@@ -324,12 +327,12 @@ function init_table(definition) {
                     });
                 };
                 buttons["Cancel"] = function () {
-                    e.remove();
+                    e.close();
                 }
             }
             else {
                 buttons[ok_button_text] = function () {
-                    e.remove();
+                    e.close();
                 }
             }
 
@@ -500,7 +503,7 @@ function init_table(definition) {
                     f[i] = s[i];
             }
             else {
-                if (!f[i]) {
+                if (f[i] == undefined) {
                     if ($.type(s[i]) == 'object')
                         f[i] = {};
                     else
@@ -537,7 +540,7 @@ function init_table(definition) {
         table = $("#" + definition.table_id).dataTable(definition.datatable);
     else
         table = $("table:last").dataTable(definition.datatable);
-    //actually defintion's functions are using the object where they are defined, so table is set there!
+    //actually defintion's functions are using the object where they are defined, so table is to be passed there!
     definition_._table = table;
 
     if (definition.datatable.serverSide) {
@@ -610,6 +613,6 @@ function init_table(definition) {
 
     table.menu = menu;
     table.definition = definition;
-
+    
     return table;
 }

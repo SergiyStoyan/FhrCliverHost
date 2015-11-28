@@ -365,7 +365,7 @@
         //$('#LinkedProductsTable tr td:nth-child(' + column_id + ')').find(".bFind").show();
         $('#LinkedProductsTable tr td:nth-child(' + column_id + ')').find(".bRemove").hide();
 
-        arrange_modal_window(ProductLinksTable.modalBox);
+        arrange_dialog_window(ProductLinksTable.modalBox);
     }
 
     function mark_added_product2s(link_id) {
@@ -411,7 +411,7 @@
             add_product_to_LinkedProductsTable(products[i]);
         }
         mark_added_product2s(products[0].LinkId);
-        arrange_modal_window(ProductLinksTable.modalBox);
+        arrange_dialog_window(ProductLinksTable.modalBox);
     }
 
     var initial_products = @Html.Raw(ViewBag.LinkedProductsJson);
