@@ -163,6 +163,17 @@ SELECT Id AS Gid FROM Products WHERE MainProductId<0
             return Content(null);
         }
 
+        public ActionResult Ungroup([Bind(Prefix = "product_ids[]")]string[] product_ids_)
+        {    
+            if (product_ids_ == null)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "product_ids_ == null");
+            int[] product_ids = (from x in product_ids_ where !string.IsNullOrWhiteSpace(x) select int.Parse(x)).ToArray();
+            db.Products.Where(p => product_ids.Contains(p.Id)).ToList().ForEach((p) => { p.MainProductId = -1; });
+            db.Configuration.ValidateOnSaveEnabled = false;
+            db.SaveChanges();
+            return Content(null);
+        }
+
         // GET: Products/Details/5
         public ActionResult Details(int? id)
         {

@@ -106,7 +106,7 @@ function show_dialog(definition) {
                 var e = definition_._e;
                 //e.dialog({ "position": { my: "center", at: "center", of: window, collision: 'fit' } });
             },
-            title: "&nbsp;",
+            title: '',
             maxHeight: $(window).height() - 10,
             maxWidth: $(window).width() - 10,
             closeOnEscape: true,
@@ -229,7 +229,11 @@ function show_dialog(definition) {
         e.show_processing();
         $.ajax(ajax_config);
     }
-    
+
+    e.is_open = function(){
+        return $(e).dialog("isOpen");
+    }
+
     e.close = definition.on_close;
     e.definition = definition;
 
@@ -238,7 +242,8 @@ function show_dialog(definition) {
 
 function init_table(definition) {
     var definition_ = {
-        on_row_clicked: function (row) {
+        on_row_clicked: function (event) {
+            var row = $($(event.target).parents('tr'));
             var table = definition_._table;
             if (row.hasClass('selected')) {
                 row.removeClass('selected');
@@ -294,8 +299,8 @@ function init_table(definition) {
                 }
             }
             var table = definition_._table;
-            if (!table.api)//when filling table in html, it calls this function before _table is set. 
-                table = this;
+            if (!table.api)//when filling table by html, this function is called before _table is set. 
+                table = $(row).parents('table').dataTable();
             table.api().row(index).data(cs);
         },
         show_row_editor: function (content_url, ok_button_text, on_success) {
@@ -494,31 +499,31 @@ function init_table(definition) {
             //initComplete: function (settings, json) { alert(json);}
         },
         _table: "!!!",
+        _merge: function merge(f, s, overwrite) {
+            for (var i in s) {
+                if ($.type(s[i]) != 'object' && $.type(s[i]) != 'array') {
+                    if (overwrite || f[i] == undefined)
+                        f[i] = s[i];
+                }
+                else {
+                    if (f[i] == undefined) {
+                        if ($.type(s[i]) == 'object')
+                            f[i] = {};
+                        else
+                            f[i] = [];
+                    }
+                    merge(f[i], s[i], overwrite);
+                }
+            }
+            return f;
+        },
     };
     if (!definition)
         return definition_;
 
-    function merge(f, s, overwrite) {
-        for (var i in s) {
-            if ($.type(s[i]) != 'object' && $.type(s[i]) != 'array') {
-                if (overwrite || f[i] == undefined)
-                    f[i] = s[i];
-            }
-            else {
-                if (f[i] == undefined) {
-                    if ($.type(s[i]) == 'object')
-                        f[i] = {};
-                    else
-                        f[i] = [];
-                }
-                merge(f[i], s[i], overwrite);
-            }
-        }
-        return f;
-    }
     //be sure that the output definition has come as init_table parameter! 
     //If using an internal object as definition, it will bring to buggy confusing when several datatables on the same page
-    var definition = merge(definition, definition_);
+    var definition = definition_._merge(definition, definition_);
 
     if (!definition.server.actions_prefix)
         definition.server.actions_prefix = '';    
@@ -544,6 +549,8 @@ function init_table(definition) {
         table = $("table:last").dataTable(definition.datatable);
     //actually defintion's functions are using the object where they are defined, so table is to be passed there!
     definition_._table = table;
+    //also some redefined functions may come from the customer's defintion, so table is to be passed there as well.
+    definition._table = table;
 
     if (definition.datatable.serverSide) {
         var search_box = table.parent().find(".dataTables_filter").find("input");
@@ -556,45 +563,36 @@ function init_table(definition) {
     }
 
     var menu = {};
+    var fill_menu = function (me, md) {
+        for (var i in md) {
+            var b = $('<a href="#" name=' + i + ' class="button" style="' + (md[i].style ? md[i].style : '') + '">' + md[i].text + '</a>');
+            me.append(b);
+            b.click(md[i].onclick);
+        }
+    }
     if (!$.isEmptyObject(definition.menu.top)) {
         menu.top = $("<p></p>");
         table.parents(".dataTables_wrapper").before(menu.top);
-        for (var i in definition.menu.top) {
-            var b = $('<a href="#" class="button" style=' + definition.menu.top[i].style + '>' + definition.menu.top[i].text + '</a>');
-            menu.top.append(b);
-            b.click(definition.menu.top[i].onclick);
-        }
+        fill_menu(menu.top, definition.menu.top);
     }
     if (!$.isEmptyObject(definition.menu.right)) {
         menu.right = $('<div class="table_floating_menu" style="visibility: hidden; position: absolute;"></div>');
         table.append(menu.right);
-        for (var i in definition.menu.right) {
-            var b = $('<a href="#" class="button" style=' + definition.menu.right[i].style + '>' + definition.menu.right[i].text + '</a>');
-            menu.right.append(b);
-            b.click(definition.menu.right[i].onclick);
-        }
+        fill_menu(menu.right, definition.menu.right);
     }
     if (!$.isEmptyObject(definition.menu.left)) {
         menu.left = $('<div class="table_floating_menu" style="visibility: hidden; position: absolute;"></div>');
         table.append(menu.left);
-        for (var i in definition.menu.left) {
-            var b = $('<a href="#" class="button" style=' + definition.menu.left[i].style + '>' + definition.menu.left[i].text + '</a>');
-            menu.left.append(b);
-            b.click(definition.menu.left[i].onclick);
-        }
+        fill_menu(menu.left, definition.menu.left);
     }
     if (!$.isEmptyObject(definition.menu.over)) {
         menu.over = $('<div class="table_floating_menu" style="visibility: hidden; position: absolute;"></div>');
         table.append(menu.over);
-        for (var i in definition.menu.over) {
-            var b = $('<a href="#" class="button" style=' + definition.menu.over[i].style + '>' + definition.menu.over[i].text + '</a>');
-            menu.over.append(b);
-            b.click(definition.menu.over[i].onclick);
-        }
+        fill_menu(menu.over, definition.menu.over);
     }
 
     if (definition.on_row_clicked)
-        table.find('tbody').on('click', 'tr', function () { definition.on_row_clicked($(this)); });
+        table.find('tbody').on('click', 'tr', definition.on_row_clicked);
 
     table.on('draw.dt', function () {
         if (menu.left)

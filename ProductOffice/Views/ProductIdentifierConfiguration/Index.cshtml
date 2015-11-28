@@ -10,9 +10,9 @@ Last autotraining date: @ViewBag.SelfTrainingDate
 <script>
     function perform_self_training(){ 
         var e = show_dialog({ 
-            title: "Self Training",
             content_div_id: "SelfTrainingContent",
             dialog: {
+                title: "Self Training",
                 buttons: {
                     Close: function(){location.reload();},
                 }
