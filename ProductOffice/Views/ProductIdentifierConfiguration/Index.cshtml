@@ -35,7 +35,7 @@ Last autotraining date: @ViewBag.SelfTrainingDate
 <div id="SelfTrainingContent" style="display:none;width:200px;height:150px;">If you want not to break execution, do not close this window...</div>
 
 Company related settings:
-<table>
+<table class="my">
     <thead>
         <tr>
             <th>
@@ -55,8 +55,8 @@ Company related settings:
         },
         menu: {
             top: false,
-            left: false,
-            right: {
+            over: {
+                delete: false,
                 edit: true,
                 details: false,
             },
@@ -66,7 +66,7 @@ Company related settings:
 
 <br /><br />
 Company-to-company related settings:
-<table>
+<table class="my">
     <thead>
         <tr>
             <th>
@@ -91,7 +91,8 @@ Company-to-company related settings:
         menu: {
             top: false,
             left: false,
-            right: {
+            over: {
+                delete: false,
                 edit: true,
                 details: false,
             },

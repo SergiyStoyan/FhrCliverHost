@@ -11,7 +11,7 @@ int RefreshSpanInSecs = 10;
 Refresh data every @RefreshSpanInSecs seconds
 <input id="refresh_table_checkbox" type="checkbox" class="btn btn-default" onchange="javascript:RefreshTable(this.checked);" /> 
 
-<table>
+<table class="my">
     <thead>
         <tr>
             <th></th>
@@ -26,8 +26,7 @@ Refresh data every @RefreshSpanInSecs seconds
             <th>@Html.DisplayNameFor(model => model.RunTimeSpan)</th>
         </tr>
     </thead>
-    <tbody>
-    </tbody>
+    <tbody></tbody>
 </table>
 
 <script type="text/javascript">

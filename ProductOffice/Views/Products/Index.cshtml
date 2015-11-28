@@ -246,9 +246,9 @@
                 over: {
                     delete: false,
                     edit: true,
+                    add2group: { text: "Group", onclick: function () { add_raw_to_group_dlg(ProductsTable.api().row('.selected')); } },
                     details: true,
-                    add: { text: "Group", onclick: function () { add_raw_to_group_dlg(ProductsTable.api().row('.selected')); } },
-                    open: { text: "Expand", onclick: function () { add_raw_to_group_dlg(ProductsTable.api().row('.selected'), true); } },                    
+                    expand: { text: "Expand", onclick: function () { add_raw_to_group_dlg(ProductsTable.api().row('.selected'), true); } },                    
                     @*ungroup: {
                         text: "Ungroup",
                         onclick: function () {

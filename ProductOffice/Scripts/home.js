@@ -293,8 +293,7 @@ function init_table(definition) {
                     cs[i] = h;
                 }
             }
-            var table = definition_._table;
-            table.api().row(index).data(cs);
+            this.api().row(index).data(cs);
         },
         show_row_editor: function (content_url, ok_button_text, on_success) {
             var e;
@@ -394,7 +393,7 @@ function init_table(definition) {
                         var table = definition_._table;
                         table.modalBox = table.definition.show_row_editor(table.definition.server.request_path + "/Create" + table.definition.server.actions_prefix, "Create", function () {
                             if (table.definition.server)
-                                table.api().draw();
+                                table.api().draw(false);
                             else
                                 location.reload();
                         });
@@ -427,7 +426,7 @@ function init_table(definition) {
 
                         table.modalBox = table.definition.show_row_editor(table.definition.server.request_path + "/Edit" + table.definition.server.actions_prefix + "?Id=" + id, "Save", function () {
                             if (table.definition.server)
-                                table.api().draw();
+                                table.api().draw(false);
                             else
                                 location.reload();
                         });
@@ -446,7 +445,7 @@ function init_table(definition) {
 
                         table.modalBox = table.definition.show_row_editor(table.definition.server.request_path + "/Delete" + table.definition.server.actions_prefix + "?Id=" + id, "Delete", function () {
                             if (table.definition.server)
-                                table.api().draw();
+                                table.api().draw(false);
                             else
                                 location.reload();
                         });

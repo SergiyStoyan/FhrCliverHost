@@ -21,7 +21,7 @@ Refresh data every @RefreshSpanInSecs seconds
     Filter by type: &nbsp; @Html.DropDownList("TypeId", null, htmlAttributes: new { @class = "form-control", onchange = "javascript:select_in_table('Type',$(this).val());" })
 </div>
 
-<table>
+<table class="my">
     <thead>
         <tr>
             <th>
@@ -54,8 +54,9 @@ Refresh data every @RefreshSpanInSecs seconds
         menu:{
             top:false,
             left:false,
-            right:{
-                edit: false,
+            over: {
+                delete:false,
+                edit:false,
             },
         }
     });
@@ -73,7 +74,7 @@ Refresh data every @RefreshSpanInSecs seconds
             if (fields2select_pattern[f])
                 select.push(f + "=" + fields2select_pattern[f]);
         table.api().columns(0).search(select.join("|"));// it is how filter parameters are passed due to bad manual!
-        table.api().draw();
+        table.api().draw(false);
     }
 
     var refresh_timer = null;
@@ -82,7 +83,7 @@ Refresh data every @RefreshSpanInSecs seconds
         {
             if(!refresh_timer )
                 refresh_timer = setInterval(function () {
-                    table.api().draw();
+                    table.api().reload();
                 }, 1000 * @RefreshSpanInSecs);
         }
         else
