@@ -293,7 +293,10 @@ function init_table(definition) {
                     cs[i] = h;
                 }
             }
-            this.api().row(index).data(cs);
+            var table = definition_._table;
+            if (!table.api)//when filling table in html, it calls this function before _table is set. 
+                table = this;
+            table.api().row(index).data(cs);
         },
         show_row_editor: function (content_url, ok_button_text, on_success) {
             var e;
