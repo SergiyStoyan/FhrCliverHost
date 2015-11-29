@@ -41,9 +41,9 @@ namespace Cliver.Bot
             {                
 	//@"metadata=res://FhrApi/ProductOffice.Models.ProductOfficeEntities.csdl|res://FhrApi/ProductOffice.Models.ProductOfficeEntities.ssdl|res://FhrApi/ProductOffice.Models.ProductOfficeEntities.msl;provider=System.Data.SqlClient;	
 	//provider connection string='data source=(localdb)\MSSQLLocalDB;attachdbfilename=&quot;D:\_d\_PROJECTS\FHR(for Andreas Chermak)\FhrCliverHost#development\_data\ProductOffice.mdf&quot;;integrated security=True;multipleactiveresultsets=True;connect timeout=30;application name=EntityFramework'" 
-                Match m= Regex.Match(connection_string, @"provider\s+connection\s+string\s*=\s*'(.*?)'", RegexOptions.IgnoreCase| RegexOptions.Singleline);
+                Match m= Regex.Match(connection_string, @"provider\s+connection\s+string\s*=\s*([""'])(.*?)\1", RegexOptions.IgnoreCase| RegexOptions.Singleline);
                 if (m.Success)
-                    connection_string = m.Groups[1].Value;
+                    connection_string = m.Groups[2].Value;
                 return new MsSqlConnection(connection_string);
             }
             else
