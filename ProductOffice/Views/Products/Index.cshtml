@@ -288,7 +288,7 @@
             },
             datatable: {
                 createdRow: function (row, cs, index) {
-                    cs[2] = "<img src='" + cs[2].replace(/[\r\n].*/ig, "") + "'/>";
+                    cs[2] = "<a href='#' onclick='javascript: show_product_image(this);'><img src='" + cs[2].replace(/[\r\n].*/ig, "") + "'/></a>";
                     if (cs[6])
                         cs[6] = "<a href='" + cs[6] + "' target='_blank'>Site</a>";
                     definition.on_row_filling(row, cs, index);
@@ -337,4 +337,36 @@
     }
 </script>
 
+<div id="ProductImage" style="display:none;"></div>
+<script>
+    function show_product_image(e) {
+        var d = $('<div>' + $(e).html() + '</div>');
+        $("body").append(d);
+        d.dialog({
+           resizable: true,
+           height: 'auto',
+           width: 'auto',
+           modal: true,
+           show: {
+               effect: "clip",
+               duration: 300
+           },
+           hide: {
+               effect: "fade",
+               duration: 300
+           },
+           dialogClass: 'noTitleStuff',
+           closeOnEscape: true,
+           open: function (event, ui) {
+           },
+           close: function (event, ui) {
+                   d.remove();
+           },
+        });
+        d.bind('click', function () { d.remove(); });
+        $('body').children('.ui-widget-overlay:last').bind('click', function () { d.remove(); });
+        d.siblings('.ui-dialog-titlebar').css('display', 'none');
+   }
+
+</script>
 

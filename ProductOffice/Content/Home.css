@@ -213,3 +213,8 @@ border-top: none;
    table.my tbody tr.SubordinateInGroup .even{
         background-color:gray;
     }
+
+   #ProductsTable img{
+       width:60px;
+       height:auto;
+   }

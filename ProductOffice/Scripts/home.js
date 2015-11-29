@@ -123,7 +123,8 @@ function show_dialog(definition) {
             hide: {
                 effect: "fade",
                 duration: 400
-            }
+            },
+            closeOnEscape: true,
         },
         on_close: function (event, ui) {
             var e = definition_._e;
