@@ -40,7 +40,8 @@ namespace Cliver.CrawlerHost
                 Properties.Settings.Default.EmailSender = AdminEmailSender.Text;
                 Properties.Settings.Default.DefaultAdminEmails = DefaultAdminEmails.Text;
                 Properties.Settings.Default.Save();
-                DbApi.ConnectionString = DbConnectionString.Text;
+                CrawlerHost.Api.SaveConnectionString(DbApi.DATABASE_CONNECTION_STRING_NAME, DbConnectionString.Text);
+                Message.Inform("To use the new settings, the application may need to be restarted.");
                 Close();
             }
             catch (Exception ex)

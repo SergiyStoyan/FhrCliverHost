@@ -144,7 +144,7 @@ namespace Cliver.CrawlerHost
 
         private void mHostSettings_Click(object sender, EventArgs e)
         {
-            HostSettingsForm f = new HostSettingsForm();
+            SettingsForm f = new SettingsForm();
             f.ShowDialog();
         }
     }

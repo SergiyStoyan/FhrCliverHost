@@ -8,6 +8,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Cliver.ProductOffice.Models;
+using Cliver.FhrApi.ProductOffice.Models;
 using System.IO;
 using System.Data.Entity.Validation;
 
@@ -16,7 +17,7 @@ namespace Cliver.ProductOffice.Controllers
     [Authorize]
     public class ImportController : Controller
     {
-        private ProductOfficeEntities db = new ProductOfficeEntities();
+        private DbApi db = new DbApi();
         
         List<object> MapSelect
         {
@@ -125,8 +126,8 @@ namespace Cliver.ProductOffice.Controllers
             //edr = Excel.ExcelReaderFactory.CreateOpenXmlReader(stream);
             System.Data.DataSet ds = edr.AsDataSet();
             edr.Close();
-
-            ImportMap import_map = db.ImportMaps.Where(r => r.Id == import.MapId).First();
+            
+            FhrApi.ProductOffice.Models.ImportMap import_map = db.ImportMaps.Where(r => r.Id == import.MapId).First();
             //if (import_map.C_CompanyProductIdI == null)
             //    throw new Exception("C_CompanyProductIdI in map #" + import_map.Id + " is not specified.");
             //if (import_map.C_NameI == null)
@@ -153,7 +154,7 @@ namespace Cliver.ProductOffice.Controllers
                 foreach (System.Data.DataRow row in dt.Rows)
                 {
                     row_number++;
-                    Product product = new Product();
+                    FhrApi.ProductOffice.Models.Product product = new FhrApi.ProductOffice.Models.Product();
                     product.CompanyId = import_map.CompanyId;
 
                     product.ExternalId = row[import_map.C_CompanyProductIdI].ToString().Trim();
@@ -209,7 +210,7 @@ namespace Cliver.ProductOffice.Controllers
 
                     if (!import.CheckNotImport)
                     {
-                        Product p = db.Products.Where(r => r.CompanyId == product.CompanyId && r.ExternalId == product.ExternalId).FirstOrDefault();
+                        FhrApi.ProductOffice.Models.Product p = db.Products.Where(r => r.CompanyId == product.CompanyId && r.ExternalId == product.ExternalId).FirstOrDefault();
                         if (p == null)
                         {
                             product.CreateTime = import.UpdateTime;
@@ -282,8 +283,7 @@ namespace Cliver.ProductOffice.Controllers
                         processed_price_count++;
                     }
 
-                    db.Dispose();
-                    db = new ProductOfficeEntities();
+                    DbApi.RenewContext(ref db);
                 }
             }
 

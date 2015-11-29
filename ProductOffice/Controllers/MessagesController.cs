@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using Cliver.ProductOffice.Models;
+using Cliver.CrawlerHost.Models;
 using System.Text.RegularExpressions;
 using System.Configuration;
 
@@ -12,13 +12,13 @@ namespace Cliver.ProductOffice.Controllers
     [Authorize]
     public class MessagesController : Controller
     {
-        private CrawlerHostDataContext chdc = new CrawlerHostDataContext(Cliver.CrawlerHost.DbApi.ConnectionString);
+        private DbApi db = new DbApi();
 
         List<object> SourceSelect
         {
             get
             {
-                var ss = (from r in chdc.Messages group r by r.Source into s select new { Value = s.Key, Name = s.Key }).ToList<object>();
+                var ss = (from r in db.Messages group r by r.Source into s select new { Value = s.Key, Name = s.Key }).ToList<object>();
                 ss.Insert(0, new { Value = "", Name = "-- ALL --" });
                 return ss;
             }
@@ -61,7 +61,7 @@ namespace Cliver.ProductOffice.Controllers
                 new JqueryDataTable.Field("Value", true),
                 new JqueryDataTable.Field("Details", true)                                        
             };
-            JsonResult jr = JqueryDataTable.Index(request, chdc.Connection, "FROM Messages", fields);
+            JsonResult jr = JqueryDataTable.Index(request, db.Connection, "FROM Messages", fields);
             foreach (var r in ((dynamic)jr.Data).Data)
             {
                 if (!String.IsNullOrEmpty(Convert.ToString(r[1])))
@@ -76,7 +76,7 @@ namespace Cliver.ProductOffice.Controllers
 
         public ActionResult Details(int id)
         {         
-            Models.Message message = chdc.Messages.Where(r => r.Id == id).FirstOrDefault();
+            Cliver.CrawlerHost.Models.Message message = db.Messages.Where(r => r.Id == id).FirstOrDefault();
             if (message == null)
             {                                                                                 
                 return HttpNotFound();
@@ -89,7 +89,7 @@ namespace Cliver.ProductOffice.Controllers
 
         protected override void Dispose(bool disposing)
         {
-            chdc.Dispose();
+            db.Dispose();
             base.Dispose(disposing);
         }
     }

@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Web.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Cliver.FhrApi.ProductOffice.Models;
 
 namespace Cliver.ProductOffice.Models
 {

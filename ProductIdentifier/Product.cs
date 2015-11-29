@@ -22,7 +22,7 @@ namespace Cliver.ProductIdentifier
 
     public class Product
     {
-        public readonly FhrCrawlerHost.Db2.Product DbProduct;
+        public readonly FhrApi.ProductOffice.Models.Product DbProduct;
 
         public string NormalizedText(Field field)
         {
@@ -38,7 +38,7 @@ namespace Cliver.ProductIdentifier
                         t = DbProduct.Description;
                         break;
                     case Field.Category:
-                        t = Regex.Replace(DbProduct.Category == null ? "" : DbProduct.Category, Regex.Escape(FhrCrawlerHost.Product.CATEGORY_SEPARATOR), " ", RegexOptions.Compiled | RegexOptions.Singleline);
+                        t = Regex.Replace(DbProduct.Category == null ? "" : DbProduct.Category, Regex.Escape(FhrApi.CrawlerHost.Product.CATEGORY_SEPARATOR), " ", RegexOptions.Compiled | RegexOptions.Singleline);
                         break;
                     default:
                         throw new Exception("untreated case");
@@ -81,7 +81,7 @@ namespace Cliver.ProductIdentifier
             return Words2Count(field).Keys;
         }
 
-        internal Product(Engine engine, FhrCrawlerHost.Db2.Product product)
+        internal Product(Engine engine, FhrApi.ProductOffice.Models.Product product)
         {
             this.engine = engine;
             if (product == null)
@@ -104,7 +104,7 @@ namespace Cliver.ProductIdentifier
             Product p = null;
             if (!product_ids2Product.TryGetValue(product_id, out p))
             {
-                FhrCrawlerHost.Db2.Product product = engine.Db2Api.Context.Products.Where(x => x.Id == product_id).FirstOrDefault();
+                FhrApi.ProductOffice.Models.Product product = engine.Db.Products.Where(x => x.Id == product_id).FirstOrDefault();
                 if (product == null)
                     throw new Exception("No Product with Id=" + product_id);
                 p = new Product(engine, product);
@@ -116,7 +116,7 @@ namespace Cliver.ProductIdentifier
         internal Product[] GetLinked(int link_id)
         {
             List<Product> ps = new List<Product>();
-            foreach (FhrCrawlerHost.Db2.Product product in engine.Db2Api.Context.Products.Where(p => p.LinkId == link_id))
+            foreach (FhrApi.ProductOffice.Models.Product product in engine.Db.Products.Where(p => p.LinkId == link_id))
             {
                 Product p = null;
                 if (!product_ids2Product.TryGetValue(product.Id, out p))
@@ -134,22 +134,22 @@ namespace Cliver.ProductIdentifier
         //    Product p = null;
         //    if (!product_ids2Product.TryGetValue(product_id, out p))
         //    {
-        //        FhrCrawlerHost.Db2.Product dp = FhrCrawlerHost.Db2Api.Context.Products.Where(x => x.Id == product_id).FirstOrDefault();
+        //        FhrApi.ProductOffice.Product dp = FhrApi.Db.Products.Where(x => x.Id == product_id).FirstOrDefault();
         //        p = new Product(dp);
         //        product_ids2Product[product_id] = p;
         //    }
         //    return p;
         //}
 
-        //public static Product Get(FhrCrawlerHost.Db2.Product product)
+        //public static Product Get(FhrApi.ProductOffice.Product product)
         //{
         //    return Get(product.Id);
         //}
         Dictionary<int, Product> product_ids2Product = new Dictionary<int, Product>();
 
-        internal void Ininitalize(System.Data.Linq.EntitySet<FhrCrawlerHost.Db2.Product> products)
+        internal void Ininitalize(ICollection<FhrApi.ProductOffice.Models.Product> products)
         {
-            foreach (FhrCrawlerHost.Db2.Product product in products)
+            foreach (FhrApi.ProductOffice.Models.Product product in products)
             {
                 if (product == null)
                     throw new Exception("product is null");

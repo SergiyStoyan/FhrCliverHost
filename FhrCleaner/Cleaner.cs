@@ -4,9 +4,10 @@ using System.Linq;
 using System.Data.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Cliver.FhrCrawlerHost;
+using Cliver.FhrApi;
 using Cliver.Bot;
 using System.Text.RegularExpressions;
+using Cliver.FhrApi.ProductOffice.Models;
 
 namespace Cliver.FhrCleaner
 {
@@ -16,26 +17,23 @@ namespace Cliver.FhrCleaner
         {
             base.Do();
 
-            FhrCrawlerHost.Db2.ProductOfficeDataContext dc = new FhrCrawlerHost.Db2.ProductOfficeDataContext(Db2Api.ConnectionString);
+            DbApi db = new DbApi();
             if (Properties.Settings.Default.DeletePricesOlderThanDays > 0)
             {
                 DateTime old_time = DateTime.Now.AddDays(-Properties.Settings.Default.DeletePricesOlderThanDays);
-                IQueryable<FhrCrawlerHost.Db2.Price> prices = dc.Prices.Where(p => p.Time < old_time);
-                dc.Prices.DeleteAllOnSubmit(prices);
+                IQueryable<Cliver.FhrApi.ProductOffice.Models.Price> prices = db.Prices.Where(p => p.Time < old_time);
+                db.Prices.RemoveRange(prices);
                 Log.Main.Write("Deleting Prices older than " + old_time.ToShortDateString() + ": " + prices.Count());
-                dc.SubmitChanges();
+                db.SaveChanges();
             }
-            dc.Dispose();
-            dc = new FhrCrawlerHost.Db2.ProductOfficeDataContext(Db2Api.ConnectionString);
+            DbApi.RenewContext(ref db);
             if (Properties.Settings.Default.DeleteProductsOlderThanDays > 0)
             {
                 DateTime old_time = DateTime.Now.AddDays(-Properties.Settings.Default.DeleteProductsOlderThanDays);
-                IQueryable<FhrCrawlerHost.Db2.Product> products = dc.Products.Where(p => p.UpdateTime == null || p.UpdateTime < old_time);
-                foreach (FhrCrawlerHost.Db2.Product product in products)
-                    dc.Prices.DeleteAllOnSubmit(product.Prices);
-                dc.Products.DeleteAllOnSubmit(products);
+                IQueryable<FhrApi.ProductOffice.Models.Product> products = db.Products.Where(p => p.UpdateTime == null || p.UpdateTime < old_time);
+                foreach (FhrApi.ProductOffice.Models.Product product in products)
+                    FhrApi.ProductOffice.DataApi.Products.Delete(db, product.Id);
                 Log.Main.Write("Deleting Products older than " + old_time.ToShortDateString() + ": " + products.Count());
-                dc.SubmitChanges();
             }
         }
 

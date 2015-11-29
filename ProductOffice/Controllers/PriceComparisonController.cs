@@ -6,14 +6,14 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
-using Cliver.ProductOffice.Models;
+using Cliver.FhrApi.ProductOffice.Models;
 
 namespace Cliver.ProductOffice.Controllers
 {
     [Authorize]
     public class PriceComparisonController : Controller
     {
-        private ProductOfficeEntities db = new ProductOfficeEntities();
+        private DbApi db = new DbApi();
 
         List<object> CompanySelect
         {

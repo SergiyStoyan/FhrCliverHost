@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using Cliver.ProductOffice.Models;
+using Cliver.CrawlerHost.Models;
 using System.Text.RegularExpressions;
 using System.Configuration;
 
@@ -12,7 +12,7 @@ namespace Cliver.ProductOffice.Controllers
     [Authorize]
     public class WatchDogController : Controller
     {
-        private CrawlerHostDataContext chdc = new CrawlerHostDataContext(Cliver.CrawlerHost.DbApi.ConnectionString);
+        private DbApi db = new DbApi();
 
         public ActionResult Index()
         {
@@ -23,7 +23,7 @@ namespace Cliver.ProductOffice.Controllers
         {
             try
             {
-                string table = Cliver.CrawlerHostWatchDog.WatchDog.GetReportsTempTable(chdc.Connection);
+                string table = Cliver.CrawlerHostWatchDog.WatchDog.GetReportsTempTable(db.Connection);
                 JqueryDataTable.Field[] fields = new JqueryDataTable.Field[] {                 
                 new JqueryDataTable.Field("Source", true), 
                 new JqueryDataTable.Field("SourceType", true),  
@@ -31,7 +31,7 @@ namespace Cliver.ProductOffice.Controllers
                 new JqueryDataTable.Field("Value", true),
                // new JqueryDataTable.Field("Details", true)                                        
             };
-            JsonResult jr = JqueryDataTable.Index(request, chdc.Connection, "FROM " + table, fields);
+            JsonResult jr = JqueryDataTable.Index(request, db.Connection, "FROM " + table, fields);
             return jr;
             }
             catch (Exception e)
@@ -43,7 +43,7 @@ namespace Cliver.ProductOffice.Controllers
 
         protected override void Dispose(bool disposing)
         {
-            chdc.Dispose();
+            db.Dispose();
             base.Dispose(disposing);
         }
     }

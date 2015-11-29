@@ -4,19 +4,17 @@ using System.Linq;
 using System.Data.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Cliver.FhrCrawlerHost;
+using Cliver.FhrApi;
 using Cliver.Bot;
 using System.Text.RegularExpressions;
+using Cliver.FhrApi.ProductOffice.Models;
 
 namespace Cliver.FhrEventMonitor
 {
     class Replicator
     {
-        static Cliver.FhrCrawlerHost.Db2.ProductOfficeDataContext dc2;
-
         public static void Do()
         {
-            dc2 = new FhrCrawlerHost.Db2.ProductOfficeDataContext(Db2Api.ConnectionString);
         }
 
         //static void replicate_product_table(string crawler_id, string products_table)
@@ -36,11 +34,11 @@ namespace Cliver.FhrEventMonitor
         //        Recordset products;
         //        do
         //        {
-        //            dc2 = new FhrDbDataContext(Db2Api.ConnectionString);
+        //            dc2 = new FhrDbDataContext(DbApi.ConnectionString);
         //            products = dbc1["SELECT TOP 100 Id, CrawlTime, ChangeTime, Url, Data, State FROM " + products_table + " WHERE State=" + (int)Crawler.ProductState.NEW].GetRecordset();
         //            foreach (Record record in products)
         //            {
-        //                FhrCrawlerHost.Product p = Cliver.CrawlerHost.Product.Restore<FhrCrawlerHost.Product>(record);
+        //                FhrApi.Product p = Cliver.CrawlerHost.Product.Restore<FhrApi.Product>(record);
         //                p.Prepare();
         //                LogMessage.Inform("Replicating id: '" + p.Id + "'");
         //                Product product = (from x in dc2.Products where x.CompanyId == company.Id && x.CompanyProductId == p.Id select x).FirstOrDefault();
@@ -77,7 +75,7 @@ namespace Cliver.FhrEventMonitor
         //                }
 
         //                decimal price_value;
-        //                Db2Api.Currency currency_id_;
+        //                DbApi.Currency currency_id_;
         //                if (FhrDbReplicator.Parser.ParsePrice(p.Price, out currency_id_, out price_value))
         //                {
         //                    int currency_id = (int)currency_id_;
@@ -111,7 +109,7 @@ namespace Cliver.FhrEventMonitor
         //        int deleted_count = 0;
         //        do
         //        {
-        //            dc2 = new FhrDbDataContext(Db2Api.ConnectionString);
+        //            dc2 = new FhrDbDataContext(DbApi.ConnectionString);
         //            products = dbc1["SELECT TOP 100 Id, CrawlTime, ChangeTime, Url, Data, State FROM " + products_table + " WHERE State=" + (int)Crawler.ProductState.DELETED].GetRecordset();
         //            foreach (Record record in products)
         //            {

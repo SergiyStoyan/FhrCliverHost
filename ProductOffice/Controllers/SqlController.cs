@@ -5,7 +5,6 @@ using System.Data;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using Cliver.ProductOffice.Models;
 using System.Configuration;
 
 namespace Cliver.ProductOffice.Controllers
@@ -28,18 +27,19 @@ namespace Cliver.ProductOffice.Controllers
                 ViewBag.Sql = sql;
                 ViewBag.Database = database;
                 int n = -1;
+                Cliver.Bot.DbConnection dbc;
                 switch (database)
                 {
                     case "CliverCrawlerHost":
 
-                        Cliver.CrawlerHost.DbApi db_api = new CrawlerHost.DbApi();
-                        n = db_api.Connection.Get(sql).Execute();
+                        dbc = Bot.DbConnection.Create(Cliver.CrawlerHost.Models.DbApi.ConnectionString);
+                        n = dbc.Get(sql).Execute();
 
                         break;
                     case "ProductOffice":
 
-                        Cliver.FhrCrawlerHost.Db2Api db2_api = new FhrCrawlerHost.Db2Api();
-                        n = db2_api.Connection.Get(sql).Execute();
+                        dbc = Cliver.Bot.DbConnection.Create(Cliver.FhrApi.ProductOffice.Models.DbApi.ConnectionString);
+                        n = dbc.Get(sql).Execute();
 
                         break;
                     default:

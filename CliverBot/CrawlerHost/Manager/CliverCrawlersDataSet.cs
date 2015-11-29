@@ -1,4 +1,5 @@
-﻿namespace Cliver.CrawlerHost {
+﻿namespace Cliver.CrawlerHost
+{
     
     
     public partial class CliverCrawlersDataSet {
@@ -8,7 +9,8 @@
     }
 }
 
-namespace Cliver.CrawlerHost.CliverCrawlersDataSetTableAdapters {
+namespace Cliver.CrawlerHost.CliverCrawlersDataSetTableAdapters
+{
     
     
     public partial class CrawlersTableAdapter {

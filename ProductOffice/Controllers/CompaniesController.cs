@@ -5,22 +5,23 @@ using System.Data;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using Cliver.ProductOffice.Models;
 using System.Configuration;
+using Cliver.FhrApi.ProductOffice.Models;
+using Cliver.CrawlerHost.Models;
 
 namespace Cliver.ProductOffice.Controllers
 {
     [Authorize]
     public class CompaniesController : Controller
     {
-        private ProductOfficeEntities db = new ProductOfficeEntities();
-        private CrawlerHostDataContext chdc = new CrawlerHostDataContext(Cliver.CrawlerHost.DbApi.ConnectionString);
+        private Cliver.CrawlerHost.Models.DbApi chdb = new Cliver.CrawlerHost.Models.DbApi();
+        private Cliver.FhrApi.ProductOffice.Models.DbApi db = new FhrApi.ProductOffice.Models.DbApi();
         
         List<object> CrawlerSelect
         {
             get            
             {
-                var cs = chdc.Crawlers.ToList().Select(r => new { Value = r.Id, Name = r.Id + " (" + r.Site + ")" + (string.IsNullOrWhiteSpace(r.Comment) ? "" : " [" + r.Comment + "]") }).ToList<object>();
+                var cs = chdb.Crawlers.ToList().Select(r => new { Value = r.Id, Name = r.Id + " (" + r.Site + ")" + (string.IsNullOrWhiteSpace(r.Comment) ? "" : " [" + r.Comment + "]") }).ToList<object>();
                 cs.Insert(0, new { Value = "", Name = "-- no crawler --" });
                 return cs;
             }
@@ -150,7 +151,7 @@ namespace Cliver.ProductOffice.Controllers
             }
             db.Companies.Remove(company);
             foreach(var p in db.Products.Where(p => p.CompanyId == id))
-                ProductOffice.DataApi.Products.Delete(db, p.Id);
+               Cliver.FhrApi.ProductOffice.DataApi.Products.Delete(db, p.Id);
             if (Request.IsAjaxRequest())
                 return Content(null);
             return RedirectToAction("Index");

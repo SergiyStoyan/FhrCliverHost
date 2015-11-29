@@ -38,7 +38,14 @@ namespace Cliver.Bot
                 throw new Exception("connection_string is null.");
 
             if (Regex.IsMatch(connection_string, @"\.mdf|\.sdf|Initial\s+Catalog\s*=", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline))
+            {                
+	//@"metadata=res://FhrApi/ProductOffice.Models.ProductOfficeEntities.csdl|res://FhrApi/ProductOffice.Models.ProductOfficeEntities.ssdl|res://FhrApi/ProductOffice.Models.ProductOfficeEntities.msl;provider=System.Data.SqlClient;	
+	//provider connection string='data source=(localdb)\MSSQLLocalDB;attachdbfilename=&quot;D:\_d\_PROJECTS\FHR(for Andreas Chermak)\FhrCliverHost#development\_data\ProductOffice.mdf&quot;;integrated security=True;multipleactiveresultsets=True;connect timeout=30;application name=EntityFramework'" 
+                Match m= Regex.Match(connection_string, @"provider\s+connection\s+string\s*=\s*'(.*?)'", RegexOptions.IgnoreCase| RegexOptions.Singleline);
+                if (m.Success)
+                    connection_string = m.Groups[1].Value;
                 return new MsSqlConnection(connection_string);
+            }
             else
                 throw new Exception("Could not detect an appropriate wrapper class for " + connection_string);
         }

@@ -81,7 +81,7 @@ Developed by: www.cliversoft.com";
             Cliver.BotGui.Program.BindProgressBar2InputItemQueue(typeof(ListItem));
             //listing_id21 = Session.GetSingleValueWorkItemDictionary<ListingId, int>();
 
-            Cliver.FhrCrawlerHost.CrawlerApi.Initialize();
+            Cliver.FhrApi.CrawlerHost.CrawlerApi.Initialize();
         }
 
         HttpRoutine HR = new HttpRoutine();
@@ -156,12 +156,12 @@ Developed by: www.cliversoft.com";
 
                 DataSifter.Capture gc = cb.product.Parse(cb.HR.HtmlResult);
 
-                decimal stock = (decimal)FhrCrawlerHost.ProductStock.NOT_SET;
+                decimal stock = (decimal)FhrApi.CrawlerHost.ProductStock.NOT_SET;
                 if (gc.ValueOf("Stock") != null)
                     if (!decimal.TryParse(gc.ValueOf("Stock"), out stock))
-                        stock = (decimal)FhrCrawlerHost.ProductStock.CANNOT_PARSE;
+                        stock = (decimal)FhrApi.CrawlerHost.ProductStock.CANNOT_PARSE;
 
-                Cliver.FhrCrawlerHost.Product product = new Cliver.FhrCrawlerHost.Product(
+                FhrApi.CrawlerHost.Product product = new FhrApi.CrawlerHost.Product(
                     id: gc.ValueOf("Id"),
                     url: Url,
                     name: gc.ValueOf("Name"),
@@ -172,7 +172,7 @@ Developed by: www.cliversoft.com";
                     stock: stock,
                     description: gc.ValueOf("Description")
                     );
-                if (!Cliver.FhrCrawlerHost.CrawlerApi.SaveProductAsJson(product))
+                if (!FhrApi.CrawlerHost.CrawlerApi.SaveProductAsJson(product))
                     throw new ProcessorException(ProcessorExceptionType.ERROR, "Product was not saved.");
             }
         }

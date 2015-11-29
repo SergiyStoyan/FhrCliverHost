@@ -23,6 +23,15 @@ namespace Cliver.CrawlerHost.Properties {
             }
         }
         
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("^(.*\\#[^\\\\\\/]*)")]
+        public string HostFolderPathRegex {
+            get {
+                return ((string)(this["HostFolderPathRegex"]));
+            }
+        }
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
@@ -32,18 +41,6 @@ namespace Cliver.CrawlerHost.Properties {
             }
             set {
                 this["CrawlerHostPath"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("SOFTWARE\\CliverSoft\\CliverBot")]
-        public string RegistrySubkey {
-            get {
-                return ((string)(this["RegistrySubkey"]));
-            }
-            set {
-                this["RegistrySubkey"] = value;
             }
         }
     }

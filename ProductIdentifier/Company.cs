@@ -15,7 +15,7 @@ namespace Cliver.ProductIdentifier
 {
     internal class Company
     {
-        internal readonly FhrCrawlerHost.Db2.Company DbCompany;
+        internal readonly FhrApi.ProductOffice.Models.Company DbCompany;
 
         internal int WordNumber(Field field)
         {
@@ -62,7 +62,7 @@ namespace Cliver.ProductIdentifier
         }
         Dictionary<Field, Dictionary<string, HashSet<int>>> field2word2product_ids = new Dictionary<Field, Dictionary<string, HashSet<int>>>();
 
-        internal Company(Engine engine, FhrCrawlerHost.Db2.Company company)
+        internal Company(Engine engine, FhrApi.ProductOffice.Models.Company company)
         {
             this.engine = engine;
             DbCompany = company;
@@ -83,7 +83,7 @@ namespace Cliver.ProductIdentifier
             Company c = null;
             if (!company_ids2Company.TryGetValue(company_id, out c))
             {
-                FhrCrawlerHost.Db2.Company dc = engine.Db2Api.Context.Companies.Where(x => x.Id == company_id).FirstOrDefault();
+                FhrApi.ProductOffice.Models.Company dc = engine.Db.Companies.Where(x => x.Id == company_id).FirstOrDefault();
                 if (dc == null)
                     throw new Exception("No Company for Id=" + company_id);
                 c = new Company(engine, dc);

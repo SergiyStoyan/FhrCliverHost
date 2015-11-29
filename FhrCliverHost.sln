@@ -19,7 +19,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "teknikdelar.se", "Crawlers\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "unionrepair.com", "Crawlers\unionrepair.com\unionrepair.com.csproj", "{4A4AFCCB-7CA5-4621-A697-A7D8C7276E1B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FhrCrawlerHostManager", "FhrCrawlerHostManager\FhrCrawlerHostManager.csproj", "{7D9E434D-1666-4464-B745-EFDB06DD538C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FhrApi", "FhrApi\FhrApi.csproj", "{7D9E434D-1666-4464-B745-EFDB06DD538C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FhrCleaner", "FhrCleaner\FhrCleaner.csproj", "{2AF8FDFD-FD6B-4BBD-B31C-524464550342}"
 EndProject
@@ -34,6 +34,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Crawlers", "Crawlers", "{C2811A81-7EB2-4373-9738-BEB4D699A224}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CliverBotGui", "CliverBot\CliverBotGui\CliverBotGui.csproj", "{CCD9744F-AA5D-4D39-BD63-0451C3E1E16A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FhrManager", "FhrManager\FhrManager.csproj", "{DF3D7FB7-7AB4-40FA-BDEA-51A37F0B8647}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrawlerHostApi", "CliverBot\CrawlerHost\Api\CrawlerHostApi.csproj", "{60998033-82B3-42E8-B492-759DD506B783}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -137,6 +141,18 @@ Global
 		{CCD9744F-AA5D-4D39-BD63-0451C3E1E16A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CCD9744F-AA5D-4D39-BD63-0451C3E1E16A}.Release|x86.ActiveCfg = Release|x86
 		{CCD9744F-AA5D-4D39-BD63-0451C3E1E16A}.Release|x86.Build.0 = Release|x86
+		{DF3D7FB7-7AB4-40FA-BDEA-51A37F0B8647}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF3D7FB7-7AB4-40FA-BDEA-51A37F0B8647}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF3D7FB7-7AB4-40FA-BDEA-51A37F0B8647}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DF3D7FB7-7AB4-40FA-BDEA-51A37F0B8647}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF3D7FB7-7AB4-40FA-BDEA-51A37F0B8647}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF3D7FB7-7AB4-40FA-BDEA-51A37F0B8647}.Release|x86.ActiveCfg = Release|Any CPU
+		{60998033-82B3-42E8-B492-759DD506B783}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60998033-82B3-42E8-B492-759DD506B783}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60998033-82B3-42E8-B492-759DD506B783}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{60998033-82B3-42E8-B492-759DD506B783}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60998033-82B3-42E8-B492-759DD506B783}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60998033-82B3-42E8-B492-759DD506B783}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

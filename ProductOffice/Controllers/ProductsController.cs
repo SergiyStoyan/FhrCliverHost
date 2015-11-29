@@ -6,7 +6,8 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
-using Cliver.ProductOffice.Models;
+using Cliver.FhrApi.ProductOffice.Models;
+using Cliver.FhrApi.ProductOffice;
 using System.Text.RegularExpressions;
 
 namespace Cliver.ProductOffice.Controllers
@@ -14,7 +15,7 @@ namespace Cliver.ProductOffice.Controllers
     [Authorize]
     public class ProductsController : Controller
     {
-        private ProductOfficeEntities db = new ProductOfficeEntities();
+        private DbApi db = new DbApi();
 
         List<object> CompanySelect
         {
@@ -283,7 +284,7 @@ SELECT Id AS Gid FROM Products WHERE MainProductId<0
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            ProductOffice.DataApi.Products.Delete(db, id);
+            DataApi.Products.Delete(db, id);
             if (Request.IsAjaxRequest())
                 return Content(null);
             return RedirectToAction("Index");

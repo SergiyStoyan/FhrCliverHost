@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using Cliver.ProductOffice.Models;
+using Cliver.CrawlerHost.Models;
 
 namespace Cliver.ProductOffice.Controllers
 {
     [Authorize]
     public class CrawlersController : Controller
     {
-        private CrawlerHostDataContext chdc = new CrawlerHostDataContext(Cliver.CrawlerHost.DbApi.ConnectionString);
+        private DbApi db = new DbApi();
    
         List<object> StateSelect
         {
@@ -34,7 +34,7 @@ namespace Cliver.ProductOffice.Controllers
 
         public ActionResult Index()
         {
-            //return View(chdc.Crawlers.ToList());
+            //return View(db.Crawlers.ToList());
             return View();
         }
         
@@ -52,7 +52,7 @@ namespace Cliver.ProductOffice.Controllers
                 new JqueryDataTable.Field("_LastEndTime"),
                 new JqueryDataTable.Field("RunTimeSpan")
             };
-            JsonResult jr = JqueryDataTable.Index(request, chdc.Connection, "FROM Crawlers", fields);
+            JsonResult jr = JqueryDataTable.Index(request, db.Connection, "FROM Crawlers", fields);
             foreach (var r in ((dynamic)jr.Data).Data)
             {
                 if (!String.IsNullOrEmpty(Convert.ToString(r[2])))
@@ -67,7 +67,7 @@ namespace Cliver.ProductOffice.Controllers
 
         public ActionResult Details(string id)
         {
-            Crawler crawler = chdc.Crawlers.Where(r => r.Id == id).FirstOrDefault();
+            Crawler crawler = db.Crawlers.Where(r => r.Id == id).FirstOrDefault();
             if (crawler == null)
             {
                 return HttpNotFound();
@@ -94,8 +94,8 @@ namespace Cliver.ProductOffice.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    chdc.Crawlers.InsertOnSubmit(crawler);
-                    chdc.SubmitChanges();
+                    db.Crawlers.InsertOnSubmit(crawler);
+                    db.SubmitChanges();
                     if (Request.IsAjaxRequest())
                         return Content(null);
                     return RedirectToAction("Index");
@@ -112,7 +112,7 @@ namespace Cliver.ProductOffice.Controllers
 
         public ActionResult Edit(string id)
         {
-            Crawler crawler = chdc.Crawlers.Where(r => r.Id == id).FirstOrDefault();
+            Crawler crawler = db.Crawlers.Where(r => r.Id == id).FirstOrDefault();
             if (crawler == null)
             {
                 return HttpNotFound();
@@ -130,7 +130,7 @@ namespace Cliver.ProductOffice.Controllers
         {
             if (ModelState.IsValid)
             {
-                Crawler c = chdc.Crawlers.Where(r => r.Id == crawler.Id).First();
+                Crawler c = db.Crawlers.Where(r => r.Id == crawler.Id).First();
                 c.AdminEmails = crawler.AdminEmails;
                 c.Command = crawler.Command;
                 c.Comment = crawler.Comment;
@@ -140,7 +140,7 @@ namespace Cliver.ProductOffice.Controllers
                 c.Site = crawler.Site;
                 c.State = crawler.State;
                 c.YieldProductTimeout = crawler.YieldProductTimeout;                
-                chdc.SubmitChanges();
+                db.SubmitChanges();
                 if (Request.IsAjaxRequest())
                     return Content(null);
                 return RedirectToAction("Index");
@@ -154,7 +154,7 @@ namespace Cliver.ProductOffice.Controllers
 
         public ActionResult Delete(string id)
         {
-            Crawler crawler = chdc.Crawlers.Where(r => r.Id == id).FirstOrDefault();
+            Crawler crawler = db.Crawlers.Where(r => r.Id == id).FirstOrDefault();
             if (crawler == null)
             {
                 return HttpNotFound();
@@ -168,9 +168,9 @@ namespace Cliver.ProductOffice.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(string id)
         {
-            Crawler crawler = chdc.Crawlers.Where(r => r.Id == id).FirstOrDefault();
-            chdc.Crawlers.DeleteOnSubmit(crawler);
-            chdc.SubmitChanges();
+            Crawler crawler = db.Crawlers.Where(r => r.Id == id).FirstOrDefault();
+            db.Crawlers.DeleteOnSubmit(crawler);
+            db.SubmitChanges();
             if (Request.IsAjaxRequest())
                 return Content(null);
             return RedirectToAction("Index");
@@ -178,7 +178,7 @@ namespace Cliver.ProductOffice.Controllers
 
         protected override void Dispose(bool disposing)
         {
-            chdc.Dispose();
+            db.Dispose();
             base.Dispose(disposing);
         }
     }

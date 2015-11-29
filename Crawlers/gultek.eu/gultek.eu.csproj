@@ -14,7 +14,7 @@
     </StartupObject>
     <ApplicationIcon>computers308.ico</ApplicationIcon>
     <IsWebBootstrapper>true</IsWebBootstrapper>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
@@ -34,6 +34,7 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -43,6 +44,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -51,6 +53,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DataSifter">
@@ -112,13 +115,17 @@
       <Project>{ccd9744f-aa5d-4d39-bd63-0451c3e1e16a}</Project>
       <Name>CliverBotGui</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\CliverBot\CrawlerHost\Api\CrawlerHostApi.csproj">
+      <Project>{60998033-82b3-42e8-b492-759dd506b783}</Project>
+      <Name>CrawlerHostApi</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\CliverBot\CrawlerHost\Manager\CrawlerHostManager.csproj">
       <Project>{9e127654-5635-4939-b8b6-715336e91287}</Project>
       <Name>CrawlerHostManager</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\FhrCrawlerHostManager\FhrCrawlerHostManager.csproj">
-      <Project>{bf896542-9d61-4003-bc84-88c83ea7bcf6}</Project>
-      <Name>FhrCrawlerHostManager</Name>
+    <ProjectReference Include="..\..\FhrApi\FhrApi.csproj">
+      <Project>{7D9E434D-1666-4464-B745-EFDB06DD538C}</Project>
+      <Name>FhrApi</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

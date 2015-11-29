@@ -5,7 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using Cliver.ProductOffice.Models;
+using Cliver.CrawlerHost.Models;
 using System.Configuration;
 
 namespace Cliver.ProductOffice.Controllers
@@ -13,14 +13,14 @@ namespace Cliver.ProductOffice.Controllers
     [Authorize]
     public class SettingsController : Controller
     {
-        private CrawlerHostDataContext chdc = new CrawlerHostDataContext(Cliver.CrawlerHost.DbApi.ConnectionString);
+        private DbApi db = new DbApi();
 
         List<object> ObjectSelect
         {
             get
             {
-                var os = chdc.Crawlers.ToList().Select(r => new { Value = r.Id, Name = r.Id + (string.IsNullOrWhiteSpace(r.Comment) ? "" : " [" + r.Comment + "]") }).ToList<object>();
-                var os2 = chdc.Services.ToList().Select(r => new { Value = r.Id, Name = r.Id + (string.IsNullOrWhiteSpace(r.Comment) ? "" : " [" + r.Comment + "]") }).ToList<object>();
+                var os = db.Crawlers.ToList().Select(r => new { Value = r.Id, Name = r.Id + (string.IsNullOrWhiteSpace(r.Comment) ? "" : " [" + r.Comment + "]") }).ToList<object>();
+                var os2 = db.Services.ToList().Select(r => new { Value = r.Id, Name = r.Id + (string.IsNullOrWhiteSpace(r.Comment) ? "" : " [" + r.Comment + "]") }).ToList<object>();
                 os.AddRange(os2);
                 return os;
             }
@@ -47,7 +47,7 @@ namespace Cliver.ProductOffice.Controllers
 
         //public ActionResult Details(int id = 0)
         //{
-        //    Setting setting = chdc.Settings.Where(x=>x..Find(id);
+        //    Setting setting = db.Settings.Where(x=>x..Find(id);
         //    if (company == null)
         //    {
         //        return HttpNotFound();
@@ -155,7 +155,7 @@ namespace Cliver.ProductOffice.Controllers
 
         protected override void Dispose(bool disposing)
         {
-            chdc.Dispose();
+            db.Dispose();
             base.Dispose(disposing);
         }
     }

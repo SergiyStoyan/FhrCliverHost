@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using Cliver.ProductOffice.Models;
+using Cliver.CrawlerHost.Models;
 
 namespace Cliver.ProductOffice.Controllers
 {
     [Authorize]
     public class ServicesController : Controller
     {
-        private CrawlerHostDataContext chdc = new CrawlerHostDataContext(Cliver.CrawlerHost.DbApi.ConnectionString);
+        private DbApi db = new DbApi();
    
         List<object> StateSelect
         {
@@ -33,7 +33,7 @@ namespace Cliver.ProductOffice.Controllers
 
         public ActionResult Index()
         {
-            //return View(chdc.Services.ToList());
+            //return View(db.Services.ToList());
             return View();
         }
         
@@ -50,7 +50,7 @@ namespace Cliver.ProductOffice.Controllers
                 new JqueryDataTable.Field("_LastEndTime"),
                 new JqueryDataTable.Field("RunTimeSpan")
             };
-            JsonResult jr = JqueryDataTable.Index(request, chdc.Connection, "FROM Services", fields);
+            JsonResult jr = JqueryDataTable.Index(request, db.Connection, "FROM Services", fields);
             foreach (var r in ((dynamic)jr.Data).Data)
             {
                 if (!String.IsNullOrEmpty(Convert.ToString(r[2])))
@@ -65,7 +65,7 @@ namespace Cliver.ProductOffice.Controllers
 
         public ActionResult Details(string id)
         {
-            Service service = chdc.Services.Where(r => r.Id == id).FirstOrDefault();
+            Service service = db.Services.Where(r => r.Id == id).FirstOrDefault();
             if (service == null)
             {
                 return HttpNotFound();
@@ -94,8 +94,8 @@ namespace Cliver.ProductOffice.Controllers
                 {
                     if (service._NextStartTime < DateTime.Now)
                         service._NextStartTime = DateTime.Now;
-                    chdc.Services.InsertOnSubmit(service);
-                    chdc.SubmitChanges();
+                    db.Services.InsertOnSubmit(service);
+                    db.SubmitChanges();
                     if (Request.IsAjaxRequest())
                         return Content(null);
                     return RedirectToAction("Index");
@@ -112,7 +112,7 @@ namespace Cliver.ProductOffice.Controllers
 
         public ActionResult Edit(string id)
         {
-            Service service = chdc.Services.Where(r => r.Id == id).FirstOrDefault();
+            Service service = db.Services.Where(r => r.Id == id).FirstOrDefault();
             if (service == null)
             {
                 return HttpNotFound();
@@ -130,7 +130,7 @@ namespace Cliver.ProductOffice.Controllers
         {
             if (ModelState.IsValid)
             {
-                Service s = chdc.Services.Where(r => r.Id == service.Id).First();
+                Service s = db.Services.Where(r => r.Id == service.Id).First();
                 //s.Id = service.Id;
                 s.AdminEmails = service.AdminEmails;
                 s.Command = service.Command;
@@ -140,7 +140,7 @@ namespace Cliver.ProductOffice.Controllers
                 s.RestartDelayIfBroken = service.RestartDelayIfBroken;
                 s.ExeFolder = service.ExeFolder;
                 s.State = service.State;
-                chdc.SubmitChanges();
+                db.SubmitChanges();
                 if (Request.IsAjaxRequest())
                     return Content(null);
                 return RedirectToAction("Index");
@@ -154,7 +154,7 @@ namespace Cliver.ProductOffice.Controllers
 
         public ActionResult Delete(string id)
         {
-            Service service = chdc.Services.Where(r => r.Id == id).FirstOrDefault();
+            Service service = db.Services.Where(r => r.Id == id).FirstOrDefault();
             if (service == null)
             {
                 return HttpNotFound();
@@ -168,9 +168,9 @@ namespace Cliver.ProductOffice.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(string id)
         {
-            Service service = chdc.Services.Where(r => r.Id == id).FirstOrDefault();
-            chdc.Services.DeleteOnSubmit(service);
-            chdc.SubmitChanges();
+            Service service = db.Services.Where(r => r.Id == id).FirstOrDefault();
+            db.Services.DeleteOnSubmit(service);
+            db.SubmitChanges();
             if (Request.IsAjaxRequest())
                 return Content(null);
             return RedirectToAction("Index");
@@ -178,7 +178,7 @@ namespace Cliver.ProductOffice.Controllers
 
         protected override void Dispose(bool disposing)
         {
-            chdc.Dispose();
+            db.Dispose();
             base.Dispose(disposing);
         }
     }

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
-using Cliver.ProductOffice.Models;
+using Cliver.FhrApi.ProductOffice.Models;
 using System.Text.RegularExpressions;
 
 namespace Cliver.ProductOffice.Controllers
@@ -15,7 +15,7 @@ namespace Cliver.ProductOffice.Controllers
     [Authorize]
     public class ProductLinksController : Controller
     {
-        private ProductOfficeEntities db = new ProductOfficeEntities();
+        private DbApi db = new DbApi();
 
         List<object> CompanySelect
         {
@@ -116,7 +116,7 @@ GROUP BY a.LinkId";
             ViewBag.LinkId = link_id > 0 ? link_id : -products[0].Id;
             ViewBag.Companies = db.Companies;
             ViewBag.LinkedProductsJson = Cliver.Bot.SerializationRoutines.Json.Get(get_product_objects(products));
-            ViewBag.CATEGORY_SEPARATOR = Cliver.FhrCrawlerHost.Product.CATEGORY_SEPARATOR;
+            ViewBag.CATEGORY_SEPARATOR = Cliver.FhrApi.CrawlerHost.Product.CATEGORY_SEPARATOR;
             if (Request.IsAjaxRequest())
                 return PartialView(products);
             return View();
@@ -344,7 +344,7 @@ GROUP BY a.LinkId";
             List<object> ds = new List<object>();
             foreach (Cliver.ProductIdentifier.Product product in pl.Product2s)
             {
-                Cliver.FhrCrawlerHost.Db2.Product p = product.DbProduct;
+                Cliver.FhrApi.ProductOffice.Models.Product p = product.DbProduct;
 
                 object d = new
                 {
@@ -407,7 +407,7 @@ GROUP BY a.LinkId";
 
         void add_path(string path, Dictionary<string, dynamic> tree)
         {
-            Match m = Regex.Match(path, "^(.*?)" + Regex.Escape(FhrCrawlerHost.Product.CATEGORY_SEPARATOR) + "+(.+)", RegexOptions.Compiled | RegexOptions.Singleline);
+            Match m = Regex.Match(path, "^(.*?)" + Regex.Escape(FhrApi.CrawlerHost.Product.CATEGORY_SEPARATOR) + "+(.+)", RegexOptions.Compiled | RegexOptions.Singleline);
             if (m.Success)
             {
                 string name = m.Groups[1].Value;

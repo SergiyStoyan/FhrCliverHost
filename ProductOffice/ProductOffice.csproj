@@ -228,7 +228,6 @@
     <Compile Include="Controllers\ProductsController.cs" />
     <Compile Include="Controllers\CompaniesController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
-    <Compile Include="DataApi.cs" />
     <Compile Include="Filters\AllActionsFilter.cs" />
     <Compile Include="Filters\InitializeSimpleMembershipAttribute.cs" />
     <Compile Include="Global.asax.cs">
@@ -238,84 +237,16 @@
     <Compile Include="Helpers\ErrorHandler.cs" />
     <Compile Include="Helpers\Message.cs" />
     <Compile Include="Helpers\JqueryDataTable.cs" />
-    <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Helpers\CurrencyRoutines.cs" />
-    <Compile Include="Models\Company.cs">
-      <DependentUpon>ProductOffice.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\CrawlerHost.designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>CrawlerHost.dbml</DependentUpon>
-    </Compile>
-    <Compile Include="Models\LinkCategory.cs">
-      <DependentUpon>ProductOffice.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Product.cs">
-      <DependentUpon>ProductOffice.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Report.cs" />
-    <Compile Include="Models\PriceComparison.cs" />
-    <Compile Include="Models\MessageAttributes.cs" />
-    <Compile Include="Models\Price.cs">
-      <DependentUpon>ProductOffice.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\ServiceAttributes.cs" />
-    <Compile Include="Models\CrawlerAttributes.cs" />
-    <Compile Include="Models\CurrencyAttributes.cs" />
-    <Compile Include="Models\Currency.cs">
-      <DependentUpon>ProductOffice.tt</DependentUpon>
-    </Compile>
+    <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\Import.cs" />
-    <Compile Include="Models\ImportMap.cs">
-      <DependentUpon>ProductOffice.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\ImportMapAttributes.cs" />
-    <Compile Include="Models\ProductOffice.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ProductOffice.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\ProductOffice.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ProductOffice.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\ProductOffice.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ProductOffice.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="Models\CompanyAttributes.cs" />
-    <Compile Include="Models\ProductAttributes.cs" />
+    <Compile Include="Models\PriceComparison.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\Home.css" />
     <Content Include="Content\Menu.css" />
     <Content Include="Global.asax" />
-    <EntityDeploy Include="Models\ProductOffice.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>ProductOffice.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="Models\ProductOffice.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>ProductOffice.edmx</DependentUpon>
-      <LastGenOutput>ProductOffice.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="Models\ProductOffice.edmx.diagram">
-      <DependentUpon>ProductOffice.edmx</DependentUpon>
-    </Content>
-    <Content Include="Models\ProductOffice.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>ProductOffice.edmx</DependentUpon>
-      <LastGenOutput>ProductOffice.cs</LastGenOutput>
-    </Content>
-    <Content Include="Models\CrawlerHost.dbml">
-      <Generator>MSLinqToSQLGenerator</Generator>
-      <LastGenOutput>CrawlerHost.designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </Content>
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
     <Content Include="Scripts\home.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
@@ -447,6 +378,10 @@
       <Project>{5283eea1-5f94-4379-bdf3-975ca4adbbf4}</Project>
       <Name>CliverBot</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CliverBot\CrawlerHost\Api\CrawlerHostApi.csproj">
+      <Project>{60998033-82b3-42e8-b492-759dd506b783}</Project>
+      <Name>CrawlerHostApi</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CliverBot\CrawlerHost\Manager\CrawlerHostManager.csproj">
       <Project>{f5dcafd6-8716-46fc-ab41-583f31e652e5}</Project>
       <Name>CrawlerHostManager</Name>
@@ -455,19 +390,14 @@
       <Project>{cc46f24d-d915-4c23-afa1-841fe825db8d}</Project>
       <Name>CrawlerHostWatchDog</Name>
     </ProjectReference>
-    <ProjectReference Include="..\FhrCrawlerHostManager\FhrCrawlerHostManager.csproj">
+    <ProjectReference Include="..\FhrApi\FhrApi.csproj">
       <Project>{7d9e434d-1666-4464-b745-efdb06dd538c}</Project>
-      <Name>FhrCrawlerHostManager</Name>
+      <Name>FhrApi</Name>
     </ProjectReference>
     <ProjectReference Include="..\ProductIdentifier\ProductIdentifier.csproj">
       <Project>{b0875726-757c-430e-af2e-0aae72f66e4b}</Project>
       <Name>ProductIdentifier</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Models\CrawlerHost.dbml.layout">
-      <DependentUpon>CrawlerHost.dbml</DependentUpon>
-    </None>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

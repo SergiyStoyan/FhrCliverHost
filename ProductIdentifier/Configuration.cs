@@ -32,7 +32,7 @@ namespace Cliver.ProductIdentifier
         public Configuration(Engine engine)
         {
             this.engine = engine;
-            this.settings = new Bot.DbSettings(engine.Db2Api.Connection);
+            this.settings = new Bot.DbSettings(engine.Dbc);
             
             default_word_weights = default_word_weights.ToDictionary(x => x.Key.Trim().ToLower(), x => x.Value);
 
