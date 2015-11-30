@@ -407,7 +407,8 @@ function init_table(definition) {
                                 location.reload();
                         });
                     },
-                    style: "display:inline-block;margin-right:30px;",
+                    style: null,
+                    class: null,
                 },
                 details: {
                     text: "Details",
@@ -421,7 +422,7 @@ function init_table(definition) {
 
                         table.modalBox = table.definition.show_row_editor(table.definition.server.request_path + "/Details" + table.definition.server.actions_prefix + "?Id=" + id, "OK");
                     },
-                    style: "display:inline-block;margin-right:3px;",
+                    style: null,
                 },
                 edit: {
                     text: "Edit",
@@ -440,7 +441,7 @@ function init_table(definition) {
                                 location.reload();
                         });
                     },
-                    style: "display:inline-block;margin-right:3px;",
+                    style: null,
                 },
                 delete: {
                     text: "Delete",
@@ -566,29 +567,29 @@ function init_table(definition) {
     var menu = {};
     var fill_menu = function (me, md) {
         for (var i in md) {
-            var b = $('<a href="#" name=' + i + ' class="button" style="' + (md[i].style ? md[i].style : '') + '">' + md[i].text + '</a>');
+            var b = $('<a href="#" name=' + i + ' class="' + (md[i].class ? md[i].class : 'button') + '" style="' + (md[i].style ? md[i].style : '') + '">' + md[i].text + '</a>');
             me.append(b);
             b.click(md[i].onclick);
         }
     }
     if (!$.isEmptyObject(definition.menu.top)) {
-        menu.top = $("<p></p>");
+        menu.top = $('<p class="table_fixed_menu"></p>');
         table.parents(".dataTables_wrapper").before(menu.top);
         fill_menu(menu.top, definition.menu.top);
     }
     if (!$.isEmptyObject(definition.menu.right)) {
         menu.right = $('<div class="table_floating_menu" style="visibility: hidden; position: absolute;"></div>');
-        table.append(menu.right);
+        table.parents(".dataTables_wrapper").after(menu.right);
         fill_menu(menu.right, definition.menu.right);
     }
     if (!$.isEmptyObject(definition.menu.left)) {
         menu.left = $('<div class="table_floating_menu" style="visibility: hidden; position: absolute;"></div>');
-        table.append(menu.left);
+        table.parents(".dataTables_wrapper").after(menu.left);
         fill_menu(menu.left, definition.menu.left);
     }
     if (!$.isEmptyObject(definition.menu.over)) {
         menu.over = $('<div class="table_floating_menu" style="visibility: hidden; position: absolute;"></div>');
-        table.append(menu.over);
+        table.parents(".dataTables_wrapper").after(menu.over);
         fill_menu(menu.over, definition.menu.over);
     }
 

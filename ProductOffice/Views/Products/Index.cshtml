@@ -284,9 +284,22 @@
                             });
                         },
                     },*@
+                    site: {
+                        text: "Site",
+                        onclick: function () {
+                            window.open($(definition._table.api().row('.selected').data()[6]).attr('href'), '_blank');
+                        }
+                    },
                 },
             },
             datatable: {
+                columnDefs: [
+                    {
+                        visible: false,
+                        //searchable: false,
+                        targets: [0, -1]
+                    },
+                ],
                 createdRow: function (row, cs, index) {
                     cs[2] = "<a href='#' onclick='javascript: show_product_image(this);'><img src='" + cs[2].replace(/[\r\n].*/ig, "") + "'/></a>";
                     if (cs[6])
