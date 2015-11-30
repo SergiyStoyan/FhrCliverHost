@@ -284,7 +284,7 @@ SELECT Id AS Gid FROM Products WHERE MainProductId<0
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            DataApi.Products.Delete(db, id);
+            FhrApi.ProductOffice.DataApi.Product.Delete(db, id);
             if (Request.IsAjaxRequest())
                 return Content(null);
             return RedirectToAction("Index");

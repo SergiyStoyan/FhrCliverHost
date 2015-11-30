@@ -116,7 +116,7 @@ GROUP BY a.LinkId";
             ViewBag.LinkId = link_id > 0 ? link_id : -products[0].Id;
             ViewBag.Companies = db.Companies;
             ViewBag.LinkedProductsJson = Cliver.Bot.SerializationRoutines.Json.Get(get_product_objects(products));
-            ViewBag.CATEGORY_SEPARATOR = Cliver.FhrApi.CrawlerHost.Product.CATEGORY_SEPARATOR;
+            ViewBag.CATEGORY_SEPARATOR = FhrApi.ProductOffice.DataApi.Product.CATEGORY_SEPARATOR;
             if (Request.IsAjaxRequest())
                 return PartialView(products);
             return View();
@@ -407,7 +407,7 @@ GROUP BY a.LinkId";
 
         void add_path(string path, Dictionary<string, dynamic> tree)
         {
-            Match m = Regex.Match(path, "^(.*?)" + Regex.Escape(FhrApi.CrawlerHost.Product.CATEGORY_SEPARATOR) + "+(.+)", RegexOptions.Compiled | RegexOptions.Singleline);
+            Match m = Regex.Match(path, "^(.*?)" + Regex.Escape(FhrApi.ProductOffice.DataApi.Product.CATEGORY_SEPARATOR) + "+(.+)", RegexOptions.Compiled | RegexOptions.Singleline);
             if (m.Success)
             {
                 string name = m.Groups[1].Value;

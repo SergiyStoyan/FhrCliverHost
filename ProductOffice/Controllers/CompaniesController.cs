@@ -151,7 +151,7 @@ namespace Cliver.ProductOffice.Controllers
             }
             db.Companies.Remove(company);
             foreach(var p in db.Products.Where(p => p.CompanyId == id))
-               Cliver.FhrApi.ProductOffice.DataApi.Products.Delete(db, p.Id);
+               Cliver.FhrApi.ProductOffice.DataApi.Product.Delete(db, p.Id);
             if (Request.IsAjaxRequest())
                 return Content(null);
             return RedirectToAction("Index");

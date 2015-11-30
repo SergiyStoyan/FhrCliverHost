@@ -30,12 +30,7 @@ namespace Cliver.FhrApi.CrawlerHost
             Name = name;
             Sku = sku;
             Price = price;
-            List<string> cs = new List<string>();
-            foreach (string c in category_branch)
-                cs.Add(Cliver.PrepareField.Html.GetDbField(
-                    Regex.Replace(c, Regex.Escape(CATEGORY_SEPARATOR), "-", RegexOptions.Singleline | RegexOptions.Compiled)
-                    ));
-            Category = string.Join(CATEGORY_SEPARATOR, cs);
+            CategoryBranch = category_branch;
             ImageUrls = image_urls;
             Description = description;
 
@@ -44,15 +39,13 @@ namespace Cliver.FhrApi.CrawlerHost
             else
                 Stock = (decimal)stock;
         }
-
-        public const string CATEGORY_SEPARATOR = @">";
-
+        
         readonly public string Name;
         readonly public string Sku;
         readonly public string Price;
         readonly public string Description;
         readonly public string[] ImageUrls;
-        readonly public string Category;
+        readonly public string[] CategoryBranch;
         readonly public decimal Stock;
 
         override public void Validate()
@@ -70,8 +63,8 @@ namespace Cliver.FhrApi.CrawlerHost
                 Warning("Sku is empty.");
             if (string.IsNullOrWhiteSpace(Price))
                 Warning("Price is empty.");
-            if (string.IsNullOrWhiteSpace(Category))
-                Warning("Category is empty.");
+            if (CategoryBranch.Length < 1)
+                Warning("CategoryBranch is empty.");
             if (string.IsNullOrWhiteSpace(Description))
                 Warning("Description is empty.");
             if (Stock == (decimal)ProductStock.NOT_SET || Stock == (decimal)ProductStock.CANNOT_PARSE)
@@ -80,32 +73,42 @@ namespace Cliver.FhrApi.CrawlerHost
                 Warning("ImageUrls is empty.");
         }
 
-        //public static Product GetPreparedProduct(Product p)
-        //{
-        //    List<string> cs = new List<string>();
-        //    foreach (string c in p.Category.Split('\\'))
-        //        cs.Add(FileWriter.PrepareField(c, FileWriter.FieldFormat.DB_TABLE));
-
-        //    return new Product(
-        //        id: p.Id,
-        //        url: p.Url,
-        //        name: FileWriter.PrepareField(p.Name, FileWriter.FieldFormat.DB_TABLE),
-        //        sku: FileWriter.PrepareField(p.Sku, FileWriter.FieldFormat.DB_TABLE),
-        //        price: FileWriter.PrepareField(p.Price, FileWriter.FieldFormat.DB_TABLE),
-        //        category_branch: cs.ToArray(),
-        //        image_urls: p.ImageUrls,
-        //        description: FileWriter.PrepareField(p.Description, FileWriter.FieldFormat.DB_TABLE),
-        //        stock: p.Stock.ToString()
-        //    );
-        //}
-
-        public void Prepare()
+        public class PreparedProduct
         {
-            this.Set("Name", Cliver.PrepareField.Html.GetDbField(this.Name));
-            this.Set("Sku", Cliver.PrepareField.Html.GetDbField(this.Sku));
-            this.Set("Price", Cliver.PrepareField.Html.GetDbField(this.Price));
-            this.Set("Category", Cliver.PrepareField.Html.GetDbField(this.Category));
-            this.Set("Description", Cliver.PrepareField.Html.GetDbField(this.Description));
+            public readonly string Id;
+            public readonly string Url;
+            public readonly DateTime CrawlTime; 
+            public readonly DateTime ChangeTime;
+            readonly public string Name;
+            readonly public string Sku;
+            readonly public string Price;
+            readonly public string Description;
+            readonly public string ImageUrls;
+            readonly public string Category;
+            readonly public decimal Stock;
+
+            internal PreparedProduct(Product p)
+            {
+                Id = p.Id;
+                Url = p.Url;
+                CrawlTime = p.CrawlTime;
+                ChangeTime = p.ChangeTime;
+                Name = Cliver.PrepareField.Html.GetDbField(p.Name);
+                Sku = Cliver.PrepareField.Html.GetDbField(p.Sku);
+                Price = Cliver.PrepareField.Html.GetDbField(p.Price);
+                Description = Cliver.PrepareField.Html.GetDbField(p.Description);
+                ImageUrls = string.Join(Cliver.FhrApi.ProductOffice.DataApi.Product.IMAGE_URL_SEPARATOR, p.ImageUrls);
+                List<string> cs = new List<string>();
+                foreach (string c in p.CategoryBranch)
+                    cs.Add(Cliver.PrepareField.Html.GetDbField(Regex.Replace(c, Regex.Escape(Cliver.FhrApi.ProductOffice.DataApi.Product.CATEGORY_SEPARATOR), "-", RegexOptions.Singleline | RegexOptions.Compiled)));
+                Category = string.Join(Cliver.FhrApi.ProductOffice.DataApi.Product.CATEGORY_SEPARATOR, cs);
+                Stock = p.Stock;
+            }
+        }
+
+        public PreparedProduct GetPreparedProduct()
+        {
+            return new PreparedProduct(this);
         }
     }
 

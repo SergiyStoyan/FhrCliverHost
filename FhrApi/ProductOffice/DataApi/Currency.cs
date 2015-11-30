@@ -12,7 +12,7 @@ using System.Reflection;
 using System.Xml;
 using Cliver.Bot;
 
-namespace Cliver.FhrApi.ProductOffice
+namespace Cliver.FhrApi.ProductOffice.DataApi
 {
     public enum Currency
     {

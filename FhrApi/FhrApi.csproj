@@ -142,8 +142,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="CrawlerHost\Product.cs" />
-    <Compile Include="ProductOffice\DataApi.cs" />
-    <Compile Include="ProductOffice\Currency.cs" />
+    <Compile Include="ProductOffice\DataApi\Product.cs" />
+    <Compile Include="ProductOffice\DataApi\Company.cs" />
+    <Compile Include="ProductOffice\DataApi\Currency.cs" />
     <Compile Include="ProductOffice\Models\DbApi.cs" />
     <Compile Include="ProductOffice\Models\Company.cs">
       <DependentUpon>ProductOfficeEntities.tt</DependentUpon>

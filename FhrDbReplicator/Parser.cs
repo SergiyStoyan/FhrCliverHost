@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Cliver.FhrApi;
 using Cliver.Bot;
-using Cliver.FhrApi.ProductOffice;
+using Cliver.FhrApi.ProductOffice.DataApi;
 using System.Text.RegularExpressions;
 
 namespace Cliver.FhrDbReplicator

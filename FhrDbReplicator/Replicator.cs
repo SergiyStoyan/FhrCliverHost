@@ -5,7 +5,8 @@ using System.Data.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Cliver.FhrApi.CrawlerHost;
-using Cliver.FhrApi.ProductOffice.Models;
+//using Cliver.FhrApi.ProductOffice.Models;
+using Cliver.FhrApi.ProductOffice.DataApi;
 using Cliver.Bot;
 using System.Text.RegularExpressions;
 
@@ -13,7 +14,7 @@ namespace Cliver.FhrDbReplicator
 {
     public class Replicator : CrawlerHost.Service
     {
-        Cliver.FhrApi.ProductOffice.Models.DbApi db2 = new DbApi();
+        Cliver.FhrApi.ProductOffice.Models.DbApi db2 = new FhrApi.ProductOffice.Models.DbApi();
 
         override protected void Do()
         {
@@ -44,15 +45,15 @@ namespace Cliver.FhrDbReplicator
                     products = Db["SELECT TOP 100 Id, CrawlTime, ChangeTime, Url, Data, State FROM " + products_table + " WHERE State=" + (int)Crawler.ProductState.NEW].GetRecordset();
                     foreach (Record record in products)
                     {
-                        FhrApi.CrawlerHost.Product p = Cliver.CrawlerHost.Product.Restore<FhrApi.CrawlerHost.Product>(record);
-                        p.Prepare();
+                        FhrApi.CrawlerHost.Product raw_p = Cliver.CrawlerHost.Product.Restore<FhrApi.CrawlerHost.Product>(record);
+                        FhrApi.CrawlerHost.Product.PreparedProduct p = raw_p.GetPreparedProduct();
                         LogMessage.Write("Replicating id: '" + p.Id + "'");
                         FhrApi.ProductOffice.Models.Product product = (from x in db2.Products where x.CompanyId == company.Id && x.ExternalId == p.Id select x).FirstOrDefault();
                         if (product != null)
                         {
                             product.Category = p.Category;
                             product.Description = p.Description;
-                            product.ImageUrls = string.Join("\n", p.ImageUrls);
+                            product.ImageUrls = p.ImageUrls;
                             product.ModifyTime = p.ChangeTime;
                             product.Name = p.Name;
                             product.Sku = p.Sku;
@@ -64,6 +65,8 @@ namespace Cliver.FhrDbReplicator
                         else
                         {
                             product = new FhrApi.ProductOffice.Models.Product();
+
+                            List<string> cs = new List<string>();
                             product.Category = p.Category;
                             product.CompanyId = company.Id;
                             product.ExternalId = p.Id;
@@ -82,7 +85,7 @@ namespace Cliver.FhrDbReplicator
                         }
 
                         decimal price_value;
-                        FhrApi.ProductOffice.Currency currency_id_;
+                        Currency currency_id_;
                         if (FhrDbReplicator.Parser.ParsePrice(p.Price, out currency_id_, out price_value))
                         {
                             int currency_id = (int)currency_id_;
@@ -127,7 +130,7 @@ namespace Cliver.FhrDbReplicator
                             Log.Warning("Could not find Product [CompanyId=" + company.Id + "CompanyProductId=" + (string)record["Id"] + "] while deleting.");
                         else
                         {
-                            Cliver.FhrApi.ProductOffice.DataApi.Products.Delete(db2, product.Id);
+                            Cliver.FhrApi.ProductOffice.DataApi.Product.Delete(db2, product.Id);
 
                             int u = Db["DELETE FROM " + products_table + " WHERE Id=@Id"].Execute("@Id", (string)record["Id"]);
                             if (u < 1)

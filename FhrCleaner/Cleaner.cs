@@ -32,7 +32,7 @@ namespace Cliver.FhrCleaner
                 DateTime old_time = DateTime.Now.AddDays(-Properties.Settings.Default.DeleteProductsOlderThanDays);
                 IQueryable<FhrApi.ProductOffice.Models.Product> products = db.Products.Where(p => p.UpdateTime == null || p.UpdateTime < old_time);
                 foreach (FhrApi.ProductOffice.Models.Product product in products)
-                    FhrApi.ProductOffice.DataApi.Products.Delete(db, product.Id);
+                    FhrApi.ProductOffice.DataApi.Product.Delete(db, product.Id);
                 Log.Main.Write("Deleting Products older than " + old_time.ToShortDateString() + ": " + products.Count());
             }
         }

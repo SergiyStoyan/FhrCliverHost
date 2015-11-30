@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Cliver.FhrApi.ProductOffice;
+using Cliver.FhrApi.ProductOffice.DataApi;
 using Cliver.Bot;
 using System.Text.RegularExpressions;
 
@@ -13,7 +13,7 @@ namespace Cliver.FhrEventMonitor
     {
         //static Cliver.DataSifter.Parser currency = new DataSifter.Parser("Currency.fltr");
  
-        static public bool ParsePrice(string text, out FhrApi.ProductOffice.Currency currency_id, out decimal price)
+        static public bool ParsePrice(string text, out Currency currency_id, out decimal price)
         {
             string t = Regex.Replace(text, @"\s+", "", RegexOptions.IgnoreCase | RegexOptions.Singleline);
             Match m = Regex.Match(t, @"(?'Left'[^\.\,\;\d]*)(?'Price'\d+\.?\d*|\.\d+)(?'Right'[^\.\,\;\d]*)", RegexOptions.IgnoreCase | RegexOptions.Singleline);

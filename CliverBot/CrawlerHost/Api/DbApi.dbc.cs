@@ -15,8 +15,13 @@ using Cliver.Bot;
 
 namespace Cliver.CrawlerHost
 {
-    public class DbApi:DbConnection
+    public class DbApi : MsSqlConnection
     {
+        //static public DbApi Create()
+        //{
+        //    return new DbApi();
+        //}
+
         public DbApi()
             : base(ConnectionString)
         {
@@ -32,7 +37,7 @@ namespace Cliver.CrawlerHost
             }
             catch (Exception e)
             {
-                string m = "The app could not connect the database with string:" + ConnectionString + "\r\nBe sure " + Cliver.CrawlerHost.Api.CrawlerHost_CONGIG_FILE_NAME + " file exists and is correct.\r\n\r\n" + e.Message;
+                string m = "The app could not connect the database with string:\r\n" + ConnectionString + "\r\nBe sure " + Cliver.CrawlerHost.Api.CrawlerHost_CONGIG_FILE_NAME + " file exists and is correct.\r\n\r\n" + e.Message;
                 if (!ProgramRoutines.IsWebContext)
                     LogMessage.Exit(m);
                 else
