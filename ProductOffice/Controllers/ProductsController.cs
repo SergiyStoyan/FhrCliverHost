@@ -64,6 +64,12 @@ SELECT Id AS Gid FROM Products WHERE MainProductId<0
             return JqueryDataTable.Index(request, db.Database.Connection, from_sql, fields);
         }
 
+        public ActionResult GetCompanyCategories(int company_id)
+        {
+            Dictionary<string, dynamic> tree = CategoryRoutines.GetCompanyCategories(db, company_id);
+            return Json(tree, JsonRequestBehavior.AllowGet);
+        }
+
         public ActionResult SaveGroup(
             [Bind(Prefix = "product_ids[]")]string[] product_ids_,
             int? main_product_id

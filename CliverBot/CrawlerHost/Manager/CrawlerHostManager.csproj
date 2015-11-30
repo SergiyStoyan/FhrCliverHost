@@ -142,7 +142,6 @@
       <DependentUpon>CliverCrawlersDataSet.xsd</DependentUpon>
     </Compile>
     <Compile Include="CrawlerApi.cs" />
-    <Compile Include="Linker.cs" />
     <Compile Include="CrawlerService.cs" />
     <Compile Include="ServiceApi.cs" />
     <Compile Include="Mailer.cs" />

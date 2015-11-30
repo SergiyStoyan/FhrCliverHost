@@ -234,6 +234,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\BaseController.cs" />
+    <Compile Include="Helpers\CategoryRoutines.cs" />
     <Compile Include="Helpers\ErrorHandler.cs" />
     <Compile Include="Helpers\Message.cs" />
     <Compile Include="Helpers\JqueryDataTable.cs" />
@@ -320,7 +321,6 @@
     <Content Include="Views\Products\Delete.cshtml" />
     <Content Include="Views\Products\Details.cshtml" />
     <Content Include="Views\Products\Edit.cshtml" />
-    <Content Include="Views\Products\Index2.cshtml" />
     <Content Include="Views\ImportMaps\Create.cshtml" />
     <Content Include="Views\ImportMaps\Delete.cshtml" />
     <Content Include="Views\ImportMaps\Details.cshtml" />
