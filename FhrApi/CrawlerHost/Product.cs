@@ -54,7 +54,6 @@ namespace Cliver.FhrApi.CrawlerHost
                 Error("Id is empty.");
             if (string.IsNullOrWhiteSpace(Url))
                 Error("Url is empty.");
-
             if (string.IsNullOrWhiteSpace(Sku))
                 Warning("Sku is empty.");
             if (string.IsNullOrWhiteSpace(Name))
@@ -98,10 +97,19 @@ namespace Cliver.FhrApi.CrawlerHost
                 Price = Cliver.PrepareField.Html.GetDbField(p.Price);
                 Description = Cliver.PrepareField.Html.GetDbField(p.Description);
                 ImageUrls = string.Join(Cliver.FhrApi.ProductOffice.DataApi.Product.IMAGE_URL_SEPARATOR, p.ImageUrls);
-                List<string> cs = new List<string>();
-                foreach (string c in p.CategoryBranch)
-                    cs.Add(Cliver.PrepareField.Html.GetDbField(Regex.Replace(c, Regex.Escape(Cliver.FhrApi.ProductOffice.DataApi.Product.CATEGORY_SEPARATOR), "-", RegexOptions.Singleline | RegexOptions.Compiled)));
-                Category = string.Join(Cliver.FhrApi.ProductOffice.DataApi.Product.CATEGORY_SEPARATOR, cs);
+                if (p.CategoryBranch != null)//for legacy comaptibility
+                {
+                    List<string> cs = new List<string>();
+                    foreach (string c in p.CategoryBranch)
+                    {
+                        string s = Cliver.PrepareField.Html.GetDbField(c);
+                        s = Regex.Replace(s, Regex.Escape(Cliver.FhrApi.ProductOffice.DataApi.Product.CATEGORY_SEPARATOR), "-", RegexOptions.Singleline | RegexOptions.Compiled);
+                        cs.Add(s);
+                    }
+                    Category = string.Join(Cliver.FhrApi.ProductOffice.DataApi.Product.CATEGORY_SEPARATOR, cs);
+                }
+                else
+                    Category = "";
                 Stock = p.Stock;
             }
         }

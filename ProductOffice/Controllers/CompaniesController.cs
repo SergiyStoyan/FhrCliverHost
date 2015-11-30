@@ -86,9 +86,9 @@ namespace Cliver.ProductOffice.Controllers
                     return RedirectToAction("Index");
                 }
             }
-            catch (Exception e)
+            catch (System.Data.Entity.Validation.DbEntityValidationException e)
             {
-                var g = ((System.Data.Entity.Validation.DbEntityValidationException)e).EntityValidationErrors;
+                var g = e.EntityValidationErrors;
             }
             if (Request.IsAjaxRequest())
                 return PartialView(company);
