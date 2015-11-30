@@ -129,8 +129,7 @@
                 menu: {
                     top: false,
                     right: false,
-                    left: false,
-                    over: {
+                    left: {
                         delete: true,
                         ungroup: {
                             text: "Ungroup",
@@ -166,9 +165,9 @@
 
                     var table = definition._table;
                     if ($(event.target).parent('tr').hasClass('MainInGroup'))
-                        $(table.menu.over).find("[name='main']").css('display', 'none');
+                        $(table.menu.left).find("[name='main']").css('display', 'none');
                     else
-                        $(table.menu.over).find("[name='main']").css('display', 'block');
+                        $(table.menu.left).find("[name='main']").css('display', 'block');
                 },
             };
         GroupTable = init_table(definition);
@@ -258,11 +257,15 @@
                 top: {
                     //start: { text: "Start Grouping", onclick: function () { alert("2"); } }
                 },
-                over: {
-                    delete: false,
+                right: {
+                    edit: false,
+                    details: false,
+                },
+                left: {
                     edit: true,
-                    add2group: { text: "Group", onclick: function () { add_raw_to_group_dlg(ProductsTable.api().row('.selected')); } },
                     details: true,
+                    delete: false,
+                    add2group: { text: "Group", onclick: function () { add_raw_to_group_dlg(ProductsTable.api().row('.selected')); } },
                     expand: { text: "Expand", onclick: function () { add_raw_to_group_dlg(ProductsTable.api().row('.selected'), true); } },                    
                     @*ungroup: {
                         text: "Ungroup",
@@ -312,13 +315,13 @@
 
             //    var table = definition._table;
             //    var product_id = table.api().row($($(event.target).parent('tr')).index()).data()[0];
-            //    $(table.menu.over).find("[name='add2group'], [name='expand']").css('display', 'block');
+            //    $(table.menu.left).find("[name='add2group'], [name='expand']").css('display', 'block');
             //    if (GroupDlg)
             //        if (GroupDlg.is_open()) {
             //            var d = GroupTable.api().rows().data();
             //            for (i in d) {
             //                if (d[i][0] == product_id) {
-            //                    $(table.menu.over).find("[name='add2group'], [name='expand']").css('display', 'none');
+            //                    $(table.menu.left).find("[name='add2group'], [name='expand']").css('display', 'none');
             //                    break;
             //                }
             //            }
@@ -327,7 +330,7 @@
             //            var d = GroupTable.api().rows().data();
             //            for (i in d) {
             //                if (d[i][0] == product_id) {
-            //                    $(table.menu.over).find("[name='add2group']").css('display', 'none');
+            //                    $(table.menu.left).find("[name='add2group']").css('display', 'none');
             //                    break;
             //                }
             //            }

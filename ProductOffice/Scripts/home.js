@@ -258,21 +258,20 @@ function init_table(definition) {
                 var r = table.parents(".dataTables_wrapper");
                 if (table.menu.left) {
                     table.menu.left.css('visibility', 'visible');
-                    table.menu.left.offset({ 'top': t, 'left': r.offset().left - table.menu.left.outerWidth() });
+                    if (table.menu.left.hasClass('outside'))
+                        table.menu.left.offset({ 'top': t, 'left': r.offset().left - table.menu.left.outerWidth() });
+                    else
+                        table.menu.left.offset({ 'top': t, 'left': r.offset().left });
                     table.menu.left.css("padding-top", row.find('td:first').css("padding-top"));
                     table.menu.left.css("padding-bottom", row.find('td:first').css("padding-bottom"));
                     table.menu.left.innerHeight(row.innerHeight());
                 }
-                if (table.menu.over) {
-                    table.menu.over.css('visibility', 'visible');
-                    table.menu.over.offset({ 'top': t, 'left': r.offset().over });
-                    table.menu.over.css("padding-top", row.find('td:first').css("padding-top"));
-                    table.menu.over.css("padding-bottom", row.find('td:first').css("padding-bottom"));
-                    table.menu.over.innerHeight(row.innerHeight());
-                }
                 if (table.menu.right) {
                     table.menu.right.css('visibility', 'visible');
-                    table.menu.right.offset({ 'top': t, 'left': r.offset().left + r.outerWidth(true) });
+                    if (table.menu.right.hasClass('outside'))
+                        table.menu.right.offset({ 'top': t, 'left': r.offset().left + r.outerWidth(true) });
+                    else
+                        table.menu.right.offset({ 'top': t, 'left': r.offset().left + r.outerWidth(true) - table.menu.right.outerWidth() });
                     table.menu.right.css("padding-top", row.find('td:first').css("padding-top"));
                     table.menu.right.css("padding-bottom", row.find('td:first').css("padding-bottom"));
                     table.menu.right.innerHeight(row.innerHeight());
@@ -283,8 +282,6 @@ function init_table(definition) {
                     table.menu.left.css('visibility', 'hidden');
                 if (table.menu.right)
                     table.menu.right.css('visibility', 'hidden');
-                if (table.menu.over)
-                    table.menu.over.css('visibility', 'hidden');
             }
         },
         on_row_filling: function (row, cs, index) {
@@ -384,16 +381,11 @@ function init_table(definition) {
                 new: true,
             },
             left: {
-                //delete: true,
+                delete: true,
+                details: true,
+                edit: true,
             },
             right: {
-                //details: true,
-                //edit: true,
-            },
-            over: {
-                delete: true,
-                edit: true,
-                details: true,
             },
             _templates: {
                 new: {
@@ -587,11 +579,6 @@ function init_table(definition) {
         table.parents(".dataTables_wrapper").after(menu.left);
         fill_menu(menu.left, definition.menu.left);
     }
-    if (!$.isEmptyObject(definition.menu.over)) {
-        menu.over = $('<div class="table_floating_menu" style="visibility: hidden; position: absolute;"></div>');
-        table.parents(".dataTables_wrapper").after(menu.over);
-        fill_menu(menu.over, definition.menu.over);
-    }
 
     if (definition.on_row_clicked)
         table.find('tbody').on('click', 'tr', definition.on_row_clicked);
@@ -601,8 +588,6 @@ function init_table(definition) {
             menu.left.css('visibility', 'hidden');
         if (menu.right)
             menu.right.css('visibility', 'hidden');
-        if (menu.over)
-            menu.over.css('visibility', 'hidden');
     });
 
     table.show_processing = function (show) {
