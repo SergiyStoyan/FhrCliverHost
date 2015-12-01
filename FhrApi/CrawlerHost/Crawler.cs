@@ -27,4 +27,8 @@ namespace Cliver.Fhr.CrawlerHost
             INVALID = 6,
         }
     }
+
+    public class CrawlerApi : Cliver.CrawlerHost.CrawlerApi
+    {
+    }
 }

@@ -136,7 +136,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CrawlerHost\CrawlerApi.cs" />
     <Compile Include="CrawlerHost\Crawler.cs" />
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
