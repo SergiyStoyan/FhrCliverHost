@@ -97,6 +97,15 @@ namespace Cliver.ProductOffice
                                 search_value = "'" + search_value + "'";
                             wheres.Add(m.Groups["DbField"].Value + "=" + search_value);
                         }
+                        m = Regex.Match(f2c, @"(?'DbField'.*?)\s*LIKE\s*(?'SearchValue'.*)", RegexOptions.Singleline);
+                        if (m.Success)
+                        {
+                            string search_value = m.Groups["SearchValue"].Value;
+                            decimal sv;
+                            if (!decimal.TryParse(search_value, out sv))
+                                search_value = "'" + search_value + "'";
+                            wheres.Add(m.Groups["DbField"].Value + " LIKE " + search_value);
+                        }
                     }
                     if (wheres.Count > 0)
                     {
