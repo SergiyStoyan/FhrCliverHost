@@ -18,7 +18,7 @@
     <DefaultTargetSchema>IE50</DefaultTargetSchema>
     <DelaySign>false</DelaySign>
     <OutputType>Library</OutputType>
-    <RootNamespace>Cliver.CrawlerHost</RootNamespace>
+    <RootNamespace>Cliver.CrawlerHost.Manager</RootNamespace>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
     <StartupObject>
     </StartupObject>
@@ -141,10 +141,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>CliverCrawlersDataSet.xsd</DependentUpon>
     </Compile>
-    <Compile Include="CrawlerApi.cs" />
     <Compile Include="CrawlerService.cs" />
-    <Compile Include="ServiceApi.cs" />
-    <Compile Include="Mailer.cs" />
     <Compile Include="ServiceManager.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <DependentUpon>Settings.settings</DependentUpon>
@@ -157,6 +154,7 @@
     <Compile Include="DbConnectionSettingsForm.Designer.cs">
       <DependentUpon>DbConnectionSettingsForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Settings.cs" />
     <Compile Include="SettingsForm.cs">
       <SubType>Form</SubType>
     </Compile>

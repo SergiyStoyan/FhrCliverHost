@@ -6,7 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
-using Cliver.FhrApi.ProductOffice.Models;
+using Cliver.Fhr.ProductOffice.Models;
 using System.Text.RegularExpressions;
 
 namespace Cliver.ProductOffice.Controllers
@@ -15,7 +15,7 @@ namespace Cliver.ProductOffice.Controllers
     [Authorize]
     public class ProductLinksController : Controller
     {
-        private DbApi db = FhrApi.ProductOffice.Models.DbApi.Create();
+        private DbApi db = Fhr.ProductOffice.Models.DbApi.Create();
 
         List<object> CompanySelect
         {
@@ -116,7 +116,7 @@ GROUP BY a.LinkId";
             ViewBag.LinkId = link_id > 0 ? link_id : -products[0].Id;
             ViewBag.Companies = db.Companies;
             ViewBag.LinkedProductsJson = Cliver.Bot.SerializationRoutines.Json.Get(get_product_objects(products));
-            ViewBag.CATEGORY_SEPARATOR = FhrApi.ProductOffice.DataApi.Product.CATEGORY_SEPARATOR;
+            ViewBag.CATEGORY_SEPARATOR = Fhr.ProductOffice.DataApi.Product.CATEGORY_SEPARATOR;
             if (Request.IsAjaxRequest())
                 return PartialView(products);
             return View();
@@ -344,7 +344,7 @@ GROUP BY a.LinkId";
             List<object> ds = new List<object>();
             foreach (Cliver.ProductIdentifier.Product product in pl.Product2s)
             {
-                Cliver.FhrApi.ProductOffice.Models.Product p = product.DbProduct;
+                Cliver.Fhr.ProductOffice.Models.Product p = product.DbProduct;
 
                 object d = new
                 {

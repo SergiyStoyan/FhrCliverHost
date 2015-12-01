@@ -56,6 +56,7 @@
     <Compile Include="Api.cs" />
     <Compile Include="Crawler.cs" />
     <Compile Include="DbApi.dbc.cs" />
+    <Compile Include="Mailer.cs" />
     <Compile Include="Models\CrawlerAttributes.cs" />
     <Compile Include="Models\DbApi.dbml.cs" />
     <Compile Include="Models\CliverCrawlerHost.designer.cs">
@@ -72,6 +73,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Service.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

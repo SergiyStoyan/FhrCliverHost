@@ -22,7 +22,7 @@ using System.Net;
 using System.Threading;
 using Cliver.Bot;
 
-namespace Cliver.CrawlerHost
+namespace Cliver.CrawlerHostManager
 {
     internal partial class SysTrayForm : BaseForm
     {

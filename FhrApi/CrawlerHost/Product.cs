@@ -13,7 +13,7 @@ using System.Reflection;
 using Cliver.Bot;
 using Cliver.CrawlerHost;
 
-namespace Cliver.FhrApi.CrawlerHost
+namespace Cliver.Fhr.CrawlerHost
 {
     public class Product : Cliver.CrawlerHost.Product
     {
@@ -96,17 +96,17 @@ namespace Cliver.FhrApi.CrawlerHost
                 Sku = Cliver.PrepareField.Html.GetDbField(p.Sku);
                 Price = Cliver.PrepareField.Html.GetDbField(p.Price);
                 Description = Cliver.PrepareField.Html.GetDbField(p.Description);
-                ImageUrls = string.Join(Cliver.FhrApi.ProductOffice.DataApi.Product.IMAGE_URL_SEPARATOR, p.ImageUrls);
+                ImageUrls = string.Join(Cliver.Fhr.ProductOffice.DataApi.Product.IMAGE_URL_SEPARATOR, p.ImageUrls);
                 if (p.CategoryBranch != null)//for legacy comaptibility
                 {
                     List<string> cs = new List<string>();
                     foreach (string c in p.CategoryBranch)
                     {
                         string s = Cliver.PrepareField.Html.GetDbField(c);
-                        s = Regex.Replace(s, Regex.Escape(Cliver.FhrApi.ProductOffice.DataApi.Product.CATEGORY_SEPARATOR), "-", RegexOptions.Singleline | RegexOptions.Compiled);
+                        s = Regex.Replace(s, Regex.Escape(Cliver.Fhr.ProductOffice.DataApi.Product.CATEGORY_SEPARATOR), "-", RegexOptions.Singleline | RegexOptions.Compiled);
                         cs.Add(s);
                     }
-                    Category = string.Join(Cliver.FhrApi.ProductOffice.DataApi.Product.CATEGORY_SEPARATOR, cs);
+                    Category = string.Join(Cliver.Fhr.ProductOffice.DataApi.Product.CATEGORY_SEPARATOR, cs);
                 }
                 else
                     Category = "";

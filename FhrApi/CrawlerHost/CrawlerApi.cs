@@ -13,7 +13,7 @@ using System.Xml;
 using Cliver.CrawlerHost;
 using Cliver.Bot;
 
-namespace Cliver.FhrApi.CrawlerHost
+namespace Cliver.Fhr.CrawlerHost
 {
     public class CrawlerApi : Cliver.CrawlerHost.CrawlerApi
     {

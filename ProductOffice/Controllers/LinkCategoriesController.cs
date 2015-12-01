@@ -5,7 +5,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using Cliver.FhrApi.ProductOffice.Models;
+using Cliver.Fhr.ProductOffice.Models;
 using System.Linq.Dynamic;
 
 namespace Cliver.ProductOffice.Controllers
@@ -13,7 +13,7 @@ namespace Cliver.ProductOffice.Controllers
     [Authorize]
     public class LinkCategoriesController : Controller
     {
-        private DbApi db = FhrApi.ProductOffice.Models.DbApi.Create();
+        private DbApi db = Fhr.ProductOffice.Models.DbApi.Create();
 
         public ActionResult Index()
         {

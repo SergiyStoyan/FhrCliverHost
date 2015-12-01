@@ -6,7 +6,7 @@ using System.Configuration;
 using System.Data.Entity;
 using System.Web.Mvc;
 
-namespace Cliver.FhrApi.ProductOffice.Models
+namespace Cliver.Fhr.ProductOffice.Models
 {
     [MetadataType(typeof(ImportMapAttributes))]
     public partial class ImportMap

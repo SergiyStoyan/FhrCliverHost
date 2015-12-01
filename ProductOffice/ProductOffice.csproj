@@ -380,10 +380,6 @@
       <Project>{60998033-82b3-42e8-b492-759dd506b783}</Project>
       <Name>CrawlerHostApi</Name>
     </ProjectReference>
-    <ProjectReference Include="..\CliverBot\CrawlerHost\Manager\CrawlerHostManager.csproj">
-      <Project>{f5dcafd6-8716-46fc-ab41-583f31e652e5}</Project>
-      <Name>CrawlerHostManager</Name>
-    </ProjectReference>
     <ProjectReference Include="..\CliverBot\CrawlerHost\WatchDog\CrawlerHostWatchDog.csproj">
       <Project>{cc46f24d-d915-4c23-afa1-841fe825db8d}</Project>
       <Name>CrawlerHostWatchDog</Name>

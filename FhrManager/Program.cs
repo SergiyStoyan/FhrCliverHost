@@ -17,7 +17,7 @@ using System.Text.RegularExpressions;
 using System.Diagnostics;
 using System.Reflection;
 using Cliver.Bot;
-using Cliver.CrawlerHost;
+using Cliver.CrawlerHostManager;
 
 namespace Cliver.FhrManager
 {
@@ -28,8 +28,8 @@ namespace Cliver.FhrManager
         {
             try
             {
-                Cliver.CrawlerHost.Program.SetTitle(Assembly.GetExecutingAssembly());
-                Cliver.CrawlerHost.Program.Main();
+                Cliver.CrawlerHostManager.Program.SetTitle(Assembly.GetExecutingAssembly());
+                Cliver.CrawlerHostManager.Program.Main();
             }
             catch (Exception e)
             {

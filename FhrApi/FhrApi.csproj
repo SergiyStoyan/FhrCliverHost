@@ -18,7 +18,7 @@
     <DefaultTargetSchema>IE50</DefaultTargetSchema>
     <DelaySign>false</DelaySign>
     <OutputType>Library</OutputType>
-    <RootNamespace>Cliver.FhrApi</RootNamespace>
+    <RootNamespace>Cliver.Fhr</RootNamespace>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
     <StartupObject>
     </StartupObject>
@@ -244,10 +244,6 @@
     <ProjectReference Include="..\CliverBot\CrawlerHost\Api\CrawlerHostApi.csproj">
       <Project>{60998033-82b3-42e8-b492-759dd506b783}</Project>
       <Name>CrawlerHostApi</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CliverBot\CrawlerHost\Manager\CrawlerHostManager.csproj">
-      <Project>{f5dcafd6-8716-46fc-ab41-583f31e652e5}</Project>
-      <Name>CrawlerHostManager</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

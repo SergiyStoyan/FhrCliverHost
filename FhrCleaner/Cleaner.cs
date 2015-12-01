@@ -4,10 +4,10 @@ using System.Linq;
 using System.Data.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Cliver.FhrApi;
+using Cliver.Fhr;
 using Cliver.Bot;
 using System.Text.RegularExpressions;
-using Cliver.FhrApi.ProductOffice.Models;
+using Cliver.Fhr.ProductOffice.Models;
 
 namespace Cliver.FhrCleaner
 {
@@ -17,11 +17,11 @@ namespace Cliver.FhrCleaner
         {
             base.Do();
 
-            DbApi db = FhrApi.ProductOffice.Models.DbApi.Create();
+            DbApi db = Fhr.ProductOffice.Models.DbApi.Create();
             if (Properties.Settings.Default.DeletePricesOlderThanDays > 0)
             {
                 DateTime old_time = DateTime.Now.AddDays(-Properties.Settings.Default.DeletePricesOlderThanDays);
-                IQueryable<Cliver.FhrApi.ProductOffice.Models.Price> prices = db.Prices.Where(p => p.Time < old_time);
+                IQueryable<Cliver.Fhr.ProductOffice.Models.Price> prices = db.Prices.Where(p => p.Time < old_time);
                 db.Prices.RemoveRange(prices);
                 Log.Main.Write("Deleting Prices older than " + old_time.ToShortDateString() + ": " + prices.Count());
                 db.SaveChanges();
@@ -30,9 +30,9 @@ namespace Cliver.FhrCleaner
             if (Properties.Settings.Default.DeleteProductsOlderThanDays > 0)
             {
                 DateTime old_time = DateTime.Now.AddDays(-Properties.Settings.Default.DeleteProductsOlderThanDays);
-                IQueryable<FhrApi.ProductOffice.Models.Product> products = db.Products.Where(p => p.UpdateTime == null || p.UpdateTime < old_time);
-                foreach (FhrApi.ProductOffice.Models.Product product in products)
-                    FhrApi.ProductOffice.DataApi.Product.Delete(db, product.Id);
+                IQueryable<Fhr.ProductOffice.Models.Product> products = db.Products.Where(p => p.UpdateTime == null || p.UpdateTime < old_time);
+                foreach (Fhr.ProductOffice.Models.Product product in products)
+                    Fhr.ProductOffice.DataApi.Product.Delete(db, product.Id);
                 Log.Main.Write("Deleting Products older than " + old_time.ToShortDateString() + ": " + products.Count());
             }
         }

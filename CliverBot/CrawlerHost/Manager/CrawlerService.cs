@@ -24,8 +24,9 @@ using System.Text;
 using System.Reflection;
 using System.Net.Mail;
 using Cliver.Bot;
+using Cliver.CrawlerHost;
 
-namespace Cliver.CrawlerHost
+namespace Cliver.CrawlerHostManager
 {
     internal class CrawlerService
     {
@@ -255,7 +256,7 @@ WHERE (State<>" + (int)Crawler.State.DISABLED + " AND GETDATE()>=_NextStartTime 
                 parameters.Add(Bot.CommandLineParameters.NOT_RESTORE_SESSION.ToString());
 
             string crawler_directory;
-            crawler_directory = Log.GetAbsolutePath(Cliver.CrawlerHost.Properties.Settings.Default.CrawlersDirectory);
+            crawler_directory = Log.GetAbsolutePath(Properties.Settings.Default.CrawlersDirectory);
             if (!Directory.Exists(crawler_directory))
             {
                 Mailer.Send(db, "Crawler directory '" + crawler_directory + "' does not exist", ReportSourceType.CRAWLER, crawler_id);
@@ -273,7 +274,7 @@ WHERE (State<>" + (int)Crawler.State.DISABLED + " AND GETDATE()>=_NextStartTime 
             p.StartInfo.Arguments = string.Join(" ", parameters);
             Log.Main.Write("Starting crawler " + crawler_id);
             p.Start();
-            ThreadRoutines.Wait(Properties.Settings.Default.ServiceCheckDurationInMss);
+            ThreadRoutines.Wait(Cliver.CrawlerHost.Properties.Settings.Default.ServiceCheckDurationInMss);
             if (!ServiceManager.IsProcessAlive(p.Id, crawler_id))
             {
                 db["UPDATE Crawlers SET _NextStartTime=DATEADD(ss, RestartDelayIfBroken, GETDATE()) WHERE Id=@Id"].Execute("@Id", crawler_id);

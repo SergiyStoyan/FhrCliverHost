@@ -5,7 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using Cliver.FhrApi.ProductOffice.Models;
+using Cliver.Fhr.ProductOffice.Models;
 using System.Configuration;
 using System.Text.RegularExpressions;
 
@@ -14,7 +14,7 @@ namespace Cliver.ProductOffice.Controllers
     [Authorize]
     public class ProductIdentifierConfigurationController : Controller
     {
-        private DbApi db = FhrApi.ProductOffice.Models.DbApi.Create();
+        private DbApi db = Fhr.ProductOffice.Models.DbApi.Create();
         
         //List<object> CompanySelect
         //{

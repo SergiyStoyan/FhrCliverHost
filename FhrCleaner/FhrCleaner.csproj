@@ -84,13 +84,13 @@
       <Project>{5283eea1-5f94-4379-bdf3-975ca4adbbf4}</Project>
       <Name>CliverBot</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CliverBot\CrawlerHost\Api\CrawlerHostApi.csproj">
+      <Project>{60998033-82b3-42e8-b492-759dd506b783}</Project>
+      <Name>CrawlerHostApi</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CliverBot\CrawlerHost\Cleaner\CrawlerHostCleaner.csproj">
       <Project>{5ddeee6a-d196-40a1-b7aa-48e5e0c9755f}</Project>
       <Name>CrawlerHostCleaner</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CliverBot\CrawlerHost\Manager\CrawlerHostManager.csproj">
-      <Project>{f5dcafd6-8716-46fc-ab41-583f31e652e5}</Project>
-      <Name>CrawlerHostManager</Name>
     </ProjectReference>
     <ProjectReference Include="..\FhrApi\FhrApi.csproj">
       <Project>{7D9E434D-1666-4464-B745-EFDB06DD538C}</Project>

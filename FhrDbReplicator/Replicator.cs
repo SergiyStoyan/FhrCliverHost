@@ -4,9 +4,9 @@ using System.Linq;
 using System.Data.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Cliver.FhrApi.CrawlerHost;
-//using Cliver.FhrApi.ProductOffice.Models;
-using Cliver.FhrApi.ProductOffice.DataApi;
+using Cliver.Fhr.CrawlerHost;
+//using Cliver.Fhr.ProductOffice.Models;
+using Cliver.Fhr.ProductOffice.DataApi;
 using Cliver.Bot;
 using System.Text.RegularExpressions;
 
@@ -14,7 +14,7 @@ namespace Cliver.FhrDbReplicator
 {
     public class Replicator : CrawlerHost.Service
     {
-        Cliver.FhrApi.ProductOffice.Models.DbApi db2 = FhrApi.ProductOffice.Models.DbApi.Create();
+        Cliver.Fhr.ProductOffice.Models.DbApi db2 = Fhr.ProductOffice.Models.DbApi.Create();
 
         override protected void Do()
         {
@@ -25,12 +25,12 @@ namespace Cliver.FhrDbReplicator
 
         void replicate_product_table(string crawler_id, string products_table)
         {
-            Cliver.FhrApi.ProductOffice.Models.DbApi.RenewContext(ref db2);
+            Cliver.Fhr.ProductOffice.Models.DbApi.RenewContext(ref db2);
             try
             {
                 Log.Write("Processing '" + products_table + "' table.");
 
-                FhrApi.ProductOffice.Models.Company company = (from r in db2.Companies where r.CrawlerId == crawler_id select r).FirstOrDefault();
+                Fhr.ProductOffice.Models.Company company = (from r in db2.Companies where r.CrawlerId == crawler_id select r).FirstOrDefault();
                 if (company == null)
                 {
                     Log.Error("Could not find company for crawler_id:" + crawler_id);
@@ -41,14 +41,14 @@ namespace Cliver.FhrDbReplicator
                 Recordset products;
                 do
                 {
-                    Cliver.FhrApi.ProductOffice.Models.DbApi.RenewContext(ref db2);
+                    Cliver.Fhr.ProductOffice.Models.DbApi.RenewContext(ref db2);
                     products = Db["SELECT TOP 100 Id, CrawlTime, ChangeTime, Url, Data, State FROM " + products_table + " WHERE State=" + (int)Crawler.ProductState.NEW].GetRecordset();
                     foreach (Record record in products)
                     {
-                        FhrApi.CrawlerHost.Product raw_p = Cliver.CrawlerHost.Product.Restore<FhrApi.CrawlerHost.Product>(record);
-                        FhrApi.CrawlerHost.Product.PreparedProduct p = raw_p.GetPreparedProduct();
+                        Fhr.CrawlerHost.Product raw_p = Cliver.CrawlerHost.Product.Restore<Fhr.CrawlerHost.Product>(record);
+                        Fhr.CrawlerHost.Product.PreparedProduct p = raw_p.GetPreparedProduct();
                         LogMessage.Write("Replicating id: '" + p.Id + "'");
-                        FhrApi.ProductOffice.Models.Product product = (from x in db2.Products where x.CompanyId == company.Id && x.ExternalId == p.Id select x).FirstOrDefault();
+                        Fhr.ProductOffice.Models.Product product = (from x in db2.Products where x.CompanyId == company.Id && x.ExternalId == p.Id select x).FirstOrDefault();
                         if (product != null)
                         {
                             product.Category = p.Category;
@@ -64,7 +64,7 @@ namespace Cliver.FhrDbReplicator
                         }
                         else
                         {
-                            product = new FhrApi.ProductOffice.Models.Product();
+                            product = new Fhr.ProductOffice.Models.Product();
 
                             List<string> cs = new List<string>();
                             product.Category = p.Category;
@@ -89,7 +89,7 @@ namespace Cliver.FhrDbReplicator
                         if (FhrDbReplicator.Parser.ParsePrice(p.Price, out currency_id_, out price_value))
                         {
                             int currency_id = (int)currency_id_;
-                            FhrApi.ProductOffice.Models.Price price = product.Prices.SingleOrDefault(x => x.Time == p.CrawlTime);
+                            Fhr.ProductOffice.Models.Price price = product.Prices.SingleOrDefault(x => x.Time == p.CrawlTime);
                             //Price price = (from x in dc2.Prices where x.ProductId == product.Id && x.Time == (DateTime)r["CrawlTime"] && x.Quantity==1 select x).FirstOrDefault();
                             if (price != null)
                             {
@@ -98,7 +98,7 @@ namespace Cliver.FhrDbReplicator
                             }
                             else
                             {
-                                price = new FhrApi.ProductOffice.Models.Price();
+                                price = new Fhr.ProductOffice.Models.Price();
                                 price.CurrencyId = currency_id;
                                 price.ProductId = product.Id;
                                 price.Time = p.CrawlTime;
@@ -120,17 +120,17 @@ namespace Cliver.FhrDbReplicator
                 int deleted_count = 0;
                 do
                 {
-                    Cliver.FhrApi.ProductOffice.Models.DbApi.RenewContext(ref db2);
+                    Cliver.Fhr.ProductOffice.Models.DbApi.RenewContext(ref db2);
                     products = Db["SELECT TOP 100 Id, CrawlTime, ChangeTime, Url, Data, State FROM " + products_table + " WHERE State=" + (int)Crawler.ProductState.DELETED].GetRecordset();
                     foreach (Record record in products)
                     {
                         LogMessage.Inform("Deleting id: '" + (string)record["Id"] + "'");
-                        FhrApi.ProductOffice.Models.Product product = (from x in db2.Products where x.CompanyId == company.Id && x.ExternalId == (string)record["Id"] select x).FirstOrDefault();
+                        Fhr.ProductOffice.Models.Product product = (from x in db2.Products where x.CompanyId == company.Id && x.ExternalId == (string)record["Id"] select x).FirstOrDefault();
                         if (product == null)
                             Log.Warning("Could not find Product [CompanyId=" + company.Id + "CompanyProductId=" + (string)record["Id"] + "] while deleting.");
                         else
                         {
-                            Cliver.FhrApi.ProductOffice.DataApi.Product.Delete(db2, product.Id);
+                            Cliver.Fhr.ProductOffice.DataApi.Product.Delete(db2, product.Id);
 
                             int u = Db["DELETE FROM " + products_table + " WHERE Id=@Id"].Execute("@Id", (string)record["Id"]);
                             if (u < 1)

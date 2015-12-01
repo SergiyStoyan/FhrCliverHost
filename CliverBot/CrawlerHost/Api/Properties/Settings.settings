@@ -10,5 +10,26 @@
 &lt;/SerializableConnectionString&gt;</DesignTimeValue>
       <Value Profile="(Default)">Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename="D:\_d\_PROJECTS\FHR(for Andreas Chermak)\FhrCliverHost#development\_data\CliverCrawlerHost.mdf";Integrated Security=True;Connect Timeout=30</Value>
     </Setting>
+    <Setting Name="ServiceCheckDurationInMss" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">100</Value>
+    </Setting>
+    <Setting Name="DefaultAdminEmails" Type="System.String" Scope="User">
+      <Value Profile="(Default)">crawler_manager@cliversoft.com</Value>
+    </Setting>
+    <Setting Name="EmailSender" Type="System.String" Scope="User">
+      <Value Profile="(Default)">crawler_manager@cliversoft.com</Value>
+    </Setting>
+    <Setting Name="SmtpHost" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="SmtpPort" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">25</Value>
+    </Setting>
+    <Setting Name="SmtpLogin" Type="System.String" Scope="User">
+      <Value Profile="(Default)">crawler_manager@cliversoft.com</Value>
+    </Setting>
+    <Setting Name="SmtpPassword" Type="System.String" Scope="User">
+      <Value Profile="(Default)">123456</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

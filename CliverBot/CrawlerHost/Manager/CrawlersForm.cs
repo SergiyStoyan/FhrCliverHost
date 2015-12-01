@@ -9,7 +9,7 @@ using System.Windows.Forms;
 using Cliver.Bot;
 using Cliver.CrawlerHost;
 
-namespace Cliver.CrawlerHost
+namespace Cliver.CrawlerHostManager
 {
     internal partial class CrawlersForm : BaseForm
     {

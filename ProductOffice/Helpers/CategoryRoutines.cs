@@ -11,7 +11,7 @@ using System.Linq.Expressions;
 using System.Data.Common;
 using System.Collections.Specialized;
 using System.Xml;
-using Cliver.FhrApi.ProductOffice.Models;
+using Cliver.Fhr.ProductOffice.Models;
 
 namespace Cliver.ProductOffice
 {
@@ -35,7 +35,7 @@ namespace Cliver.ProductOffice
 
      static void add_path(string path, Dictionary<string, dynamic> tree)
         {
-            Match m = Regex.Match(path, "^(.*?)" + Regex.Escape(FhrApi.ProductOffice.DataApi.Product.CATEGORY_SEPARATOR) + "+(.+)", RegexOptions.Compiled | RegexOptions.Singleline);
+            Match m = Regex.Match(path, "^(.*?)" + Regex.Escape(Fhr.ProductOffice.DataApi.Product.CATEGORY_SEPARATOR) + "+(.+)", RegexOptions.Compiled | RegexOptions.Singleline);
             if (m.Success)
             {
                 string name = m.Groups[1].Value;

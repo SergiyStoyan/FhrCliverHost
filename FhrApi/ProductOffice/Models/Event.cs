@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Cliver.FhrApi.ProductOffice.Models
+namespace Cliver.Fhr.ProductOffice.Models
 {
     using System;
     using System.Collections.Generic;

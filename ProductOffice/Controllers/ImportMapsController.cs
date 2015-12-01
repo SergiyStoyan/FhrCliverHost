@@ -6,14 +6,14 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
-using Cliver.FhrApi.ProductOffice.Models;
+using Cliver.Fhr.ProductOffice.Models;
 
 namespace Cliver.ProductOffice.Controllers
 {
     [Authorize]
     public class ImportMapsController : Controller
     {
-        private DbApi db = FhrApi.ProductOffice.Models.DbApi.Create();
+        private DbApi db = Fhr.ProductOffice.Models.DbApi.Create();
 
         // GET: ImportMaps
         public ActionResult Index()

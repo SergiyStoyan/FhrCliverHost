@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Cliver.FhrApi;
+using Cliver.Fhr;
 using Cliver.Bot;
-using Cliver.FhrApi.ProductOffice.DataApi;
+using Cliver.Fhr.ProductOffice.DataApi;
 using System.Text.RegularExpressions;
 
 namespace Cliver.FhrDbReplicator

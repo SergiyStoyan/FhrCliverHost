@@ -8,7 +8,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Cliver.ProductOffice.Models;
-using Cliver.FhrApi.ProductOffice.Models;
+using Cliver.Fhr.ProductOffice.Models;
 using System.IO;
 using System.Data.Entity.Validation;
 
@@ -17,7 +17,7 @@ namespace Cliver.ProductOffice.Controllers
     [Authorize]
     public class ImportController : Controller
     {
-        private DbApi db = FhrApi.ProductOffice.Models.DbApi.Create();
+        private DbApi db = Fhr.ProductOffice.Models.DbApi.Create();
         
         List<object> MapSelect
         {
@@ -127,7 +127,7 @@ namespace Cliver.ProductOffice.Controllers
             System.Data.DataSet ds = edr.AsDataSet();
             edr.Close();
             
-            FhrApi.ProductOffice.Models.ImportMap import_map = db.ImportMaps.Where(r => r.Id == import.MapId).First();
+            Fhr.ProductOffice.Models.ImportMap import_map = db.ImportMaps.Where(r => r.Id == import.MapId).First();
             //if (import_map.C_CompanyProductIdI == null)
             //    throw new Exception("C_CompanyProductIdI in map #" + import_map.Id + " is not specified.");
             //if (import_map.C_NameI == null)
@@ -154,7 +154,7 @@ namespace Cliver.ProductOffice.Controllers
                 foreach (System.Data.DataRow row in dt.Rows)
                 {
                     row_number++;
-                    FhrApi.ProductOffice.Models.Product product = new FhrApi.ProductOffice.Models.Product();
+                    Fhr.ProductOffice.Models.Product product = new Fhr.ProductOffice.Models.Product();
                     product.CompanyId = import_map.CompanyId;
 
                     product.ExternalId = row[import_map.C_CompanyProductIdI].ToString().Trim();
@@ -210,7 +210,7 @@ namespace Cliver.ProductOffice.Controllers
 
                     if (!import.CheckNotImport)
                     {
-                        FhrApi.ProductOffice.Models.Product p = db.Products.Where(r => r.CompanyId == product.CompanyId && r.ExternalId == product.ExternalId).FirstOrDefault();
+                        Fhr.ProductOffice.Models.Product p = db.Products.Where(r => r.CompanyId == product.CompanyId && r.ExternalId == product.ExternalId).FirstOrDefault();
                         if (p == null)
                         {
                             product.CreateTime = import.UpdateTime;

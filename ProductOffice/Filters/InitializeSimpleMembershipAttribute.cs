@@ -38,7 +38,7 @@ namespace Cliver.ProductOffice.Filters
                         }
                     }
 
-                    WebSecurity.InitializeDatabaseConnection(FhrApi.ProductOffice.Models.DbApi.GetProviderConnectionString(), "System.Data.SqlClient", "UserProfile", "UserId", "UserName", autoCreateTables: true);
+                    WebSecurity.InitializeDatabaseConnection(Fhr.ProductOffice.Models.DbApi.GetProviderConnectionString(), "System.Data.SqlClient", "UserProfile", "UserId", "UserName", autoCreateTables: true);
                 }
                 catch (Exception ex)
                 {

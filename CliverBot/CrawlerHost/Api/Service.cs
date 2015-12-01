@@ -99,7 +99,7 @@ namespace Cliver.CrawlerHost
                     Db["UPDATE Services SET _LastEndTime=GETDATE(), _LastSessionState=" + (int)Service.SessionState._COMPLETED + ", _NextStartTime=DATEADD(ss, RunTimeSpan, _LastStartTime) WHERE Id=@Id"].Execute("@Id", ServiceId);
                 }
 
-                ServiceManager.WaitUntilCheckTime();
+                Service.WaitUntilCheckTime();
             }
         }
 
@@ -131,6 +131,13 @@ namespace Cliver.CrawlerHost
             {
                 LogMessage.Exit(e);
             }
+        }
+
+        public static void WaitUntilCheckTime()
+        {
+            long duration = (long)(Process.GetCurrentProcess().StartTime.AddMilliseconds(Properties.Settings.Default.ServiceCheckDurationInMss + 500) - DateTime.Now).TotalMilliseconds;
+            if (duration > 0)
+                ThreadRoutines.Wait(duration);
         }
     }
 }

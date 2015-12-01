@@ -82,10 +82,6 @@
       <Project>{60998033-82b3-42e8-b492-759dd506b783}</Project>
       <Name>CrawlerHostApi</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Manager\CrawlerHostManager.csproj">
-      <Project>{f5dcafd6-8716-46fc-ab41-583f31e652e5}</Project>
-      <Name>CrawlerHostManager</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

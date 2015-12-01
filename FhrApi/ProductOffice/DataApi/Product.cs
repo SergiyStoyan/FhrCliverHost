@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace Cliver.FhrApi.ProductOffice.DataApi
+namespace Cliver.Fhr.ProductOffice.DataApi
 {
     public class Product
     {
-        public static void Delete(Cliver.FhrApi.ProductOffice.Models.ProductOfficeEntities db, int product_id, bool delete_group = false)
+        public static void Delete(Cliver.Fhr.ProductOffice.Models.ProductOfficeEntities db, int product_id, bool delete_group = false)
         {
             db.Prices.RemoveRange(db.Prices.Where(i => i.ProductId == product_id));
             if (delete_group)
@@ -19,7 +19,7 @@ namespace Cliver.FhrApi.ProductOffice.DataApi
         public const string CATEGORY_SEPARATOR = @">";
         public const string IMAGE_URL_SEPARATOR = "\n";
 
-        //public static void Add(Cliver.FhrApi.ProductOffice.Models.ProductOfficeEntities db, Product p)
+        //public static void Add(Cliver.Fhr.ProductOffice.Models.ProductOfficeEntities db, Product p)
         //{
         //    db.Prices.RemoveRange(db.Prices.Where(i => i.ProductId == product_id));
         //    if (delete_group)

@@ -24,9 +24,10 @@ using System.Text;
 using System.Reflection;
 using System.Net.Mail;
 using Cliver.Bot;
-using System.Windows.Forms;
+using Cliver.CrawlerHost;
+//using System.Windows.Forms;
 
-namespace Cliver.CrawlerHost
+namespace Cliver.CrawlerHostManager
 {
     public class ServiceManager
     {
@@ -308,7 +309,7 @@ WHERE (State<>" + (int)Service.State.DISABLED + " AND GETDATE()>=_NextStartTime 
             p.StartInfo.Arguments = string.Join(" ", parameters);
             Log.Main.Write("Starting service " + service_id);
             p.Start();
-            ThreadRoutines.Wait(Properties.Settings.Default.ServiceCheckDurationInMss);
+            ThreadRoutines.Wait(CrawlerHost.Properties.Settings.Default.ServiceCheckDurationInMss);
             if (!IsProcessAlive(p.Id, service_id))
             {
                 db["UPDATE Services SET _NextStartTime=DATEADD(ss, RestartDelayIfBroken, GETDATE()) WHERE Id=@Id"].Execute("@Id", service_id);
@@ -372,13 +373,6 @@ WHERE (State<>" + (int)Service.State.DISABLED + " AND GETDATE()>=_NextStartTime 
             {
                 return null;
             }
-        }
-        
-        public static void WaitUntilCheckTime()
-        {
-            long duration = (long)(Process.GetCurrentProcess().StartTime.AddMilliseconds(Properties.Settings.Default.ServiceCheckDurationInMss + 500) - DateTime.Now).TotalMilliseconds;
-            if (duration > 0)
-                ThreadRoutines.Wait(duration);
         }
     }
 }

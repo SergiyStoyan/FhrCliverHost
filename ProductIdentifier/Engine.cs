@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 using System.Data;
 using System.Data.SqlClient;
 using System.Configuration;
-using Cliver.FhrApi;
+using Cliver.Fhr;
 
 namespace Cliver.ProductIdentifier
 {
@@ -17,8 +17,8 @@ namespace Cliver.ProductIdentifier
     {
         public Engine()
         {
-            this.Db = FhrApi.ProductOffice.Models.DbApi.Create();
-            Dbc = Bot.DbConnection.Create(FhrApi.ProductOffice.Models.DbApi.GetProviderConnectionString());
+            this.Db = Fhr.ProductOffice.Models.DbApi.Create();
+            Dbc = Bot.DbConnection.Create(Fhr.ProductOffice.Models.DbApi.GetProviderConnectionString());
             Configuration = new Configuration(this);
             Companies = new Companies(this);
             Products = new Products(this);
@@ -29,12 +29,12 @@ namespace Cliver.ProductIdentifier
         internal readonly Companies Companies;
         internal readonly Products Products;
         internal readonly Words Words;
-        internal readonly Cliver.FhrApi.ProductOffice.Models.DbApi Db;
+        internal readonly Cliver.Fhr.ProductOffice.Models.DbApi Db;
         internal readonly Cliver.Bot.DbConnection Dbc;
 
         public List<ProductLink> CreateProductLinkList(int[] product1_ids, int company2_id/*, string[] keyword2s = null*/)
         {
-            FhrApi.ProductOffice.Models.Product p1 = Db.Products.Where(p => product1_ids.Contains(p.Id) && p.CompanyId == company2_id).FirstOrDefault();
+            Fhr.ProductOffice.Models.Product p1 = Db.Products.Where(p => product1_ids.Contains(p.Id) && p.CompanyId == company2_id).FirstOrDefault();
             if (p1 != null)
                 throw new Exception("Product Id:" + p1.Id + " already belongs to company Id:" + p1.CompanyId + " " + p1.Company.Name + " so no more link can be found.");
 
@@ -94,11 +94,11 @@ WHERE b.LinkId IS NULL").GetSingleValue();
 
             int link_id = get_minimal_free_link_id(Dbc);
 
-            //FhrApi.ProductOffice.ProductOfficeDataContext db = DbApi.RenewContext();
+            //Fhr.ProductOffice.ProductOfficeDataContext db = DbApi.RenewContext();
             Dictionary<int, int> company_ids2product_id = new Dictionary<int, int>();
             foreach (int product_id in product_ids)
             {
-                FhrApi.ProductOffice.Models.Product p = Db.Products.Where(r => r.Id == product_id).FirstOrDefault();
+                Fhr.ProductOffice.Models.Product p = Db.Products.Where(r => r.Id == product_id).FirstOrDefault();
                 if (p == null)
                     continue;
                 if (company_ids2product_id.ContainsKey(p.CompanyId))
@@ -112,8 +112,8 @@ WHERE b.LinkId IS NULL").GetSingleValue();
 
         public void PerformSelfTrainingAnalysisOfLinks()
         {
-            Dictionary<int?, List<FhrApi.ProductOffice.Models.Product>> link_ids2linked_products = Db.Products.GroupBy(p => p.LinkId).Where(g => g.Key > 0 && g.Count() > 1).ToDictionary(g => g.Key, g => g.ToList());
-            foreach (List<FhrApi.ProductOffice.Models.Product> lps in link_ids2linked_products.Values)
+            Dictionary<int?, List<Fhr.ProductOffice.Models.Product>> link_ids2linked_products = Db.Products.GroupBy(p => p.LinkId).Where(g => g.Key > 0 && g.Count() > 1).ToDictionary(g => g.Key, g => g.ToList());
+            foreach (List<Fhr.ProductOffice.Models.Product> lps in link_ids2linked_products.Values)
                 analyse_link(lps.Select(p => p.Id).ToArray());
             Configuration.Save();
         }

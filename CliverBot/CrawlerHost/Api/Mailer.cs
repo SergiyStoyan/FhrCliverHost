@@ -7,7 +7,6 @@
 //Copyright: (C) 2006, Sergey Stoyan
 //********************************************************************************************
 using System;
-using System.Windows.Forms;
 using System.Diagnostics;
 using System.IO;
 using System.Text;

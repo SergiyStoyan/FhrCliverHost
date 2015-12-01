@@ -6,7 +6,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Configuration;
-using Cliver.FhrApi.ProductOffice.Models;
+using Cliver.Fhr.ProductOffice.Models;
 using Cliver.CrawlerHost.Models;
 
 namespace Cliver.ProductOffice.Controllers
@@ -15,7 +15,7 @@ namespace Cliver.ProductOffice.Controllers
     public class CompaniesController : Controller
     {
         private Cliver.CrawlerHost.Models.DbApi chdb = new Cliver.CrawlerHost.Models.DbApi();
-        private Cliver.FhrApi.ProductOffice.Models.DbApi db = FhrApi.ProductOffice.Models.DbApi.Create();
+        private Cliver.Fhr.ProductOffice.Models.DbApi db = Fhr.ProductOffice.Models.DbApi.Create();
         
         List<object> CrawlerSelect
         {
@@ -151,7 +151,7 @@ namespace Cliver.ProductOffice.Controllers
             }
             db.Companies.Remove(company);
             foreach(var p in db.Products.Where(p => p.CompanyId == id))
-               Cliver.FhrApi.ProductOffice.DataApi.Product.Delete(db, p.Id);
+               Cliver.Fhr.ProductOffice.DataApi.Product.Delete(db, p.Id);
             if (Request.IsAjaxRequest())
                 return Content(null);
             return RedirectToAction("Index");

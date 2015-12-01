@@ -4,10 +4,10 @@ using System.Linq;
 using System.Data.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Cliver.FhrApi;
+using Cliver.Fhr;
 using Cliver.Bot;
 using System.Text.RegularExpressions;
-using Cliver.FhrApi.ProductOffice.Models;
+using Cliver.Fhr.ProductOffice.Models;
 
 namespace Cliver.FhrEventMonitor
 {
@@ -38,7 +38,7 @@ namespace Cliver.FhrEventMonitor
         //            products = dbc1["SELECT TOP 100 Id, CrawlTime, ChangeTime, Url, Data, State FROM " + products_table + " WHERE State=" + (int)Crawler.ProductState.NEW].GetRecordset();
         //            foreach (Record record in products)
         //            {
-        //                FhrApi.Product p = Cliver.CrawlerHost.Product.Restore<FhrApi.Product>(record);
+        //                Fhr.Product p = Cliver.CrawlerHost.Product.Restore<Fhr.Product>(record);
         //                p.Prepare();
         //                LogMessage.Inform("Replicating id: '" + p.Id + "'");
         //                Product product = (from x in dc2.Products where x.CompanyId == company.Id && x.CompanyProductId == p.Id select x).FirstOrDefault();

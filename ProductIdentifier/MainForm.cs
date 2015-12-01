@@ -32,7 +32,7 @@ namespace Cliver.ProductIdentifier
         private void MainForm_Load(object sender, EventArgs e)
         {
             //AddMessage("Loading company list...");
-            //foreach (FhrApi.ProductOffice.Company c in FhrApi.Db.Companies)
+            //foreach (Fhr.ProductOffice.Company c in Fhr.Db.Companies)
             //    Company2.Items.Add(new Item(c.Name, c.Id));
             //ReplaceMessage("Site list loaded.");
         }

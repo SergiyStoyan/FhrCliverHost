@@ -4,7 +4,7 @@ using System.Linq;
 using System.Data.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Cliver.FhrApi;
+using Cliver.Fhr;
 using Cliver.Bot;
 using System.Text.RegularExpressions;
 

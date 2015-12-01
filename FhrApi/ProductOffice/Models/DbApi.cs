@@ -12,7 +12,7 @@ using System.Reflection;
 using System.Xml;
 using Cliver.Bot;
 
-namespace Cliver.FhrApi.ProductOffice.Models
+namespace Cliver.Fhr.ProductOffice.Models
 {
     using System;
     using System.Data.Entity;
