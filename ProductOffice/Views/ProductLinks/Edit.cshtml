@@ -46,7 +46,7 @@
                                 $("#Keyword2s").val('');
                                 $("#ProductCount").html('');
                                 CategoryTreeView = null;
-                                $("#Category2").val("");
+                                $("#Category2").html('');
 
                                 get_next_product2_range(true);
                             }
@@ -184,8 +184,8 @@
 <div id="ProductMatchesContent" style="display:none;">
     Keyword: <input type="text" name="Keyword2s" id="Keyword2s" style="box-sizing:border-box;" /><br />
     <a href="#" onclick="javascript: show_CategoryTreeView();" style="">Category:</a> 
-    <a class="button" href="#" onclick='javascript: $("#Category2").val("");' style="">X</a>
-    <input type="text" id="Category2" name="Category2" style="box-sizing:border-box;width:600px;" readonly />
+    <a class="button" href="#" onclick='javascript: $("#Category2").html('');' style="">X</a>
+    <span id="Category2" name="Category2" style="box-sizing:border-box;" class="form-control"></span>
     <br />
     <link rel="stylesheet" href="https://static.jstree.com/3.2.1/assets/dist/themes/default/style.min.css" />
     <script src="https://static.jstree.com/3.2.1/assets/dist/jstree.min.js"></script>
@@ -242,7 +242,7 @@
     }
         $('#CategoryTreeViewContent').on('select_node.jstree', function (e, data) {
             var path = $('#CategoryTreeViewContent').jstree(true).get_path(data.node, "@Html.Raw(ViewBag.CATEGORY_SEPARATOR)");
-            $("#Category2").val(path);
+            $("#Category2").html(path);
             $('#CategoryTreeViewContent').jstree(true).toggle_node(data.node);
             //CategoryTreeView.close();
         })
@@ -298,7 +298,7 @@
                         "product1_ids": product1_ids,
                         "company2_id": CurrentCompany2Id,
                         "keyword2s": $('#Keyword2s').val(),
-                        "category2": $('#Category2').val(),
+                        "category2": $('#Category2').html(),
                         "range_size": $('#RangeSize').val(),
                         "forward": forward || forward == undefined ? true : false
                     },
