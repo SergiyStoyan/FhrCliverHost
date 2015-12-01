@@ -147,5 +147,19 @@ namespace Cliver.CrawlerHost
             SettingsForm f = new SettingsForm();
             f.ShowDialog();
         }
+
+        //private void InitializeComponent()
+        //{
+        //    System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SysTrayForm));
+        //    this.SuspendLayout();
+        //    // 
+        //    // SysTrayForm
+        //    // 
+        //    this.ClientSize = new System.Drawing.Size(284, 262);
+        //    this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+        //    this.Name = "SysTrayForm";
+        //    this.ResumeLayout(false);
+
+        //}
     }
 }

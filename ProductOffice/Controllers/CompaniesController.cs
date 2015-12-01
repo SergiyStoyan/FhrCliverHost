@@ -15,7 +15,7 @@ namespace Cliver.ProductOffice.Controllers
     public class CompaniesController : Controller
     {
         private Cliver.CrawlerHost.Models.DbApi chdb = new Cliver.CrawlerHost.Models.DbApi();
-        private Cliver.FhrApi.ProductOffice.Models.DbApi db = new FhrApi.ProductOffice.Models.DbApi();
+        private Cliver.FhrApi.ProductOffice.Models.DbApi db = FhrApi.ProductOffice.Models.DbApi.Create();
         
         List<object> CrawlerSelect
         {

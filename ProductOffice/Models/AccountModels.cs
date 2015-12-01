@@ -14,7 +14,7 @@ namespace Cliver.ProductOffice.Models
     public class UsersContext : DbContext
     {
         public UsersContext()
-            : base("DefaultConnection")
+            : base(FhrApi.ProductOffice.Models.DbApi.GetProviderConnectionString())
         {
         }
 

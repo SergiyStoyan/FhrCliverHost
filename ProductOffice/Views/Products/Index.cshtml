@@ -215,11 +215,14 @@
 
     <div id="filters" class="col-md-10"     style="display:inline-block;margin-right:30px;">
         Expand groups: <input id="ExpandGroups" type="checkbox" class = "form-control" onchange = "javascript:select_in_products_table();" style = "display:inline-block;margin-right:30px;" />
-        Filter by company: &nbsp; <select id="CompanyId" class = "form-control" onchange = "javascript:select_in_products_table();" style = "display:inline-block;margin-right:30px;"></select>
-        Filter by <a href="#" onclick="javascript: show_CategoryTreeView();" style="display:inline-block;">category:</a> 
-        &nbsp; <a class="button" href="#" onclick='javascript: $("#Category2").val("");' style="display:inline-block;">X</a>
-        <input id="Category" type="text" class="form-control" readonly onchange="javascript:select_in_products_table();" style="display:inline-block;margin-right:30px;"/>
-</div>
+        Filter by company: &nbsp; @Html.DropDownList("CompanyId", null, htmlAttributes: new { @class = "form-control", onchange = "javascript:select_in_products_table();fill_CategoryTreeView();", style = "display:inline-block;margin-right:30px;" })
+        <div id="category_filter" style="display:inline-block;">
+            Filter by <a href="#" onclick="javascript: show_CategoryTreeView();" style="display:inline-block;">category:</a>
+            &nbsp; <a class="button" href="#" onclick='javascript: $("#Category").val("");' style="display:inline-block;">X</a>
+            <input id="Category" type="text" class="form-control" readonly onchange="javascript:select_in_products_table();" style="display:inline-block;margin-right:30px;" />
+        </div>
+    </div>
+<div id="CategoryTreeViewContent" style="display:none;"></div>
 <link rel="stylesheet" href="https://static.jstree.com/3.2.1/assets/dist/themes/default/style.min.css" />
 <script src="https://static.jstree.com/3.2.1/assets/dist/jstree.min.js"></script>
 <script>
@@ -231,26 +234,34 @@
                 dialog: {
                     buttons: {
                         Close: function () { CategoryTreeView.close(); },
-                    }
+                    },
+                    close: function () {
+                        console.log($('#CategoryTreeViewContent').jstree("get_selected"));
+                        var node_id = $('#CategoryTreeViewContent').jstree("get_selected");
+                        var path = $('#CategoryTreeViewContent').jstree(true).get_path(node_id, "@Html.Raw(ViewBag.CATEGORY_SEPARATOR)");
+                        if ($("#Category").val() == path)
+                            return;
+                        $("#Category").val(path);
+                      //  select_in_products_table();
+                    },
                 },
             });
         }
         else
             CategoryTreeView.dialog("open");
+    }
 
-        if ($('#CategoryTreeViewContent').html())
+    function fill_CategoryTreeView() {
+        $('#category_filter').hide();
+        if ($("#CompanyId").val() < 0)
             return;
-
-        CategoryTreeView.getContentByAjax(
-            {
-                type: 'GET',
-                data: {
-                    "company_id": CurrentCompany2Id
-                },
-                url: "@Url.Action("GetCompanyCategories")"
+        $.ajax({
+            type: 'GET',
+            url: "@Url.Action("GetCompanyCategories")",
+            data: {
+                "company_id": $('#CompanyId').val(),
             },
-            function (category_tree) {
-
+            success:  function (category_tree) {
                 function build_tree_view_from_tree(pn1, pn2_children) {
                     for (var name in pn1) {
                         var n2 = { text: name };
@@ -261,26 +272,43 @@
                         }
                     }
                 }
-
                 var tree_view_json = [];
                 build_tree_view_from_tree(category_tree, tree_view_json);
-
                 $('#CategoryTreeViewContent').jstree({
                     core: {
                         data: tree_view_json
                     }
                 });
-
-                $('#CategoryTreeViewContent').on('select_node.jstree', function (e, data) {
-                    var path = $('#CategoryTreeViewContent').jstree(true).get_path(data.node, "@Html.Raw(ViewBag.CATEGORY_SEPARATOR)");
-                    $("#Category2").val(path);
-                    $('#CategoryTreeViewContent').jstree(true).toggle_node(data.node);
-                    //CategoryTreeView.close();
-                })
+                $('#category_filter').show();
+            },
+            error: function (xhr, error) {
+                show_error("Could not get categories: " + xhr.responseText);
             }
-        );
+        });
     }
+    $('#CategoryTreeViewContent').on('select_node.jstree', function (e, data) {
+        $('#CategoryTreeViewContent').jstree(true).toggle_node(data.node);
+        //CategoryTreeView.close();
+    })
     var CategoryTreeView;
+
+    function select_in_products_table() {
+        ProductsTable.api().columns(1).search("ExpandGroups=" + $("#ExpandGroups").is(":checked"));//it is how filter parameters are passed due to to bad manual!
+        console.log(111);
+        var search = [];
+        var ci = $("#CompanyId").val();
+        if (ci > -1)
+            search.push("CompanyId=" + ci);
+        else
+            $("#Category").val(null);
+        
+        var ca = $("#Category").val();
+        if (ca)
+            search.push("Category=" + ca);
+
+        ProductsTable.api().columns(0).search(search.join("|"));//it is how filter parameters are passed due to to bad manual!
+        ProductsTable.api().draw();
+    }
 </script>
 
 <table id="ProductsTable" class="my">
@@ -407,23 +435,6 @@
     //set environment for definition_.on_row_clicked
     definition_._table = ProductsTable;
     ProductsTable.menu.top.append($("#filters"));
-
-    function select_in_products_table() {
-        ProductsTable.api().columns(1).search("ExpandGroups=" + $("#ExpandGroups").is(":checked"));//it is how filter parameters are passed due to to bad manual!
-
-        var search = [];
-        var ci = $("#CompanyId").val();
-        if (ci > -1)
-            search.push("CompanyId=" + ci);
-        else
-            $("#Category").val(null);
-        var ca = $("#Category").val();
-        if (ca)
-            search.push("Category=" + ca);
-
-        ProductsTable.api().columns(0).search(search.join("|"));//it is how filter parameters are passed due to to bad manual!
-        ProductsTable.api().draw();
-    }
 </script>
 
 <div id="ProductImage" style="display:none;"></div>

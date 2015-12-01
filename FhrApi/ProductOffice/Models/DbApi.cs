@@ -27,17 +27,22 @@ namespace Cliver.FhrApi.ProductOffice.Models
 
     public class DbApi : ProductOfficeEntities
     {
-        public DbApi()
-            : base(ConnectionString)
+        static public DbApi Create()
+        {        
+            return new DbApi(Cliver.CrawlerHost.Api.GetConnectionString(DATABASE_CONNECTION_STRING_NAME));
+        }
+
+        DbApi(string connection_string)
+            : base(connection_string)
         {
             try
             {
                 if (!ProgramRoutines.IsWebContext)
-                    Log.Main.Write("DbApi ConnectionString: " + ConnectionString);
+                    Log.Main.Write("DbApi ConnectionString: " + connection_string);
             }
             catch(Exception e)
             {
-                string m = "The app could not connect the database with string:\r\n" + ConnectionString + "\r\nBe sure " + Cliver.CrawlerHost.Api.CrawlerHost_CONGIG_FILE_NAME + " file exists and is correct.\r\n\r\n" + e.Message;
+                string m = "The app could not connect the database with string:\r\n" + connection_string + "\r\nBe sure " + Cliver.CrawlerHost.Api.CrawlerHost_CONGIG_FILE_NAME + " file exists and is correct.\r\n\r\n" + e.Message;
                 if (!ProgramRoutines.IsWebContext)
                     LogMessage.Exit(m);
                 else
@@ -45,8 +50,16 @@ namespace Cliver.FhrApi.ProductOffice.Models
             }
         }
 
-        public static readonly string ConnectionString = Cliver.CrawlerHost.Api.GetConnectionString(DATABASE_CONNECTION_STRING_NAME);
         public const string DATABASE_CONNECTION_STRING_NAME = "ProductOfficeEntities";
+
+        public static string GetProviderConnectionString()
+        {
+            string connection_string = Cliver.CrawlerHost.Api.GetConnectionString(DATABASE_CONNECTION_STRING_NAME);
+            Match m = Regex.Match(connection_string, @"provider\s+connection\s+string\s*=\s*([""'])(.*?)\1", RegexOptions.IgnoreCase | RegexOptions.Singleline);
+            if (m.Success)
+                connection_string = m.Groups[2].Value;
+            return connection_string;
+        }
 
         //public static string GetConnectionString()
         //{
@@ -59,7 +72,7 @@ namespace Cliver.FhrApi.ProductOffice.Models
         {
             if (context != null)
                 context.Dispose();
-            context = new DbApi();
+            context = new DbApi(Cliver.CrawlerHost.Api.GetConnectionString(DATABASE_CONNECTION_STRING_NAME));
         }
     }
 }

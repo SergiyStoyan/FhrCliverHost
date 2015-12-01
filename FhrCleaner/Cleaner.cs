@@ -17,7 +17,7 @@ namespace Cliver.FhrCleaner
         {
             base.Do();
 
-            DbApi db = new DbApi();
+            DbApi db = FhrApi.ProductOffice.Models.DbApi.Create();
             if (Properties.Settings.Default.DeletePricesOlderThanDays > 0)
             {
                 DateTime old_time = DateTime.Now.AddDays(-Properties.Settings.Default.DeletePricesOlderThanDays);

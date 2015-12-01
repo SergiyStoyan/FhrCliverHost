@@ -14,7 +14,7 @@ namespace Cliver.FhrDbReplicator
 {
     public class Replicator : CrawlerHost.Service
     {
-        Cliver.FhrApi.ProductOffice.Models.DbApi db2 = new FhrApi.ProductOffice.Models.DbApi();
+        Cliver.FhrApi.ProductOffice.Models.DbApi db2 = FhrApi.ProductOffice.Models.DbApi.Create();
 
         override protected void Do()
         {

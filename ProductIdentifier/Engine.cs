@@ -17,8 +17,8 @@ namespace Cliver.ProductIdentifier
     {
         public Engine()
         {
-            this.Db = new FhrApi.ProductOffice.Models.DbApi();
-            Dbc = Bot.DbConnection.Create(FhrApi.ProductOffice.Models.DbApi.ConnectionString);
+            this.Db = FhrApi.ProductOffice.Models.DbApi.Create();
+            Dbc = Bot.DbConnection.Create(FhrApi.ProductOffice.Models.DbApi.GetProviderConnectionString());
             Configuration = new Configuration(this);
             Companies = new Companies(this);
             Products = new Products(this);

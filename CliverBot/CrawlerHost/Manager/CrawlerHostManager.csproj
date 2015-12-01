@@ -146,11 +146,6 @@
     <Compile Include="ServiceApi.cs" />
     <Compile Include="Mailer.cs" />
     <Compile Include="ServiceManager.cs" />
-    <Compile Include="Properties\Host.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>Host.settings</DependentUpon>
-    </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
       <DependentUpon>Settings.settings</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -214,10 +209,6 @@
     </None>
     <None Include="CliverCrawlersDataSet.xss">
       <DependentUpon>CliverCrawlersDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="Properties\Host.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Host.Designer.cs</LastGenOutput>
     </None>
     <None Include="Properties\Settings.settings">
       <Generator>PublicSettingsSingleFileGenerator</Generator>

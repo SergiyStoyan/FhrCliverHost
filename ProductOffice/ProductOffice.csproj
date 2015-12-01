@@ -357,9 +357,6 @@
     <Content Include="Views\Sql\Index.cshtml" />
     <Content Include="Views\ProductIdentifierConfiguration\Index.cshtml" />
     <Content Include="Views\ProductIdentifierConfiguration\Edit.cshtml" />
-    <Content Include="ConnectionStrings.config">
-      <SubType>Designer</SubType>
-    </Content>
     <Content Include="Views\ProductIdentifierConfiguration\Edit2.cshtml" />
     <Content Include="Views\Products\Index.cshtml" />
   </ItemGroup>

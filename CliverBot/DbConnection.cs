@@ -38,12 +38,7 @@ namespace Cliver.Bot
                 throw new Exception("connection_string is null.");
 
             if (Regex.IsMatch(connection_string, @"\.mdf|\.sdf|Initial\s+Catalog\s*=", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline))
-            {                
-               Match m= Regex.Match(connection_string, @"provider\s+connection\s+string\s*=\s*([""'])(.*?)\1", RegexOptions.IgnoreCase| RegexOptions.Singleline);
-                if (m.Success)
-                    connection_string = m.Groups[2].Value;
                 return new MsSqlConnection(connection_string);
-            }
             throw new Exception("Could not detect an appropriate wrapper class for " + connection_string);
         }
 

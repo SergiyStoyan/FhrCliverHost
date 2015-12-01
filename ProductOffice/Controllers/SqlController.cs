@@ -38,7 +38,7 @@ namespace Cliver.ProductOffice.Controllers
                         break;
                     case "ProductOffice":
 
-                        dbc = Cliver.Bot.DbConnection.Create(Cliver.FhrApi.ProductOffice.Models.DbApi.ConnectionString);
+                        dbc = Cliver.Bot.DbConnection.Create(Cliver.FhrApi.ProductOffice.Models.DbApi.GetProviderConnectionString());
                         n = dbc.Get(sql).Execute();
 
                         break;

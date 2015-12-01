@@ -13,7 +13,7 @@ namespace Cliver.ProductOffice.Controllers
     [Authorize]
     public class ImportMapsController : Controller
     {
-        private DbApi db = new DbApi();
+        private DbApi db = FhrApi.ProductOffice.Models.DbApi.Create();
 
         // GET: ImportMaps
         public ActionResult Index()

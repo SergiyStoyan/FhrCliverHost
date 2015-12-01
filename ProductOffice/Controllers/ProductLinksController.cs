@@ -15,7 +15,7 @@ namespace Cliver.ProductOffice.Controllers
     [Authorize]
     public class ProductLinksController : Controller
     {
-        private DbApi db = new DbApi();
+        private DbApi db = FhrApi.ProductOffice.Models.DbApi.Create();
 
         List<object> CompanySelect
         {

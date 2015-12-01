@@ -13,7 +13,7 @@ namespace Cliver.ProductOffice.Controllers
     [Authorize]
     public class LinkCategoriesController : Controller
     {
-        private DbApi db = new DbApi();
+        private DbApi db = FhrApi.ProductOffice.Models.DbApi.Create();
 
         public ActionResult Index()
         {

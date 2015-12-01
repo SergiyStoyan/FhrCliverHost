@@ -15,7 +15,7 @@ namespace Cliver.ProductOffice.Controllers
     [Authorize]
     public class ProductsController : Controller
     {
-        private DbApi db = new DbApi();
+        private DbApi db = FhrApi.ProductOffice.Models.DbApi.Create();
 
         List<object> CompanySelect
         {
@@ -31,6 +31,7 @@ namespace Cliver.ProductOffice.Controllers
         public ActionResult Index()
         {
             ViewBag.CompanyId = new SelectList(CompanySelect, "Value", "Name");
+            ViewBag.CATEGORY_SEPARATOR = FhrApi.ProductOffice.DataApi.Product.CATEGORY_SEPARATOR;
             var products = db.Products.Include(p => p.Company);
             return View(products);
         }
