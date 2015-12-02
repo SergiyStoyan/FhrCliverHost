@@ -34,8 +34,7 @@ namespace Cliver.ProductOffice.Controllers
 
         public ActionResult Index()
         {
-            Bot.DbSettings ss = new Bot.DbSettings(Cliver.Bot.DbConnection.CreateFromNativeConnection(db.Database.Connection));
-            DateTime t = ss.Get<DateTime>(Cliver.ProductIdentifier.SettingsKey.SCOPE, Cliver.ProductIdentifier.SettingsKey.TRAINING_TIME);
+            DateTime t = Cliver.Bot.DbSettings.Get<DateTime>(Cliver.Bot.DbConnection.CreateFromNativeConnection(db.Database.Connection), Cliver.ProductIdentifier.SettingsKey.SCOPE, Cliver.ProductIdentifier.SettingsKey.TRAINING_TIME);
             if (t != default(DateTime))
                 ViewBag.SelfTrainingDate = t.ToShortDateString();
             else
@@ -105,8 +104,7 @@ ELSE
 CREATE TABLE [#ProductIdentifierConfig2] ([C1IdC2Id] NVARCHAR (100) NOT NULL" + fs + ")";
             dbc.Get(sql).Execute();
 
-            Bot.DbSettings ss = new Bot.DbSettings(dbc);
-            List<string> keys = ss.GetKeys(Cliver.ProductIdentifier.SettingsKey.SCOPE, Cliver.ProductIdentifier.SettingsKey.CATEGORY_MAP + "%");
+            List<string> keys = Cliver.Bot.DbSettings.GetKeys(dbc, Cliver.ProductIdentifier.SettingsKey.SCOPE, Cliver.ProductIdentifier.SettingsKey.CATEGORY_MAP + "%");
             foreach(string k in keys)
             {
                 Match m = Regex.Match(k, @"(\d+),(\d+)$", RegexOptions.Singleline);

@@ -142,6 +142,7 @@
       <DependentUpon>CliverCrawlersDataSet.xsd</DependentUpon>
     </Compile>
     <Compile Include="CrawlerService.cs" />
+    <Compile Include="Properties\Settings.cs" />
     <Compile Include="ServiceManager.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <DependentUpon>Settings.settings</DependentUpon>
@@ -154,7 +155,6 @@
     <Compile Include="DbConnectionSettingsForm.Designer.cs">
       <DependentUpon>DbConnectionSettingsForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Settings.cs" />
     <Compile Include="SettingsForm.cs">
       <SubType>Form</SubType>
     </Compile>

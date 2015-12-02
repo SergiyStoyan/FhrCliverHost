@@ -28,9 +28,10 @@ namespace Cliver.FhrManager
         {
             try
             {
+                //FhrManager.Properties.Settings.Loaded += Cliver.CrawlerHost.Settings.LoadFromDatabase;
+                //CrawlerHostManager.Properties.Settings.Loaded += Cliver.CrawlerHost.Settings.LoadFromDatabase;
                 //int t = Cliver.FhrManager.Properties.Settings.Default.test;
-                //t = Cliver.FhrManager.Properties.Settings.Default.test;
-                //string t2 = Cliver.FhrManager.Properties.Settings.Default.test2;
+                //string t2 = Cliver.CrawlerHostManager.Properties.Settings.Default.CrawlersDirectory;
                 //Form f = new Form();
                 //f.ShowDialog();
                 //return;

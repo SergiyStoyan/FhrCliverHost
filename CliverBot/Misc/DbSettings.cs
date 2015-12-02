@@ -20,17 +20,9 @@ using System.Web.Script.Serialization;
 
 namespace Cliver.Bot
 {
-    public partial class DbSettings
+    public class DbSettings
     {
-        public DbSettings(DbConnection dbc)
-        {
-            this.dbc = dbc;
-            create_tables();
-        }
-        
-        readonly DbConnection dbc;
-
-        void create_tables()
+     static   void create_tables(DbConnection dbc)
         {
             lock (dbc)
             {
@@ -50,13 +42,13 @@ CREATE TABLE [dbo].[Settings] (
 
         //public const string DEFAULT_KEY = "__DEFAULT__";
 
-        public List<string> GetScopes(string scope_template)
+     static public List<string> GetScopes(DbConnection dbc, string scope_template)
         {
             Recordset scopes = dbc["SELECT Scope FROM Settings WHERE Scope LIKE @Scope"].GetRecordset("@Scope", scope_template);
             return scopes.Select(k => (string)k["Scope"]).ToList();
         }
 
-        public List<string> GetKeys(string scope, string key_template)
+     static public List<string> GetKeys(DbConnection dbc, string scope, string key_template)
         {
             Recordset keys = dbc["SELECT [Key] FROM Settings WHERE Scope=@Scope AND [Key] LIKE @Key"].GetRecordset("@Scope", scope, "@Key", key_template);
             return keys.Select(k => (string)k["Key"]).ToList();
@@ -73,7 +65,7 @@ CREATE TABLE [dbo].[Settings] (
         //    return Get<T>(scope, DEFAULT_KEY);
         //}
 
-        public T Get<T>(string scope, string key)
+     static public T Get<T>(DbConnection dbc, string scope, string key)
         {
             string json = (string)dbc["SELECT Value FROM Settings WHERE Scope=@Scope AND [Key]=@Key"].GetSingleValue("@Scope", scope, "@Key", key);
             if (json == null)
@@ -95,7 +87,7 @@ CREATE TABLE [dbo].[Settings] (
         //    Save(scope, DEFAULT_KEY, value);
         //}
 
-        public void Save(string scope, string key, object value)
+     static public void Save(DbConnection dbc, string scope, string key, object value)
         {
             JavaScriptSerializer serializer = new JavaScriptSerializer();
             string json = serializer.Serialize(value);
@@ -114,7 +106,7 @@ CREATE TABLE [dbo].[Settings] (
         //    Save(scope, key, po);
         //}
 
-        public int Delete(string scope, string key_template)
+     static public int Delete(DbConnection dbc, string scope, string key_template)
         {
             return dbc.Get("DELETE FROM Settings WHERE Scope=@Scope AND [Key] LIKE @Key").Execute("@Scope", scope, "@Key", key_template);
         }

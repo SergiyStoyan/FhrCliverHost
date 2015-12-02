@@ -72,15 +72,20 @@ namespace Cliver.ProductOffice.Controllers
                 database = (string)Session["Database"];
             if (database == null || scope == null || key == null)
                 return new HttpStatusCodeResult(System.Net.HttpStatusCode.BadRequest);
-            Bot.DbSettings dss = new Bot.DbSettings(GetDbc(database));
             ViewBag.Scope = scope;
             ViewBag.Key = key;
-            dynamic value = dss.Get<dynamic>(scope, key);
-            JavaScriptSerializer serializer = new JavaScriptSerializer();
-            ViewBag.Value = serializer.Serialize(value);
+            ViewBag.Value = get_value_as_string(database, scope, key);
             if (Request.IsAjaxRequest())
                 return PartialView();
             return View();
+        }
+
+        string get_value_as_string(string database, string scope, string key)
+        {
+            dynamic value = Cliver.Bot.DbSettings.Get<dynamic>(GetDbc(database), scope, key);
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+            string v = serializer.Serialize(value);
+            return Regex.Replace(v, @"""(?'Key'.*?)""\s*\:\s*(?'Value'\d+|"".*?""|\[.*?\])\s*(,|})", "$0\r\n", RegexOptions.Singleline | RegexOptions.IgnoreCase);
         }
 
         [HttpPost]
@@ -91,10 +96,9 @@ namespace Cliver.ProductOffice.Controllers
                 database = (string)Session["Database"];
             if (database == null || scope == null || key == null)
                 return new HttpStatusCodeResult(System.Net.HttpStatusCode.BadRequest);
-            Bot.DbSettings dss = new Bot.DbSettings(GetDbc(database));
             JavaScriptSerializer serializer = new JavaScriptSerializer();
             Dictionary<string, object> ss = serializer.Deserialize<Dictionary<string, object>>(value);
-            dss.Save(scope, key, ss);
+            Cliver.Bot.DbSettings.Save(GetDbc(database), scope, key, ss);
             if (Request.IsAjaxRequest())
                 return Content(null);
             return RedirectToAction("Index");
@@ -106,12 +110,9 @@ namespace Cliver.ProductOffice.Controllers
                 database = (string)Session["Database"];
             if (database == null || scope == null || key == null)
                 return new HttpStatusCodeResult(System.Net.HttpStatusCode.BadRequest);
-            Bot.DbSettings dss = new Bot.DbSettings(GetDbc(database));
             ViewBag.Scope = scope;
             ViewBag.Key = key;
-            dynamic value = dss.Get<dynamic>(scope, key);
-            JavaScriptSerializer serializer = new JavaScriptSerializer();
-            ViewBag.Value = serializer.Serialize(value);
+            ViewBag.Value = get_value_as_string(database, scope, key);
             if (Request.IsAjaxRequest())
                 return PartialView();
             return View();
@@ -123,12 +124,9 @@ namespace Cliver.ProductOffice.Controllers
                 database = (string)Session["Database"];
             if (database == null || scope == null || key == null)
                 return new HttpStatusCodeResult(System.Net.HttpStatusCode.BadRequest);
-            Bot.DbSettings dss = new Bot.DbSettings(GetDbc(database));
             ViewBag.Scope = scope;
             ViewBag.Key = key;
-            dynamic value = dss.Get<dynamic>(scope, key);
-            JavaScriptSerializer serializer = new JavaScriptSerializer();
-            ViewBag.Value = serializer.Serialize(value);
+            ViewBag.Value = get_value_as_string(database, scope, key);
             if (Request.IsAjaxRequest())
                 return PartialView();
             return View();
@@ -142,8 +140,7 @@ namespace Cliver.ProductOffice.Controllers
                 database = (string)Session["Database"];
             if (database == null || scope == null || key == null)
                 return new HttpStatusCodeResult(System.Net.HttpStatusCode.BadRequest);
-            Bot.DbSettings dss = new Bot.DbSettings(GetDbc(database));
-            dss.Delete(scope, key);
+            Cliver.Bot.DbSettings.Delete(GetDbc(database), scope, key);
             if (Request.IsAjaxRequest())
                 return Content(null);
             return RedirectToAction("Index");

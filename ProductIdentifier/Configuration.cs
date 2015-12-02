@@ -32,7 +32,6 @@ namespace Cliver.ProductIdentifier
         public Configuration(Engine engine)
         {
             this.engine = engine;
-            this.settings = new Bot.DbSettings(engine.Dbc);
             
             default_word_weights = default_word_weights.ToDictionary(x => x.Key.Trim().ToLower(), x => x.Value);
 
@@ -42,7 +41,6 @@ namespace Cliver.ProductIdentifier
             default_synonyms = default_synonyms.ToDictionary(x => x.Key.Trim().ToLower(), x => x.Value.Trim().ToLower());            
         }
         readonly Engine engine;
-        readonly Bot.DbSettings settings;
 
         public Company Get(Product product)
         {
@@ -63,11 +61,11 @@ namespace Cliver.ProductIdentifier
 
         public void Save(bool update_traning_time = true)
         {
-            settings.Delete(SettingsKey.SCOPE, "%");
+            Cliver.Bot.DbSettings.Delete(engine.Dbc, SettingsKey.SCOPE, "%");
             company_ids2Company.Values.ToList().ForEach(x => { x.SaveWordWeights(); x.SaveSynonyms(); });
             SaveMappedCategories();
             if (update_traning_time)
-                settings.Save(SettingsKey.SCOPE, SettingsKey.TRAINING_TIME, DateTime.Now);
+                Cliver.Bot.DbSettings.Save(engine.Dbc, SettingsKey.SCOPE, SettingsKey.TRAINING_TIME, DateTime.Now);
         }
 
         public void MapCategories(Product product1, Product product2)
@@ -108,7 +106,7 @@ namespace Cliver.ProductIdentifier
             string company1_id_company2_id = product1.DbProduct.CompanyId.ToString() + "," + product2.DbProduct.CompanyId;
             if (!company1_id_company2_id_to_category1s_to_mapped_category2s.TryGetValue(company1_id_company2_id, out category1s_to_mapped_category2s))
             {
-                var category1s_to_mapped_category2s_ = settings.Get<Dictionary<string, List<string>>>(SettingsKey.SCOPE, SettingsKey.CATEGORY_MAP + company1_id_company2_id);
+                var category1s_to_mapped_category2s_ = Cliver.Bot.DbSettings.Get<Dictionary<string, List<string>>>(engine.Dbc, SettingsKey.SCOPE, SettingsKey.CATEGORY_MAP + company1_id_company2_id);
                 if (category1s_to_mapped_category2s_ != null)
                 {
                     category1s_to_mapped_category2s = new Dictionary<string, HashSet<string>>();
@@ -130,7 +128,7 @@ namespace Cliver.ProductIdentifier
         public void SaveMappedCategories()
         {
             foreach (string company1_id_company2_id in company1_id_company2_id_to_category1s_to_mapped_category2s.Keys)
-                settings.Save(SettingsKey.SCOPE, SettingsKey.CATEGORY_MAP + company1_id_company2_id, company1_id_company2_id_to_category1s_to_mapped_category2s[company1_id_company2_id]);
+                Cliver.Bot.DbSettings.Save(engine.Dbc, SettingsKey.SCOPE, SettingsKey.CATEGORY_MAP + company1_id_company2_id, company1_id_company2_id_to_category1s_to_mapped_category2s[company1_id_company2_id]);
         }
 
         #region API for editing configuration
@@ -145,7 +143,7 @@ namespace Cliver.ProductIdentifier
             //    mapped_categories = null;
             //else
             //    mapped_categories = Cliver.Bot.SerializationRoutines.Json.Get(category1s_to_mapped_category2s);
-            Dictionary<string, List<string>> category1s_to_mapped_category2s = settings.Get<Dictionary<string, List<string>>>(SettingsKey.SCOPE, SettingsKey.CATEGORY_MAP + company1_id_company2_id);
+            Dictionary<string, List<string>> category1s_to_mapped_category2s = Cliver.Bot.DbSettings.Get<Dictionary<string, List<string>>>(engine.Dbc, SettingsKey.SCOPE, SettingsKey.CATEGORY_MAP + company1_id_company2_id);
             mapped_categories = Bot.SerializationRoutines.Json.Get(category1s_to_mapped_category2s);
             mapped_categories = Regex.Replace(mapped_categories, @",", "$0\r\n", RegexOptions.Singleline);
             mapped_categories = Regex.Replace(mapped_categories, @"\:|\]\s*,", "$0\r\n", RegexOptions.Singleline);
@@ -160,7 +158,7 @@ namespace Cliver.ProductIdentifier
             Dictionary<string, HashSet<string>> category1s_to_mapped_category2s = Cliver.Bot.SerializationRoutines.Json.Get<Dictionary<string, HashSet<string>>>(mapped_categories);
             company1_id_company2_id_to_category1s_to_mapped_category2s[company1_id_company2_id] = category1s_to_mapped_category2s;
 
-            settings.Save(SettingsKey.SCOPE, SettingsKey.CATEGORY_MAP + company1_id_company2_id, company1_id_company2_id_to_category1s_to_mapped_category2s[company1_id_company2_id]);
+            Cliver.Bot.DbSettings.Save(engine.Dbc, SettingsKey.SCOPE, SettingsKey.CATEGORY_MAP + company1_id_company2_id, company1_id_company2_id_to_category1s_to_mapped_category2s[company1_id_company2_id]);
         }
         #endregion
 

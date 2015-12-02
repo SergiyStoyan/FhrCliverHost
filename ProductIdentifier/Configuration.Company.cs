@@ -22,7 +22,7 @@ namespace Cliver.ProductIdentifier
                 this.configuration = configuration;
                 this.company_id = company_id;
 
-                word_weights = configuration.settings.Get<Dictionary<string, double>>(SettingsKey.SCOPE, SettingsKey.COMPANY + company_id + SettingsKey.WORD_WEIGHTS);
+                word_weights = Cliver.Bot.DbSettings.Get<Dictionary<string, double>>(configuration.engine.Dbc, SettingsKey.SCOPE, SettingsKey.COMPANY + company_id + SettingsKey.WORD_WEIGHTS);
                 if (word_weights == null)
                 {
                     word_weights = new Dictionary<string, double>();
@@ -31,7 +31,7 @@ namespace Cliver.ProductIdentifier
                         this.word_weights[iw] = -1;
                 }
 
-                synonyms = configuration.settings.Get<Dictionary<string, string>>(SettingsKey.SCOPE, SettingsKey.COMPANY + company_id + SettingsKey.SYNONYMS);
+                synonyms = Cliver.Bot.DbSettings.Get<Dictionary<string, string>>(configuration.engine.Dbc, SettingsKey.SCOPE, SettingsKey.COMPANY + company_id + SettingsKey.SYNONYMS);
                 if (synonyms == null)
                 {
                     this.synonyms = new Dictionary<string, string>();
@@ -46,14 +46,14 @@ namespace Cliver.ProductIdentifier
 
             public void SaveWordWeights()
             {
-                configuration.settings.Save(SettingsKey.SCOPE, SettingsKey.COMPANY + company_id + SettingsKey.WORD_WEIGHTS, word_weights);
+                Cliver.Bot.DbSettings.Save(configuration.engine.Dbc, SettingsKey.SCOPE, SettingsKey.COMPANY + company_id + SettingsKey.WORD_WEIGHTS, word_weights);
             }
 
             public void SaveSynonyms()
             {
                 List<string> looped_synonyms = synonyms.Keys.Intersect(synonyms.Values).ToList();
                 synonyms = synonyms.Where(x => !looped_synonyms.Contains(x.Key)).ToDictionary(x => x.Key, x => x.Value);
-                configuration.settings.Save(SettingsKey.SCOPE, SettingsKey.COMPANY + company_id + SettingsKey.SYNONYMS, synonyms);
+                Cliver.Bot.DbSettings.Save(configuration.engine.Dbc, SettingsKey.SCOPE, SettingsKey.COMPANY + company_id + SettingsKey.SYNONYMS, synonyms);
             }
 
             public double GetWordWeight(string word)
