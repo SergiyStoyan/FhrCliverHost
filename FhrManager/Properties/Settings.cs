@@ -12,13 +12,10 @@ namespace Cliver.FhrManager.Properties
     {
         public Settings()
         {
-            this.SettingsLoaded += Settings_SettingsLoaded;
-        }
-
-        void Settings_SettingsLoaded(object sender, System.Configuration.SettingsLoadedEventArgs e)
-        {
-            if (Loaded != null)
-                Loaded.Invoke(Assembly.GetExecutingAssembly(), this);
+            this.SettingsLoaded += (object sender, System.Configuration.SettingsLoadedEventArgs e) => {
+                if (Loaded != null)
+                    Loaded.Invoke(Assembly.GetExecutingAssembly(), this);
+            };
         }
         public delegate void OnLoaded(Assembly assembly, System.Configuration.ApplicationSettingsBase settings);
         static public event OnLoaded Loaded = null;

@@ -31,23 +31,31 @@ namespace Cliver.CrawlerHost
                 setting_names2value = new Dictionary<string, object>();
 
             FieldInfo fi = settings.GetType().GetField("defaultInstance", BindingFlags.NonPublic | BindingFlags.Static);
-            Dictionary<string, object> setting_names2value2 = new Dictionary<string, object>();
             PropertyInfo[] pis = fi.FieldType.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+            bool new_property = false;
             foreach (PropertyInfo pi in pis)
             {
+                string name = pi.DeclaringType.FullName + "." + pi.Name;
                 object value;
-                if (setting_names2value.TryGetValue(pi.Name, out value))
+                if (setting_names2value.TryGetValue(name, out value))
                 {
+                    if (!pi.CanWrite)
+                    {
+                        Log.Warning("Settings '" + name + "' is not writable.");
+                        continue;
+                    }
                     if (pi.PropertyType == typeof(int) && value is string)
                         value = int.Parse((string)value);
-                    //((global::System.Configuration.ApplicationSettingsBase)fi.GetValue(null))[pi.Name] = value;
                     pi.SetValue(settings, value);
                 }
                 else
-                    value = pi.GetValue(settings);
-                setting_names2value2[pi.Name] = value;
+                {
+                    new_property = true;
+                    setting_names2value[name] = pi.GetValue(settings);
+                }
             }
-            Cliver.Bot.DbSettings.Save(di, scope, key, setting_names2value2);
+            if(new_property)
+                Cliver.Bot.DbSettings.Save(di, scope, key, setting_names2value);
         }
 
         //public static void Load()
