@@ -54,7 +54,7 @@ namespace Cliver.ProductOffice.Controllers
         public ActionResult TableJson([ModelBinder(typeof(DataTables.AspNet.Mvc5.ModelBinder))] DataTables.AspNet.Core.IDataTablesRequest request)
         {
             JqueryDataTable.Field[] fields = new JqueryDataTable.Field[] {                 
-                new JqueryDataTable.Field("Id", false, -1), 
+                new JqueryDataTable.Field("Id", false, JqueryDataTable.Field.OrderMode.DESC), 
                 new JqueryDataTable.Field("Type"),  
                 new JqueryDataTable.Field("Source", true),                                 
                 new JqueryDataTable.Field("Time"),

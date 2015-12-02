@@ -13,44 +13,42 @@ namespace Cliver.CrawlerHost
 {
     public class Settings
     {
-        const string KEY = "SETTINGS";
+        const string KEY = "__SETTINGS__";
 
-      static  public void Save(string scope, Dictionary<string, object> setting_names2value)
+        static public void Save(string scope, Dictionary<string, object> setting_names2value)
         {
-            DbApi db = DbApi.Create();
-            DbSettings dbs = new DbSettings(db);
-            dbs.Save(scope, KEY, setting_names2value);
+            DbSettings dss = new DbSettings(DbApi.Create());
+            dss.Save(scope, KEY, setting_names2value);
         }
 
-       static public void SettingsLoadedEventHandler(System.Configuration.ApplicationSettingsBase settings)
+        static public void SettingsLoadedEventHandler(System.Configuration.ApplicationSettingsBase settings)
         {
             Assembly calling_assembly = Assembly.GetCallingAssembly();
 
-            DbApi db = DbApi.Create();
-            DbSettings dbs = new DbSettings(db);
+            DbSettings dss = new DbSettings(DbApi.Create());
             string scope = calling_assembly.GetName().Name;
-            Dictionary<string, object> setting_names2value = dbs.Get<Dictionary<string, object>>(scope, KEY);
+            Dictionary<string, object> setting_names2value = dss.Get<Dictionary<string, object>>(scope, KEY);
+            if (setting_names2value == null)
+                setting_names2value = new Dictionary<string, object>();
 
-            //Configuration c = ConfigurationManager.OpenExeConfiguration(calling_assembly.CodeBase);
-            //AppSettingsSection ass = c.AppSettings;
             FieldInfo fi = settings.GetType().GetField("defaultInstance", BindingFlags.NonPublic | BindingFlags.Static);
-            foreach (string name in setting_names2value.Keys)
+            Dictionary<string, object> setting_names2value2 = new Dictionary<string, object>();
+            PropertyInfo[] pis = fi.FieldType.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+            foreach (PropertyInfo pi in pis)
             {
-                object value = setting_names2value[name];
-                try
+                object value;
+                if (setting_names2value.TryGetValue(pi.Name, out value))
                 {
-                    PropertyInfo pi = fi.FieldType.GetProperty(name);
-                    if (pi == null)
-                        Log.Warning("Setting '" + scope + "::" + name + "' could not be set as it does not exists.");
                     if (pi.PropertyType == typeof(int) && value is string)
                         value = int.Parse((string)value);
-                    ((global::System.Configuration.ApplicationSettingsBase)fi.GetValue(null))[name] = value;
-                    continue;
+                    //((global::System.Configuration.ApplicationSettingsBase)fi.GetValue(null))[pi.Name] = value;
+                    pi.SetValue(settings, value);
                 }
-                catch { }
-                LogMessage.Error("Could not set '" + scope + "::" + name + "' to " + value.ToString());
+                else
+                    value = pi.GetValue(settings);
+                setting_names2value2[pi.Name] = value;
             }
+            dss.Save(scope, KEY, setting_names2value2);
         }
     }
 }
-

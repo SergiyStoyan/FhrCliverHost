@@ -8,7 +8,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Cliver.Fhr.ProductOffice.Models;
 
-namespace Cliver.ProductOffice.Models
+namespace Cliver.Fhr.ProductOffice.Models
 {
     public class PriceComparison
     {

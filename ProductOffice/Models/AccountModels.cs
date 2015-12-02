@@ -9,7 +9,7 @@ using WebMatrix.WebData;
 using System.Linq;
 //using Microsoft.AspNet.Identity;
 
-namespace Cliver.ProductOffice.Models
+namespace Cliver.Fhr.ProductOffice.Models
 {
     public class UsersContext : DbContext
     {

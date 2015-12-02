@@ -375,7 +375,9 @@ function init_table(definition) {
             request_path: "!!!",
             actions_prefix: '',
         },
-        id_column_id: 0,
+        key_column_ids2name: {
+            0: "id",
+        },
         menu: {
             top: {
                 new: true,
@@ -410,9 +412,11 @@ function init_table(definition) {
                             show_message("No row selected!", "Warning");
                             return false;
                         }
-                        var id = table.fnGetData(table.$('tr.selected'))[table.definition.id_column_id];
+                        var parameters = [];
+                        for (i in table.definition.key_column_ids2name)
+                            parameters.push(table.definition.key_column_ids2name[i] + "=" + table.fnGetData(table.$('tr.selected'))[i]);
 
-                        table.modalBox = table.definition.show_row_editor(table.definition.server.request_path + "/Details" + table.definition.server.actions_prefix + "?Id=" + id, "OK");
+                        table.modalBox = table.definition.show_row_editor(table.definition.server.request_path + "/Details" + table.definition.server.actions_prefix + "?" + parameters.join('&'), "OK");
                     },
                     style: null,
                 },
@@ -424,9 +428,11 @@ function init_table(definition) {
                             show_message("No row selected!", "Warning");
                             return false;
                         }
-                        var id = table.fnGetData(table.$('tr.selected'))[table.definition.id_column_id];
+                        var parameters = [];
+                        for (i in table.definition.key_column_ids2name)
+                            parameters.push(table.definition.key_column_ids2name[i] + "=" + table.fnGetData(table.$('tr.selected'))[i]);
 
-                        table.modalBox = table.definition.show_row_editor(table.definition.server.request_path + "/Edit" + table.definition.server.actions_prefix + "?Id=" + id, "Save", function () {
+                        table.modalBox = table.definition.show_row_editor(table.definition.server.request_path + "/Edit" + table.definition.server.actions_prefix + "?" + parameters.join('&'), "Save", function () {
                             if (table.definition.server)
                                 table.api().draw(false);
                             else
@@ -443,9 +449,11 @@ function init_table(definition) {
                             show_message("No row selected!", "Warning");
                             return false;
                         }
-                        var id = table.fnGetData(table.$('tr.selected'))[table.definition.id_column_id];
+                        var parameters = [];
+                        for (i in table.definition.key_column_ids2name)
+                            parameters.push(table.definition.key_column_ids2name[i] + "=" + table.fnGetData(table.$('tr.selected'))[i]);
 
-                        table.modalBox = table.definition.show_row_editor(table.definition.server.request_path + "/Delete" + table.definition.server.actions_prefix + "?Id=" + id, "Delete", function () {
+                        table.modalBox = table.definition.show_row_editor(table.definition.server.request_path + "/Delete" + table.definition.server.actions_prefix + "?" + parameters.join('&'), "Delete", function () {
                             if (table.definition.server)
                                 table.api().draw(false);
                             else

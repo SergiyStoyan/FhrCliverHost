@@ -3,7 +3,10 @@
   <Profiles />
   <Settings>
     <Setting Name="test" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">111</Value>
+      <Value Profile="(Default)">444</Value>
+    </Setting>
+    <Setting Name="test2" Type="System.String" Scope="User">
+      <Value Profile="(Default)">rrrrrrrrrr</Value>
     </Setting>
   </Settings>
 </SettingsFile>

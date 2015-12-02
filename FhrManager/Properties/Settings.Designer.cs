@@ -25,13 +25,25 @@ namespace Cliver.FhrManager.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("111")]
+        [global::System.Configuration.DefaultSettingValueAttribute("444")]
         public int test {
             get {
                 return ((int)(this["test"]));
             }
             set {
                 this["test"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("rrrrrrrrrr")]
+        public string test2 {
+            get {
+                return ((string)(this["test2"]));
+            }
+            set {
+                this["test2"] = value;
             }
         }
     }

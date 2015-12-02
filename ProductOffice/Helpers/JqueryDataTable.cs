@@ -64,8 +64,14 @@ namespace Cliver.ProductOffice
             }            
             public readonly bool Searchable = false;
             public readonly string Expression = null;
-            public readonly int Order = 0;
-            public Field(string name, bool searchable = false, int order = 0, string expression = null)
+            public enum OrderMode
+            {
+                NONE = 0,
+                ASC = 1,
+                DESC = -1
+            }
+            public readonly OrderMode Order = OrderMode.NONE;
+            public Field(string name, bool searchable = false, OrderMode order = OrderMode.NONE, string expression = null)
             {
                 Name = name;
                 Searchable = searchable;
@@ -76,10 +82,14 @@ namespace Cliver.ProductOffice
 
         public static JsonResult Index(DataTables.AspNet.Core.IDataTablesRequest request, DbConnection connection, string from_sql, Field[] fields, bool ignore_first_column_search = true)
         {
+            Cliver.Bot.DbConnection dbc = Cliver.Bot.DbConnection.CreateFromNativeConnection(connection);
+            return Index(request, dbc, from_sql, fields, ignore_first_column_search);
+        }
+
+        public static JsonResult Index(DataTables.AspNet.Core.IDataTablesRequest request, Cliver.Bot.DbConnection dbc, string from_sql, Field[] fields, bool ignore_first_column_search = true)
+        {
             try
             {
-                Cliver.Bot.DbConnection dbc = Cliver.Bot.DbConnection.CreateFromNativeConnection(connection);
-
                 from_sql = " " + from_sql;
 
                 //turn around as it is unclear how to pass additional parameters
@@ -160,11 +170,11 @@ namespace Cliver.ProductOffice
                 }
                 foreach (Field field in fields)
                 {
-                    if (field.Order == 0)
+                    if (field.Order == Field.OrderMode.NONE)
                         continue;
                     if(of2nothing.ContainsKey(field.Name))
                         continue;
-                    if (field.Order > 0)
+                    if (field.Order == Field.OrderMode.ASC)
                         ofs.Add(field.Entity);
                     else
                         ofs.Add(field.Entity + " DESC");

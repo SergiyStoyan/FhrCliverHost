@@ -164,7 +164,7 @@ Developed by: www.cliversoft.com";
                     price: gc.ValueOf("Price"),
                     category_branch: gc.ValuesOf("Category"),
                     image_urls: Spider.GetAbsoluteUrls(gc.ValuesOf("ImageUrl"), Url, cb.HR.HtmlResult),
-                    stock: gc.ValueOf("Stock") != null ? (decimal)Fhr.CrawlerHost.ProductStock.IN_STOCK : (decimal)Fhr.CrawlerHost.ProductStock.NOT_IN_STOCK,
+                    stock: gc.ValueOf("Stock") != null ? (decimal)Fhr.CrawlerHost.Product.StockValue.IN_STOCK : (decimal)Fhr.CrawlerHost.Product.StockValue.NOT_IN_STOCK,
                     description: gc.ValueOf("Description")
                     );
                 if (!Cliver.Fhr.CrawlerHost.CrawlerApi.SaveProductAsJson(product))

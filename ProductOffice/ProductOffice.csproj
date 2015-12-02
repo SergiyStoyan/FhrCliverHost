@@ -350,16 +350,15 @@
     <Content Include="Views\WatchDog\Index.cshtml" />
     <Content Include="Views\ProductLinks\Edit.cshtml" />
     <Content Include="Views\ProductLinks\Index.cshtml" />
-    <Content Include="Views\Settings\Create.cshtml" />
-    <Content Include="Views\Settings\Delete.cshtml" />
-    <Content Include="Views\Settings\Details.cshtml" />
-    <Content Include="Views\Settings\Edit.cshtml" />
-    <Content Include="Views\Settings\Index.cshtml" />
     <Content Include="Views\Sql\Index.cshtml" />
     <Content Include="Views\ProductIdentifierConfiguration\Index.cshtml" />
     <Content Include="Views\ProductIdentifierConfiguration\Edit.cshtml" />
     <Content Include="Views\ProductIdentifierConfiguration\Edit2.cshtml" />
     <Content Include="Views\Products\Index.cshtml" />
+    <Content Include="Views\Settings\Index.cshtml" />
+    <Content Include="Views\Settings\Edit.cshtml" />
+    <Content Include="Views\Settings\Delete.cshtml" />
+    <Content Include="Views\Settings\Details.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

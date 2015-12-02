@@ -156,10 +156,10 @@ Developed by: www.cliversoft.com";
 
                 DataSifter.Capture gc = cb.product.Parse(cb.HR.HtmlResult);
 
-                decimal stock = (decimal)Fhr.CrawlerHost.ProductStock.NOT_SET;
+                decimal stock = (decimal)Fhr.CrawlerHost.Product.StockValue.NOT_SET;
                 if (gc.ValueOf("Stock") != null)
                     if (!decimal.TryParse(gc.ValueOf("Stock"), out stock))
-                        stock = (decimal)Fhr.CrawlerHost.ProductStock.CANNOT_PARSE;
+                        stock = (decimal)Fhr.CrawlerHost.Product.StockValue.CANNOT_PARSE;
 
                 Fhr.CrawlerHost.Product product = new Fhr.CrawlerHost.Product(
                     id: gc.ValueOf("Id"),

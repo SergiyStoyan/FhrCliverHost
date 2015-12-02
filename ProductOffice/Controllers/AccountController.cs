@@ -9,7 +9,7 @@ using DotNetOpenAuth.AspNet;
 using Microsoft.Web.WebPages.OAuth;
 using WebMatrix.WebData;
 using Cliver.ProductOffice.Filters;
-using Cliver.ProductOffice.Models;
+using Cliver.Fhr.ProductOffice.Models;
 
 namespace Cliver.ProductOffice.Controllers
 {

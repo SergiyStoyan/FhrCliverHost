@@ -35,11 +35,11 @@ namespace Cliver.Fhr.CrawlerHost
             Description = description;
 
             if (stock == null)
-                Stock = (decimal)ProductStock.NOT_SET;
+                Stock = (decimal)Product.StockValue.NOT_SET;
             else
                 Stock = (decimal)stock;
         }
-        
+
         readonly public string Name;
         readonly public string Sku;
         readonly public string Price;
@@ -66,7 +66,7 @@ namespace Cliver.Fhr.CrawlerHost
                 Warning("CategoryBranch is empty.");
             if (string.IsNullOrWhiteSpace(Description))
                 Warning("Description is empty.");
-            if (Stock == (decimal)ProductStock.NOT_SET || Stock == (decimal)ProductStock.CANNOT_PARSE)
+            if (Stock == (decimal)Product.StockValue.NOT_SET || Stock == (decimal)Product.StockValue.CANNOT_PARSE)
                 Warning("Stock is empty.");
             if (ImageUrls.Length < 1)
                 Warning("ImageUrls is empty.");
@@ -76,7 +76,7 @@ namespace Cliver.Fhr.CrawlerHost
         {
             public readonly string Id;
             public readonly string Url;
-            public readonly DateTime CrawlTime; 
+            public readonly DateTime CrawlTime;
             public readonly DateTime ChangeTime;
             readonly public string Name;
             readonly public string Sku;
@@ -118,14 +118,14 @@ namespace Cliver.Fhr.CrawlerHost
         {
             return new PreparedProduct(this);
         }
-    }
 
-    public enum ProductStock : int
-    {
-        NOT_IN_STOCK = 0,
-        NOT_SET = -1,
-        CANNOT_PARSE = -2,
-        IN_STOCK = -3,
+        public enum StockValue : int
+        {
+            NOT_IN_STOCK = 0,
+            NOT_SET = -1,
+            CANNOT_PARSE = -2,
+            IN_STOCK = -3,
+        }
     }
 }
 

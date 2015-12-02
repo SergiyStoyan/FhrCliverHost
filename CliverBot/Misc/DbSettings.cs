@@ -37,8 +37,8 @@ namespace Cliver.Bot
                 dbc.Get(@"
 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Settings' and xtype='U') 
 CREATE TABLE [dbo].[Settings] (
-    [Scope] NVARCHAR (100) NOT NULL,
-    [Key]   NVARCHAR (100) NOT NULL,
+    [Scope] NVARCHAR (255) NOT NULL,
+    [Key]   NVARCHAR (255) NOT NULL,
     [Value] NTEXT          NOT NULL,
     [SetTime] DATETIME NOT NULL, 
     CONSTRAINT [PK_Settings] PRIMARY KEY CLUSTERED ([Scope] ASC, [Key] ASC)

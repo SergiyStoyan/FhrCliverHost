@@ -1,39 +1,12 @@
-﻿@model Cliver.Fhr.ProductOffice.Models.Company
-
-@{
+﻿@{
     ViewBag.Title = "Details";
 }
 
 <h2>Details</h2>
 
-<fieldset>
-    <legend>Company</legend>
+<div>
+    <h4>Settings <b>@ViewBag.Scope::@ViewBag.Key</b></h4>
+    <hr />
+    <textarea readonly name="settings" style="resize:both;overflow:auto;height:200px;width:100%;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing: border-box;">@ViewBag.Value</textarea>
 
-    <div class="display-label">
-         @Html.DisplayNameFor(model => model.Name)
-    </div>
-    <div class="display-field">
-        @Html.DisplayFor(model => model.Name)
-    </div>
-
-    <div class="display-label">
-        @Html.DisplayNameFor(model => model.Url)
-    </div>
-    <div class="display-field">
-        @Html.DisplayFor(model => model.Url)
-    </div>
-
-    <div class="display-label">
-        @Html.DisplayNameFor(model => model.Comment)
-    </div>
-    <div class="display-field">
-        @Html.DisplayFor(model => model.Comment)
-    </div>
-
-    <div class="display-label">
-        @Html.DisplayNameFor(model => model.CrawlerId)
-    </div>
-    <div class="display-field">
-        @Html.DisplayFor(model => model.CrawlerId)
-    </div>
-</fieldset>
+</div>

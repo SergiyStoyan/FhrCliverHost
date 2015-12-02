@@ -7,7 +7,7 @@ using System.Web.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Cliver.ProductOffice.Models
+namespace Cliver.Fhr.ProductOffice.Models
 {
     public class Import
     {

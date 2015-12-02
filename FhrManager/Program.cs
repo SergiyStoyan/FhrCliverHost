@@ -28,6 +28,12 @@ namespace Cliver.FhrManager
         {
             try
             {
+                //int t = Cliver.FhrManager.Properties.Settings.Default.test;
+                //t = Cliver.FhrManager.Properties.Settings.Default.test;
+                //string t2 = Cliver.FhrManager.Properties.Settings.Default.test2;
+                //Form f = new Form();
+                //f.ShowDialog();
+                //return;
                 Cliver.CrawlerHostManager.Program.SetTitle(Assembly.GetExecutingAssembly());                
                 Cliver.CrawlerHostManager.Program.Main();
             }
