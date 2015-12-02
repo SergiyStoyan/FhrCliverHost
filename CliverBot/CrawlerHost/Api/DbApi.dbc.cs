@@ -42,7 +42,8 @@ namespace Cliver.CrawlerHost
                     LogMessage.Exit(m);
                 else
                     throw new Exception(m);
-            }
+            } 
+            ThreadLog.Writing += ThreadLog_Writing;  
         }
 
         public static string GetConnectionString()
