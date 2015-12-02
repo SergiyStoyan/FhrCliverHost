@@ -143,7 +143,7 @@ namespace Cliver.ProductOffice.Controllers
             if (database == null || scope == null || key == null)
                 return new HttpStatusCodeResult(System.Net.HttpStatusCode.BadRequest);
             Bot.DbSettings dss = new Bot.DbSettings(GetDbc(database));
-            dss.Delete(scope, "%");
+            dss.Delete(scope, key);
             if (Request.IsAjaxRequest())
                 return Content(null);
             return RedirectToAction("Index");
