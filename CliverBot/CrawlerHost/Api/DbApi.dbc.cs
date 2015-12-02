@@ -17,13 +17,13 @@ namespace Cliver.CrawlerHost
 {
     public class DbApi : MsSqlConnection
     {
-        //static public DbApi Create()
-        //{
-        //    return new DbApi();
-        //}
+        static public DbApi Create()
+        {
+            return new DbApi(GetConnectionString());
+        }
 
-        public DbApi()
-            : base(ConnectionString)
+        DbApi(string connection_string)
+            : base(connection_string)
         {
             Assembly ea = Assembly.GetEntryAssembly();
             if (ea != null)//can be null if web context
@@ -44,8 +44,11 @@ namespace Cliver.CrawlerHost
                     throw new Exception(m);
             }
         }
-        
-        new public static readonly string ConnectionString = Cliver.CrawlerHost.Api.GetConnectionString(DATABASE_CONNECTION_STRING_NAME);
+
+        public static string GetConnectionString()
+        {
+            return Cliver.CrawlerHost.Api.GetConnectionString(DATABASE_CONNECTION_STRING_NAME);
+        }
         public const string DATABASE_CONNECTION_STRING_NAME = "CliverCrawlerHostConnectionString";
 
         void create_tables()

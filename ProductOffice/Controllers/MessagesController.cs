@@ -12,7 +12,7 @@ namespace Cliver.ProductOffice.Controllers
     [Authorize]
     public class MessagesController : Controller
     {
-        private DbApi db = new DbApi();
+        private DbApi db = DbApi.Create();
 
         List<object> SourceSelect
         {

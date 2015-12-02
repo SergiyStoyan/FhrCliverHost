@@ -31,7 +31,7 @@ namespace Cliver.CrawlerHostManager
 {
     public class ServiceManager
     {
-        static Cliver.CrawlerHost.DbApi db = new DbApi();
+        static Cliver.CrawlerHost.DbApi db = DbApi.Create();
 
         public delegate void OnStateChanged(bool work);
         static public event OnStateChanged StateChanged = null;

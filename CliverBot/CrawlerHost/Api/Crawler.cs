@@ -31,7 +31,7 @@ namespace Cliver.CrawlerHost
     {
         static CrawlerApi()
         {
-            Db = new DbApi();
+            Db = DbApi.Create();
             lock (Db)
             { 
                 try

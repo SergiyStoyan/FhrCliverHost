@@ -24,7 +24,7 @@ namespace Cliver.CrawlerHostManager
             SmtpPort.Text = CrawlerHost.Properties.Settings.Default.SmtpPort.ToString();
             AdminEmailSender.Text = CrawlerHost.Properties.Settings.Default.EmailSender;
             DefaultAdminEmails.Text = CrawlerHost.Properties.Settings.Default.DefaultAdminEmails;
-            DbConnectionString.Text = DbApi.ConnectionString;
+            DbConnectionString.Text = DbApi.GetConnectionString();
             //if (string.IsNullOrWhiteSpace(DbConnectionString.Text))
             //    DbConnectionString.Text = CrawlerHost.Properties.Settings.Default.DbConnectionString;
         }

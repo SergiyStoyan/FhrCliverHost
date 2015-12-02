@@ -12,7 +12,7 @@ namespace Cliver.ProductOffice.Controllers
     [Authorize]
     public class WatchDogController : Controller
     {
-        private DbApi db = new DbApi();
+        private DbApi db = DbApi.Create();
 
         public ActionResult Index()
         {

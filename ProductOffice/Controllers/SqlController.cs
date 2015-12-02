@@ -32,7 +32,7 @@ namespace Cliver.ProductOffice.Controllers
                 {
                     case "CliverCrawlerHost":
 
-                        dbc = Bot.DbConnection.Create(Cliver.CrawlerHost.Models.DbApi.ConnectionString);
+                        dbc = Bot.DbConnection.Create(Cliver.CrawlerHost.Models.DbApi.GetConnectionString());
                         n = dbc.Get(sql).Execute();
 
                         break;

@@ -28,7 +28,7 @@ namespace Cliver.FhrManager
         {
             try
             {
-                Cliver.CrawlerHostManager.Program.SetTitle(Assembly.GetExecutingAssembly());
+                Cliver.CrawlerHostManager.Program.SetTitle(Assembly.GetExecutingAssembly());                
                 Cliver.CrawlerHostManager.Program.Main();
             }
             catch (Exception e)

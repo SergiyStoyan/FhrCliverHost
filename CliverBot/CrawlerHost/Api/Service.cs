@@ -33,7 +33,7 @@ namespace Cliver.CrawlerHost
         
         protected Service()
         {
-            Db = new DbApi();
+            Db = DbApi.Create();
             lock (Db)
             {
                 try

@@ -10,7 +10,7 @@ namespace Cliver.ProductOffice.Controllers
     [Authorize]
     public class CrawlersController : Controller
     {
-        private DbApi db = new DbApi();
+        private DbApi db = DbApi.Create();
    
         List<object> StateSelect
         {

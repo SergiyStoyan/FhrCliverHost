@@ -34,10 +34,13 @@ namespace Cliver.Bot
         {
             lock (dbc)
             {
-                dbc.Get(@"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Settings' and xtype='U') CREATE TABLE [dbo].[Settings] (
+                dbc.Get(@"
+IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Settings' and xtype='U') 
+CREATE TABLE [dbo].[Settings] (
     [Scope] NVARCHAR (100) NOT NULL,
     [Key]   NVARCHAR (100) NOT NULL,
     [Value] NTEXT          NOT NULL,
+    [SetTime] DATETIME NOT NULL, 
     CONSTRAINT [PK_Settings] PRIMARY KEY CLUSTERED ([Scope] ASC, [Key] ASC)
 );
 "
@@ -45,7 +48,7 @@ namespace Cliver.Bot
             }
         }
 
-        public const string DEFAULT_KEY = "__DEFAULT__";
+        //public const string DEFAULT_KEY = "__DEFAULT__";
 
         public List<string> GetScopes(string scope_template)
         {
@@ -59,10 +62,16 @@ namespace Cliver.Bot
             return keys.Select(k => (string)k["Key"]).ToList();
         }
 
-        public T Get<T>(string scope)
-        {
-            return Get<T>(scope, DEFAULT_KEY);
-        }
+        /// <summary>
+        /// Returns value from DEFAULT_KEY 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="scope"></param>
+        /// <returns></returns>
+        //public T Get<T>(string scope)
+        //{
+        //    return Get<T>(scope, DEFAULT_KEY);
+        //}
 
         public T Get<T>(string scope, string key)
         {
@@ -81,17 +90,17 @@ namespace Cliver.Bot
         //    return (T)o;
         //}
 
-        public void Save(string scope, Dictionary<string, object> value)
-        {
-            Save(scope, DEFAULT_KEY, value);
-        }
+        //public void Save(string scope, Dictionary<string, object> value)
+        //{
+        //    Save(scope, DEFAULT_KEY, value);
+        //}
 
         public void Save(string scope, string key, object value)
         {
             JavaScriptSerializer serializer = new JavaScriptSerializer();
             string json = serializer.Serialize(value);
-            if (dbc.Get("UPDATE Settings SET Value=@Value WHERE Scope=@Scope AND [Key]=@Key").Execute("@Value", json, "@Scope", scope, "@Key", key) < 1)
-                dbc.Get("INSERT INTO Settings (Value,Scope,[Key]) VALUES(@Value,@Scope,@Key)").Execute("@Value", json, "@Scope", scope, "@Key", key);
+            if (dbc.Get("UPDATE Settings SET Value=@Value, SetTime=GETDATE() WHERE Scope=@Scope AND [Key]=@Key").Execute("@Value", json, "@Scope", scope, "@Key", key) < 1)
+                dbc.Get("INSERT INTO Settings (Value,Scope,[Key],SetTime) VALUES(@Value,@Scope,@Key,GETDATE())").Execute("@Value", json, "@Scope", scope, "@Key", key);
         }
 
         //public void Save(string scope, string key, string json_path, object value)

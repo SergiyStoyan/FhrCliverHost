@@ -30,7 +30,7 @@ namespace Cliver.CrawlerHostManager
 {
     internal class CrawlerService
     {
-        static DbApi db = new DbApi();
+        static DbApi db = DbApi.Create();
 
         public static void Run()
         {

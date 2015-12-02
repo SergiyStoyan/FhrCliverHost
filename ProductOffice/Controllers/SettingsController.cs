@@ -13,7 +13,7 @@ namespace Cliver.ProductOffice.Controllers
     [Authorize]
     public class SettingsController : Controller
     {
-        private DbApi db = new DbApi();
+        private DbApi db = DbApi.Create();
 
         List<object> ObjectSelect
         {
