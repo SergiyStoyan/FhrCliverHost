@@ -206,8 +206,8 @@ border-top: none;
 }
 
    table tbody tr.Grouped.MainInGroup:not(.selected){
-        background-color:#fb4;
-                background-color1:#7d6;
+        background-color1:#fb4;
+                background-color:#7d6;
     }
    /*table tbody tr.Grouped.MainInGroup.selected{
         font-weight:bold;
@@ -216,7 +216,7 @@ border-top: none;
    
    table tbody tr.Grouped:not(.selected){
         background-color1:#cdc;
-        background-color:#bdc;
+        background-color:#afa;
     }
    /*table tbody tr.Grouped.even{
         background-color:#cc8;

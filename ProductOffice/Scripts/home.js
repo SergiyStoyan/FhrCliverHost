@@ -94,6 +94,7 @@ function show_dialog(definition) {
     var definition_ = {
         content_div_id: false,
         adjust: true,
+        background: null,
         dialog:{
             //close: definition_.on_close,
             //open: function (event, ui) {
@@ -190,6 +191,12 @@ function show_dialog(definition) {
     e.append(content_e);
             
     e.dialog(definition.dialog);
+
+    if (definition.background) {
+        e.parent().find('*[class^="ui-resizable-handle"]').css('background-color', definition.background);
+        e.parent().find('.ui-widget-content').css('background-color', definition.background);
+        e.parent().css('background', definition.background);
+    }
 
     e.show_processing = function (show) {
         if (show || show === undefined) {

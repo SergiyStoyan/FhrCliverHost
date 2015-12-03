@@ -8,7 +8,7 @@
 
 
 
-<div id="GroupContent" style="display:none;" class1="content-wrapper clear-fix">
+<div id="GroupContent" style="display:none;" class="content-wrapper clear-fix">
     @*<a href="#" onclick="" class="button">Remove All</a>*@
     <table id="GroupTable" class="my" style="width:100%;">
         <thead>
@@ -26,7 +26,7 @@
             @Html.DisplayNameFor(model => model.Name)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Category)
+            Category
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Sku)
@@ -50,12 +50,12 @@
                 dialog: {
                     modal: false,
                     title: "Product Group",
-                    //show: function () {
-                    //    mark_grouped_rows_in_ProductsTable();
-                    //},
-                    //close: function () {
-                    //    mark_grouped_rows_in_ProductsTable(false);
-                    //},
+                    open: function () {
+                        mark_grouped_rows_in_ProductsTable();
+                    },
+                    close: function () {
+                        mark_grouped_rows_in_ProductsTable(false);
+                    },
                     buttons: {
                         "Delete All": function () {
                             alert("TBD");
@@ -103,13 +103,12 @@
                     },
                 },
                 content_div_id: "GroupContent",
+                background: '#e3e9e9',
             });
-
-            //$("#GroupTable").width($("#ProductsTable").width());
-            GroupDlg.width($("#ProductsTable").width() + 50);
-            $("#GroupContent").height($(window).height() / 3);
+            GroupDlg.width($(window).width() - 50);
+            GroupDlg.height($(window).height() / 4);
             GroupDlg.dialog({ position: { my: 'top', at: 'top', of: window, collision: 'fit' } });
-            console.log($("#ProductsTable").width(), $("#GroupDlg").width(), $("#GroupTable").width());
+            console.log($("#ProductsTable").width(), $(GroupDlg).width(), $("#GroupTable").width());
         }
         else
             GroupDlg.dialog("open");
@@ -143,7 +142,7 @@
                     left: {
                         delete: true,
                         ungroup: {
-                            text: "Ungroup",
+                            text: "Remove",
                             onclick: function () {
                                 GroupTable.api().row('.selected').remove().draw(false);
                                 if (!GroupTable.$('tr.MainInGroup').length)
@@ -373,7 +372,7 @@
                 @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Category)
+                Category
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Sku)
