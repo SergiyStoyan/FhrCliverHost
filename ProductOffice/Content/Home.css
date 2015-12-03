@@ -205,23 +205,28 @@ border-right: none;
 border-top: none;
 }
 
-   table.my tbody tr.MainInGroup{
-        font-weight:bold;
-        background-color:lightgreen;
+   table tbody tr.Grouped.MainInGroup:not(.selected){
+        background-color1:#ef6;
+        background-color:#7d6;
     }
-   table.my tbody tr.MainInGroup.selected{
+   /*table tbody tr.Grouped.MainInGroup.selected{
         font-weight:bold;
-        background-color:#6d5;
-    }
+        background-color:#885;
+    }*/
    
-   table.my tbody tr.SubordinateInGroup .odd{
-        background-color:lightgray;
+   table tbody tr.Grouped:not(.selected){
+        background-color1:#cdc;
+        background-color:#bdc;
     }
-   table.my tbody tr.SubordinateInGroup .even{
-        background-color:gray;
-    }
+   /*table tbody tr.Grouped.even{
+        background-color:#cc8;
+    }*/
+   /*table tbody tr.Grouped.selected{
+        background-color:#958;
+    }*/
 
    #ProductsTable img{
        width:60px;
        height:auto;
    }
+   
