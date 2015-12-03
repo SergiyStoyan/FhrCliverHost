@@ -206,8 +206,8 @@ border-top: none;
 }
 
    table tbody tr.Grouped.MainInGroup:not(.selected){
-        background-color1:#ef6;
-        background-color:#7d6;
+        background-color:#fb4;
+                background-color1:#7d6;
     }
    /*table tbody tr.Grouped.MainInGroup.selected{
         font-weight:bold;

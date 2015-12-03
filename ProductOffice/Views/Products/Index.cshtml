@@ -50,12 +50,12 @@
                 dialog: {
                     modal: false,
                     title: "Product Group",
-                    show: function () {
-                        mark_grouped_rows_in_ProductsTable();
-                    },
-                    close: function () {
-                        mark_grouped_rows_in_ProductsTable(false);
-                    },
+                    //show: function () {
+                    //    mark_grouped_rows_in_ProductsTable();
+                    //},
+                    //close: function () {
+                    //    mark_grouped_rows_in_ProductsTable(false);
+                    //},
                     buttons: {
                         "Delete All": function () {
                             alert("TBD");
@@ -105,10 +105,11 @@
                 content_div_id: "GroupContent",
             });
 
-            GroupDlg.width($("#ProductsTable").width() + 50);
             //$("#GroupTable").width($("#ProductsTable").width());
+            GroupDlg.width($("#ProductsTable").width() + 50);
             $("#GroupContent").height($(window).height() / 3);
             GroupDlg.dialog({ position: { my: 'top', at: 'top', of: window, collision: 'fit' } });
+            console.log($("#ProductsTable").width(), $("#GroupDlg").width(), $("#GroupTable").width());
         }
         else
             GroupDlg.dialog("open");
@@ -404,7 +405,7 @@
                     edit: true,
                     details: true,
                     delete: false,
-                    add2group: { text: "Group", onclick: function () { add_raw_to_group_dlg(ProductsTable.api().row('.selected')); } },
+                    add2group: { text: "Add", onclick: function () { add_raw_to_group_dlg(ProductsTable.api().row('.selected')); } },
                     expand: { text: "Expand", onclick: function () { add_raw_to_group_dlg(ProductsTable.api().row('.selected'), true); } },                    
                     @*ungroup: {
                         text: "Ungroup",
@@ -452,32 +453,32 @@
                     mark_grouped_rows_in_ProductsTable();
                 },
             },
-            //on_row_clicked: function (event) {
-            //    definition_.on_row_clicked(event);
+            on_row_clicked: function (event) {
+                definition_.on_row_clicked(event);
 
-            //    var table = definition._table;
-            //    var product_id = table.api().row($($(event.target).parent('tr')).index()).data()[0];
-            //    $(table.menu.left).find("[name='add2group'], [name='expand']").css('display', 'block');
-            //    if (GroupDlg)
-            //        if (GroupDlg.is_open()) {
-            //            var d = GroupTable.api().rows().data();
-            //            for (i in d) {
-            //                if (d[i][0] == product_id) {
-            //                    $(table.menu.left).find("[name='add2group'], [name='expand']").css('display', 'none');
-            //                    break;
-            //                }
-            //            }
-            //        }
-            //        else {
-            //            var d = GroupTable.api().rows().data();
-            //            for (i in d) {
-            //                if (d[i][0] == product_id) {
-            //                    $(table.menu.left).find("[name='add2group']").css('display', 'none');
-            //                    break;
-            //                }
-            //            }
-            //        }
-            //}
+                var table = definition._table;
+                var product_id = table.api().row($($(event.target).parent('tr')).index()).data()[0];
+                //$(table.menu.left).find("[name='add2group'], [name='expand']").css('display', 'block');
+                if (GroupDlg && GroupDlg.is_open()) {
+                    $(table.menu.left).find("[name='expand']").css('display', 'none');
+                    var added = false;
+                    var d = GroupTable.api().rows().data();
+                    for (i in d) {
+                        if (d[i][0] == product_id) {
+                            added = true;
+                            break;
+                        }
+                    }
+                    if (added)
+                        $(table.menu.left).find("[name='add2group']").css('display', 'none');
+                    else
+                        $(table.menu.left).find("[name='add2group']").css('display', 'block');
+                }
+                else {
+                    $(table.menu.left).find("[name='expand']").css('display', 'block');
+                    $(table.menu.left).find("[name='add2group']").css('display', 'none');
+                }
+            }
         };
     var ProductsTable = init_table(definition);
     //set environment for definition_.on_row_clicked
