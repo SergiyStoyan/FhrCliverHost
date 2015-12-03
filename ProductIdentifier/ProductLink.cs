@@ -59,7 +59,7 @@ namespace Cliver.ProductIdentifier
                         NameScore = ((double)word2name_score.Values.Sum() / word2name_score.Count)
                             * ((double)word2name_score.Count / product1.Words(Field.Name).Count)
                             * ((double)word2name_score.Count / product2.Words(Field.Name).Count)
-                            * (1 - 0.3 * word2name_score.Count);
+                            * (1 - 0.3 / word2name_score.Count);
                     }
                 }
                 //    decimal p1 = product1.DbProduct.Price;
