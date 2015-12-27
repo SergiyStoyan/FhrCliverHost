@@ -155,8 +155,8 @@ GROUP BY a.LinkId";
             }
             return ds;
         }        
-
-        class IdenticalProductList
+        
+        internal class IdenticalProductList
         {
             readonly List<Cliver.ProductIdentifier.ProductLink> product_links;
             readonly public int[] Product1Ids;
@@ -254,6 +254,11 @@ GROUP BY a.LinkId";
             string category2 = null;
 
             public double ScoreFactor = 1;
+
+            public static void DestroyProductIdentifierEngineIfAny(HttpSessionStateBase session)
+            {
+                session[IdenticalProductList.SESSION_KEY] = null;
+            }
 
             static IdenticalProductList get_from_session(ProductLinksController controller, int[] product1_ids, int company2_id)
             {

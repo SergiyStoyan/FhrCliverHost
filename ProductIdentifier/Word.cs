@@ -22,7 +22,10 @@ namespace Cliver.ProductIdentifier
             {
                 get
                 {
-                    return word.engine.Configuration.Get(company.DbCompany.Id).GetWordWeight(word.Value);
+                    word.engine.sw9.Start();
+                    double d = word.engine.Configuration.Get(company.DbCompany.Id).GetWordWeight(word.Value);
+                    word.engine.sw9.Stop();
+                    return d;
                 }
             }
 
@@ -139,12 +142,14 @@ namespace Cliver.ProductIdentifier
 
         internal Company Get(int company_id)
         {
+                engine.sw10.Start();
             Company c;
             if (!company_ids2Company.TryGetValue(company_id, out c))
             {
                 c = new Company(engine.Companies.Get(company_id), this);
                 company_ids2Company[company_id] = c;
             }
+                engine.sw10.Stop();
             return c;
         }
     }

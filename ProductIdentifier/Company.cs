@@ -16,7 +16,7 @@ namespace Cliver.ProductIdentifier
     internal class Company
     {
         internal readonly Fhr.ProductOffice.Models.Company DbCompany;
-
+        
         internal int WordNumber(Field field)
         {
             int wn;
@@ -61,11 +61,62 @@ namespace Cliver.ProductIdentifier
             return w2pis;
         }
         Dictionary<Field, Dictionary<string, HashSet<int>>> field2word2product_ids = new Dictionary<Field, Dictionary<string, HashSet<int>>>();
+        
+        List<Product> GetProductsByCategory(string category)
+        {
+            return Products.Where(p => p.DbProduct.Category != null && Regex.IsMatch(p.DbProduct.Category, @"^\s*" + Regex.Escape(category), RegexOptions.IgnoreCase | RegexOptions.Multiline)).ToList();
+        }
+
+        internal HashSet<string> Categories
+        {
+            get
+            {
+                return categories;
+            }
+        }
+        HashSet<string> categories = new HashSet<string>();
+
+        Dictionary<string, dynamic> get_company_category_tree(int company_id)
+        {
+            List<string> categories = engine.Db.Products.Where(p => p.CompanyId == company_id).GroupBy(p => p.Category).Select(c => c.Key).ToList();
+            Dictionary<string, dynamic> tree = build_tree_from_paths(categories);
+            return tree;
+        }
+
+        static Dictionary<string, dynamic> build_tree_from_paths(List<string> paths)
+        {
+            Dictionary<string, dynamic> tree = new Dictionary<string, dynamic>();
+            foreach (string path in paths)
+                if (path != null)
+                    add_path(path, tree);
+            return tree;
+        }
+
+        static void add_path(string path, Dictionary<string, dynamic> tree)
+        {
+            Match m = Regex.Match(path, "^(.*?)" + Regex.Escape(Fhr.ProductOffice.DataApi.Product.CATEGORY_SEPARATOR) + "+(.+)", RegexOptions.Compiled | RegexOptions.Singleline);
+            if (m.Success)
+            {
+                string name = m.Groups[1].Value;
+                dynamic child_tree;
+                if (!tree.TryGetValue(name, out child_tree))
+                {
+                    child_tree = new Dictionary<string, object>();
+                    tree[name] = child_tree;
+                }
+                add_path(m.Groups[2].Value, child_tree);
+            }
+            else
+                tree[path] = new Dictionary<string, object>();
+        }
 
         internal Company(Engine engine, Fhr.ProductOffice.Models.Company company)
         {
             this.engine = engine;
             DbCompany = company;
+
+            List<string> categories = engine.Db.Products.Where(p => p.CompanyId == company.Id).GroupBy(p => p.Category).Select(c => c.Key).ToList();
+            this.categories = new HashSet<string>(categories);
         }
         readonly Engine engine;
     }

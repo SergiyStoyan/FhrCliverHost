@@ -140,6 +140,7 @@
     <Compile Include="SynonymForm.Designer.cs">
       <DependentUpon>SynonymForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Company.Word.cs" />
     <Compile Include="Word.cs" />
   </ItemGroup>
   <ItemGroup>

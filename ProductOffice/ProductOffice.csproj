@@ -352,13 +352,15 @@
     <Content Include="Views\ProductLinks\Index.cshtml" />
     <Content Include="Views\Sql\Index.cshtml" />
     <Content Include="Views\ProductIdentifierConfiguration\Index.cshtml" />
-    <Content Include="Views\ProductIdentifierConfiguration\Edit.cshtml" />
+    <Content Include="Views\ProductIdentifierConfiguration\EditWordWeights.cshtml" />
     <Content Include="Views\ProductIdentifierConfiguration\Edit2.cshtml" />
     <Content Include="Views\Products\Index.cshtml" />
     <Content Include="Views\Settings\Index.cshtml" />
     <Content Include="Views\Settings\Edit.cshtml" />
     <Content Include="Views\Settings\Delete.cshtml" />
     <Content Include="Views\Settings\Details.cshtml" />
+    <Content Include="Views\ProductIdentifierConfiguration\EditIgnoredWords.cshtml" />
+    <Content Include="Views\ProductIdentifierConfiguration\EditSynonyms.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

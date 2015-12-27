@@ -28,7 +28,6 @@ namespace Cliver.ProductIdentifier
                 List<Product> ps = ls[0].Product1s.ToList();
                 ps.AddRange(ls[1].Product2s.ToList());
                 engine.SaveLink(ps.Select(x => x.DbProduct.Id).ToArray());
-                engine.Configuration.Save();
             }
             catch (Exception e)
             {

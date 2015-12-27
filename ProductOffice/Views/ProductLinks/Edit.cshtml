@@ -54,7 +54,7 @@
                             var ProductMatchesDlg;
                             
                             function set_Category2(category2) {
-                                Category2 = category;
+                                Category2 = category2;
                                 $("#Category2").html(category2);
                             }
                             var Category2;
@@ -269,8 +269,9 @@
         </div>*@
     <div id="accumulate_pages_navigation" style="display:inline;">
         <b><a class="_to_next_product" title="Add products with lower match score" href="#" onclick="javascript: get_next_product2_range(true);">Get</a></b>
-    </div>
-    Selected product count: <span id="ProductCount"></span>
+    </div>   
+     Filtered products: <span id="FilteredProductCount"></span>   
+     Shown products: <span id="ShownProductCount"></span>
     <hr />
 
     <div id="ProductMatchesList" style="overflow: auto;">
@@ -297,7 +298,6 @@
             $("input[name='ProductId']").each(function () {
                 product1_ids.push($(this).val());
             });
-            
             ProductMatchesDlg.getContentByAjax(
                 {
                     type: 'GET',
@@ -315,7 +315,7 @@
                     if(data.Is_CurrentProductLinks_Changed)
                         $('#ProductMatchesList table').empty();
                     var product2_matches = data.Product2s;
-                    $("#ProductCount").html(data.Product2sCount);
+                    $("#FilteredProductCount").html(data.Product2sCount);
                     if (!product2_matches.length) {
                         if (forward)
                             show_message("End of list is reached.");
@@ -323,6 +323,7 @@
                             show_message("Start of list is reached.");
                         return;
                     }
+                    $("#ShownProductCount").html(product2_matches.length + $("#ShownProductCount").html());
                     for(var i in product2_matches){                    
                         for(var j in product2_matches[i]){
                             var product = product2_matches[i][j];

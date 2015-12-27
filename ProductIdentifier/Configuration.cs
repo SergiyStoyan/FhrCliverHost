@@ -18,6 +18,7 @@ namespace Cliver.ProductIdentifier
         public const string SCOPE = "PRODUCT_IDENTIFIER";
         public const string COMPANY = "COMPANY/";
         public const string TRAINING_TIME = "TrainingTime";
+        public const string ANALYSIS_TIME = "/AnalysisTime";
         public const string WORD_WEIGHTS = "/WordWeights";
         public const string SYNONYMS = "/Synonyms";
         public const string CATEGORY_MAP = "CATEGORYMAP/";
@@ -33,7 +34,7 @@ namespace Cliver.ProductIdentifier
         {
             this.engine = engine;
             
-            default_word_weights = default_word_weights.ToDictionary(x => x.Key.Trim().ToLower(), x => x.Value);
+            //default_word_weights = default_word_weights.ToDictionary(x => x.Key.Trim().ToLower(), x => x.Value);
 
             List<string> iws = (from x in default_ignored_words select x.Trim()).ToList();
             default_ignored_words = new HashSet<string>(iws);
@@ -59,7 +60,13 @@ namespace Cliver.ProductIdentifier
         }
         Dictionary<int, Company> company_ids2Company = new Dictionary<int, Company>();
 
-        public void Save(bool update_traning_time = true)
+        #region API for self-training
+        public void ClearBeforeSelfTraining()
+        {
+            company1_id_company2_id_to_category1s_to_mapped_category2s.Clear();
+        }
+
+        public void SaveAfterSelfTraining(bool update_traning_time = true)
         {
             Cliver.Bot.DbSettings.Delete(engine.Dbc, SettingsKey.SCOPE, "%");
             company_ids2Company.Values.ToList().ForEach(x => { x.SaveWordWeights(); x.SaveSynonyms(); });
@@ -94,7 +101,7 @@ namespace Cliver.ProductIdentifier
 
         Dictionary<string, Dictionary<string, HashSet<string>>> company1_id_company2_id_to_category1s_to_mapped_category2s = new Dictionary<string, Dictionary<string, HashSet<string>>>();
 
-        public bool AreCategoriesMapped(Product product1, Product product2)
+        public bool DoCategoriesBelong2MappedOnes(Product product1, Product product2)
         {
             if (product2.DbProduct.CompanyId < product1.DbProduct.CompanyId)
             {
@@ -120,9 +127,68 @@ namespace Cliver.ProductIdentifier
             if (category1s_to_mapped_category2s == null)
                 return false;
             HashSet<string> mapped_category2s;
-            if (!category1s_to_mapped_category2s.TryGetValue(product1.DbProduct.Category, out mapped_category2s))
-                return false;
-            return mapped_category2s.Contains(product1.DbProduct.Category);
+            foreach(string c1 in category1s_to_mapped_category2s.Keys)
+              if(is_child_of_category(product1.DbProduct.Category, c1))
+                  if (category1s_to_mapped_category2s.TryGetValue(c1, out mapped_category2s))
+                      foreach(string c2 in mapped_category2s)
+                          if(is_child_of_category(product2.DbProduct.Category, c2))
+                              return true;
+            return false;
+        }
+
+        bool is_child_of_category(string child_category, string category)
+        {
+            return Regex.IsMatch(child_category, @"^\s*" + Regex.Escape(category), RegexOptions.IgnoreCase | RegexOptions.Multiline);
+        }
+
+        public double GetCategoryScore(Product product1, Product product2)
+        {
+            if (product2.DbProduct.CompanyId < product1.DbProduct.CompanyId)
+            {
+                Product p = product1;
+                product1 = product2;
+                product2 = p;
+            }
+            Dictionary<string, double> category1_category2_to_score;
+            string company1_id_company2_id = product1.DbProduct.CompanyId.ToString() + "," + product2.DbProduct.CompanyId;
+            if (!company1_id_company2_id_to_category1_category2_to_score.TryGetValue(company1_id_company2_id, out category1_category2_to_score))
+            {
+                category1_category2_to_score = new Dictionary<string, double>();
+                company1_id_company2_id_to_category1_category2_to_score[company1_id_company2_id] = category1_category2_to_score;
+            }
+            double score;
+            string category1_category2 = product1.DbProduct.Category + Fhr.ProductOffice.DataApi.Product.CATEGORY_SEPARATOR + product2.DbProduct.Category;
+            if (!category1_category2_to_score.TryGetValue(category1_category2, out score))
+            {
+                score = get_category_score(product1, product2);
+                category1_category2_to_score[category1_category2] = score;
+            }
+            return score;
+        }
+        Dictionary<string, Dictionary<string, double>> company1_id_company2_id_to_category1_category2_to_score = new Dictionary<string, Dictionary<string, double>>();
+
+        double get_category_score(Product product1, Product product2)
+        {
+            Dictionary<string, double> word2category_score = new Dictionary<string, double>();
+            foreach (string word in product1.Words(Field.Category))
+            {
+                if (product2.Words2Count(Field.Category).ContainsKey(word))
+                {
+                    Word w = engine.Words.Get(word);
+                    word2category_score[word] = w.Get(product1.DbProduct.CompanyId).Weight * w.Get(product2.DbProduct.CompanyId).Weight;
+                }
+            }
+
+            double score = 0;
+            if (word2category_score.Count > 0)
+            {
+                score = ((double)word2category_score.Values.Sum() / word2category_score.Count)
+                    * ((double)word2category_score.Count / product1.Words(Field.Category).Count)
+                    * ((double)word2category_score.Count / product2.Words(Field.Category).Count)
+                    * (1 - 0.3 * word2category_score.Count);
+            }
+            score = (engine.Configuration.DoCategoriesBelong2MappedOnes(product1, product2) ? 1 : 0.5) * score;
+            return score;
         }
 
         public void SaveMappedCategories()
@@ -130,6 +196,7 @@ namespace Cliver.ProductIdentifier
             foreach (string company1_id_company2_id in company1_id_company2_id_to_category1s_to_mapped_category2s.Keys)
                 Cliver.Bot.DbSettings.Save(engine.Dbc, SettingsKey.SCOPE, SettingsKey.CATEGORY_MAP + company1_id_company2_id, company1_id_company2_id_to_category1s_to_mapped_category2s[company1_id_company2_id]);
         }
+        #endregion
 
         #region API for editing configuration
 
@@ -162,19 +229,19 @@ namespace Cliver.ProductIdentifier
         }
         #endregion
 
-        Dictionary<string, double> default_word_weights = new Dictionary<string, double>()
-        {
-            {"g4",.5},
-            {"g3",.5},
-            {"g2",.5}, 
-            {"sony", .7},
-            {"Samsung", .7},
-            {"Galaxy", .7},
-            {"HTC", .7},
-            {"EVO", .7},
-            {"Xperia", .7},
-            {"iPad", .7},     
-        };
+        //Dictionary<string, double> default_word_weights = new Dictionary<string, double>()
+        //{
+        //    {"g4",.5},
+        //    {"g3",.5},
+        //    {"g2",.5}, 
+        //    {"sony", .7},
+        //    {"Samsung", .7},
+        //    {"Galaxy", .7},
+        //    {"HTC", .7},
+        //    {"EVO", .7},
+        //    {"Xperia", .7},
+        //    {"iPad", .7},     
+        //};
 
         HashSet<string> default_ignored_words = new HashSet<string>() { 
             "the", "a", "an", "some","this","there","their","it",

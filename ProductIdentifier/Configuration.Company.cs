@@ -26,7 +26,7 @@ namespace Cliver.ProductIdentifier
                 if (word_weights == null)
                 {
                     word_weights = new Dictionary<string, double>();
-                    configuration.default_word_weights.Keys.ToList().ForEach(x => word_weights[x] = configuration.default_word_weights[x]);
+                    //configuration.default_word_weights.Keys.ToList().ForEach(x => word_weights[x] = configuration.default_word_weights[x]);
                     foreach (string iw in configuration.default_ignored_words)
                         this.word_weights[iw] = -1;
                 }
@@ -63,26 +63,29 @@ namespace Cliver.ProductIdentifier
                 if (!word_weights.TryGetValue(word, out weight))
                 {
                     weight = 1;
+
                     Word w = configuration.engine.Words.Get(word);
                     //if (w.IsInDictionary)
                     //    weight *= 0.3;
-                    weight *= (1 - w.Get(company_id).ProductFrequency(Field.Category));
-                    weight *= (1 - w.Get(company_id).WordDensity(Field.Category));
-                    weight *= (1 - w.Get(company_id).ProductFrequency(Field.Name));
-                    weight *= (1 - w.Get(company_id).WordDensity(Field.Name));
-                    weight *= 0.3 * (1 - w.Get(company_id).ProductFrequency(Field.Description));
-                    weight *= 0.3 * (1 - w.Get(company_id).WordDensity(Field.Description));
 
-                    if (Regex.IsMatch(word, @"\d"))
-                        weight *= .7;
-                    else
-                        weight *= .1;
+                    Word.Company c = w.Get(company_id);
+                    weight *= .5 * (1 + c.ProductFrequency(Field.Category));
+                    //weight *= (1 - c.WordDensity(Field.Category));
+                    weight *= .5 * (1 + c.ProductFrequency(Field.Name));
+                    //weight *= (1 - c.WordDensity(Field.Name));
+                    weight *= 0.5 * (2 - c.ProductFrequency(Field.Description));
+                    weight *= 0.5 * (2 - c.WordDensity(Field.Description));
+
+                    //if (Regex.IsMatch(word, @"\d"))
+                    //    weight *= .7;
+                    //else
+                    //    weight *= .1;
 
                     word_weights[word] = weight;
                 }
                 return weight;
             }
-
+            
             internal string StripOfIgnoredWords(string text)
             {
                 return ignored_words_regex.Replace(text, "");
@@ -174,32 +177,85 @@ namespace Cliver.ProductIdentifier
                 synonyms_regex = create_synonyms_regex();
             }
 
+            #region API for data analysis
+
+            public void ClearBeforeDataAnalysis()
+            {
+                Dictionary<string, double> wws = new Dictionary<string,double>();
+                foreach (KeyValuePair<string, double> w2w in word_weights)
+                    if (w2w.Value < 0)
+                        wws[w2w.Key] = w2w.Value;
+                word_weights = wws;
+            }
+
+            public void DefineWordWeight(string word)
+            {
+                GetWordWeight(word);
+            }
+
+            public void SaveAfterDataAnalysis()
+            {
+                SaveWordWeights();
+                Cliver.Bot.DbSettings.Save(configuration.engine.Dbc, SettingsKey.SCOPE, SettingsKey.COMPANY + company_id + SettingsKey.ANALYSIS_TIME, DateTime.Now);
+            }
+
+            #endregion
+
             #region API for editing configuration
 
-            public void GetConfigurationAsString(out string word_weights, out string ignored_words, out string synonyms)
+            public string GetWordWeightsAsString()
             {
                 List<string> wws = new List<string>();
-                List<string> iws = new List<string>();
                 foreach (var kv in this.word_weights)
                     if (kv.Value >= 0)
                         wws.Add(kv.Key + ">" + kv.Value);
-                    else
-                        iws.Add(kv.Key);
-                word_weights = string.Join(" ", wws.OrderBy(x => x));
-                ignored_words = string.Join(" ", iws.OrderBy(x => x));
+                return string.Join(" ", wws.OrderBy(x => x));
+            }
 
+            public string GetIgnoredWordsAsString()
+            {
+                List<string> iws = new List<string>();
+                foreach (var kv in this.word_weights)
+                    if (kv.Value < 0)
+                        iws.Add(kv.Key);
+                return string.Join(" ", iws.OrderBy(x => x));
+            }
+
+            public string GetSynonymsAsString()
+            {
                 List<string> ss = new List<string>();
                 foreach (var kv in this.synonyms)
                     ss.Add(kv.Key + ">" + kv.Value);
-                synonyms = string.Join(" ", ss.OrderBy(x => x));
+                return string.Join(" ", ss.OrderBy(x => x));
             }
 
-            public void SetWordWeightsFromString(string word_weights, string ignored_words)
+            public void SetWordWeightsFromString(string word_weights)
             {
-                this.word_weights.Clear();
-                for (Match m = Regex.Match(word_weights, @"(?'Word'[^\s>]+)\s*>\s*(?'Weight'[^\s>]+)", RegexOptions.Singleline | RegexOptions.IgnoreCase); m.Success; m = m.NextMatch())
-                    SetWordWeight(m.Groups["Word"].Value, double.Parse(m.Groups["Weight"].Value));
+                Dictionary<string, double> wws = new Dictionary<string, double>();
+                foreach (KeyValuePair<string, double> w2w in this.word_weights)
+                    if (w2w.Value < 0)
+                        wws[w2w.Key] = w2w.Value;
+                this.word_weights = wws;
 
+                for (Match m = Regex.Match(word_weights, @"(?'Word'[^\s>]+)\s*>\s*(?'Weight'[^\s>]+)", RegexOptions.Singleline | RegexOptions.IgnoreCase); m.Success; m = m.NextMatch())
+                {
+                    string word = m.Groups["Word"].Value;
+                    double weight = 0;
+                    if (this.word_weights.TryGetValue(word, out weight))
+                        if (weight < 1)
+                            continue;
+                    SetWordWeight(word, double.Parse(m.Groups["Weight"].Value));
+                }
+            }
+
+            public void SetIgnoredWordsFromString(string ignored_words)
+            {
+                Dictionary<string, double> wws = new Dictionary<string, double>();
+                foreach (KeyValuePair<string, double> w2w in this.word_weights)
+                    if (w2w.Value >= 0)
+                        wws[w2w.Key] = w2w.Value;
+                this.word_weights = wws;
+                
                 for (Match m = Regex.Match(ignored_words, @"(?'Word'[^\s]+)", RegexOptions.Singleline | RegexOptions.IgnoreCase); m.Success; m = m.NextMatch())
                     SetIgnoredWord(m.Groups["Word"].Value);
             }

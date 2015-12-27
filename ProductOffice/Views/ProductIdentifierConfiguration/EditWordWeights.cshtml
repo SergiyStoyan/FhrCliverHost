@@ -1,0 +1,19 @@
+﻿@{
+    ViewBag.Title = "Word Weights";
+}
+
+<h2>Word Weights</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    
+    <input type="hidden" value="@ViewBag.CompanyId" name="company_id" />
+  
+    <textarea name="word_weights" style="resize:both;overflow:auto;height:200px;width:100%;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing: border-box;">@ViewBag.WordWeights</textarea>
+
+    <p>
+        <input type="submit" value="Save" />
+    </p>
+}

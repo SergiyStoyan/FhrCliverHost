@@ -24,6 +24,7 @@ namespace Cliver.ProductIdentifier
             {
                 this.engine = engine;
                 {
+                    engine.sw4.Start();
                     Dictionary<string, double> word2category_score = new Dictionary<string, double>();
                     foreach (string word in product1.Words(Field.Category))
                     {
@@ -41,9 +42,11 @@ namespace Cliver.ProductIdentifier
                             * ((double)word2category_score.Count / product2.Words(Field.Category).Count)
                             * (1 - 0.3 * word2category_score.Count);
                     }
-                    CategoryScore = (engine.Configuration.AreCategoriesMapped(product1, product2) ? 1 : 0.5) * CategoryScore;
+                    CategoryScore = (engine.Configuration.DoCategoriesBelong2MappedOnes(product1, product2) ? 1 : 0.5) * CategoryScore;
+                    engine.sw4.Stop();
                 }
                 {
+                    engine.sw5.Start();
                     Dictionary<string, double> word2name_score = new Dictionary<string, double>();
                     foreach (string word in product1.Words(Field.Name))
                     {
@@ -53,6 +56,8 @@ namespace Cliver.ProductIdentifier
                             word2name_score[word] = w.Get(product1.DbProduct.CompanyId).Weight * w.Get(product2.DbProduct.CompanyId).Weight;
                         }
                     }
+                    engine.sw5.Stop();
+                    engine.sw6.Start();
                     MatchedWords[Field.Name] = word2name_score.Keys.ToList();
                     if (word2name_score.Count > 0)
                     {
@@ -61,6 +66,7 @@ namespace Cliver.ProductIdentifier
                             * ((double)word2name_score.Count / product2.Words(Field.Name).Count)
                             * (1 - 0.3 / word2name_score.Count);
                     }
+                    engine.sw6.Stop();
                 }
                 //    decimal p1 = product1.DbProduct.Price;
 
@@ -133,6 +139,7 @@ namespace Cliver.ProductIdentifier
 
         public ProductLink(Engine engine, Product[] product1s, Product[] product2s)
         {
+            engine.sw8.Start();
             this.Engine = engine;
             Product1s = product1s;
             Product2s = product2s;
@@ -145,6 +152,7 @@ namespace Cliver.ProductIdentifier
                     Score = -1.1;
                 else  //chains contain the same products so should be considered linked
                     Score = 1.1;
+                engine.sw8.Stop();
                 return;
             }
 
@@ -158,6 +166,8 @@ namespace Cliver.ProductIdentifier
             CategoryScore = (double)product1_id_product2_id_s2PairStatistics.Values.Select(x => x.CategoryScore).Sum() / product1_id_product2_id_s2PairStatistics.Count;
             NameScore = (double)product1_id_product2_id_s2PairStatistics.Values.Select(x => x.NameScore).Sum() / product1_id_product2_id_s2PairStatistics.Count;            
             Score = 0.6 * CategoryScore + 0.4 * NameScore;
+
+            engine.sw8.Stop();
         }
         readonly public Engine Engine;
 
@@ -166,21 +176,21 @@ namespace Cliver.ProductIdentifier
         /// </summary>
         /// <param name="product1"></param>
         /// <param name="product2"></param>
-        public ProductLink(Engine engine, Product product1, Product product2)
-        {
-            this.Engine = engine;
-            Product1s = new Product[] { product1 };
-            Product2s = new Product[] { product2 };
+        //public ProductLink(Engine engine, Product product1, Product product2)
+        //{
+        //    this.Engine = engine;
+        //    Product1s = new Product[] { product1 };
+        //    Product2s = new Product[] { product2 };
 
-            if (product1.DbProduct.Id != product2.DbProduct.Id)
-                Set(product1.DbProduct.Id, product2.DbProduct.Id, new PairStatistics(engine, product1, product2));
+        //    if (product1.DbProduct.Id != product2.DbProduct.Id)
+        //        Set(product1.DbProduct.Id, product2.DbProduct.Id, new PairStatistics(engine, product1, product2));
 
-            //word order
-            //word density
+        //    //word order
+        //    //word density
             
-            CategoryScore = (double)product1_id_product2_id_s2PairStatistics.Values.Select(x => x.CategoryScore).Sum() / product1_id_product2_id_s2PairStatistics.Count;
-            NameScore = (double)product1_id_product2_id_s2PairStatistics.Values.Select(x => x.NameScore).Sum() / product1_id_product2_id_s2PairStatistics.Count;
-            Score = 0.6 * CategoryScore + 0.4 * NameScore;
-        }
+        //    CategoryScore = (double)product1_id_product2_id_s2PairStatistics.Values.Select(x => x.CategoryScore).Sum() / product1_id_product2_id_s2PairStatistics.Count;
+        //    NameScore = (double)product1_id_product2_id_s2PairStatistics.Values.Select(x => x.NameScore).Sum() / product1_id_product2_id_s2PairStatistics.Count;
+        //    Score = 0.6 * CategoryScore + 0.4 * NameScore;
+        //}
     }
 }
