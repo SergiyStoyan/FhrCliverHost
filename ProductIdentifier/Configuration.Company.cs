@@ -38,6 +38,15 @@ namespace Cliver.ProductIdentifier
                     configuration.default_synonyms.Keys.ToList().ForEach(x => synonyms[x] = configuration.default_synonyms[x]);
                 }
 
+                DateTime t = Cliver.Bot.DbSettings.Get<DateTime>(configuration.engine.Dbc, Cliver.ProductIdentifier.SettingsKey.SCOPE, Cliver.ProductIdentifier.SettingsKey.COMPANY + company_id + Cliver.ProductIdentifier.SettingsKey.ANALYSIS_TIME);
+                if (t == null || t <= configuration.engine.Db.Products.Max(p => p.UpdateTime).Value)
+                {
+                    ClearBeforeDataAnalysis();
+                    foreach (string w in configuration.engine.Companies.Get(company_id).Words2ProductIds(Field.Name).Keys)
+                        DefineWordWeight(w);
+                    SaveAfterDataAnalysis();
+                }
+
                 ignored_words_regex = create_ignored_words_regex();
                 synonyms_regex = create_synonyms_regex();
             }

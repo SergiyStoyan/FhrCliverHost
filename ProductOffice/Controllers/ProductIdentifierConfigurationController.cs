@@ -36,7 +36,7 @@ namespace Cliver.ProductOffice.Controllers
         {
             DateTime t = Cliver.Bot.DbSettings.Get<DateTime>(Cliver.Bot.DbConnection.CreateFromNativeConnection(db.Database.Connection), Cliver.ProductIdentifier.SettingsKey.SCOPE, Cliver.ProductIdentifier.SettingsKey.TRAINING_TIME);
             if (t != default(DateTime))
-                ViewBag.SelfTrainingDate = t.ToShortDateString();
+                ViewBag.SelfTrainingDate = t.ToString("yyyy-MM-dd HH:mm:ss");
             else
                 ViewBag.SelfTrainingDate = "no training was done yet.";
             ViewBag.Companies = db.Companies;
@@ -60,9 +60,9 @@ namespace Cliver.ProductOffice.Controllers
                 DateTime t = Cliver.Bot.DbSettings.Get<DateTime>(dbc, Cliver.ProductIdentifier.SettingsKey.SCOPE, Cliver.ProductIdentifier.SettingsKey.COMPANY + (int)fs[0] + Cliver.ProductIdentifier.SettingsKey.ANALYSIS_TIME);
                 Array.Resize(ref fs, fs.Length + 1);
                 if (t != default(DateTime))
-                    fs[fs.Length - 1] = t.ToShortDateString();
+                    fs[fs.Length - 1] = t.ToString("yyyy-MM-dd HH:mm:ss");
                 else
-                    fs[fs.Length - 1] = "not done yet";
+                    fs[fs.Length - 1] = "no analysis was done yet";
                 cs[i] = fs;
             }
 
