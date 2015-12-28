@@ -23,7 +23,7 @@ namespace Cliver.ProductIdentifier
             try
             {
                 //Application.Run(MainForm.This);
-                Engine engine = new Engine();
+                Engine engine = new Engine(true);
                 List<ProductLink> ls = engine.CreateProductLinkList(new int[] { 52658 }, 3);
                 List<Product> ps = ls[0].Product1s.ToList();
                 ps.AddRange(ls[1].Product2s.ToList());

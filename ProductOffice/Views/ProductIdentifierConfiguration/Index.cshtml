@@ -76,25 +76,19 @@ Company related settings:
                 ignored_words: {
                     text: "Ignored Words",
                     onclick: function () {
-                        var e = table1.definition.show_row_editor("@Request.Path/EditIgnoredWords?id=" + table1.api().row('.selected').data()[0], "OK", function () {
-                            table1.api().draw(false);
-                        });
+                        table1.definition.show_row_editor("@Request.Path/EditIgnoredWords?id=" + table1.api().row('.selected').data()[0], "OK");
                     }
                 },
                 word_weights: {
                     text: "Word Weights",
                     onclick: function () {
-                        var e = table1.definition.show_row_editor("@Request.Path/EditWordWeights?id=" + table1.api().row('.selected').data()[0], "OK", function () {
-                            table1.api().draw(false);
-                        });
+                        table1.definition.show_row_editor("@Request.Path/EditWordWeights?id=" + table1.api().row('.selected').data()[0], "OK");
                     }
                 },
                 synonyms: {
                     text: "Synonyms",
                     onclick: function () {
-                        var e = table1.definition.show_row_editor("@Request.Path/EditSynonyms?id=" + table1.api().row('.selected').data()[0], "OK", function () {
-                            table1.api().draw(false);
-                        });
+                        table1.definition.show_row_editor("@Request.Path/EditSynonyms?id=" + table1.api().row('.selected').data()[0], "OK");
                     }
                 },
                 delete: false,

@@ -267,7 +267,7 @@ GROUP BY a.LinkId";
                 if (product1_ids == null)
                     return ipl;
                 if (ipl == null)
-                    ipl = new IdenticalProductList(controller, product1_ids, company2_id, new Cliver.ProductIdentifier.Engine());
+                    ipl = new IdenticalProductList(controller, product1_ids, company2_id, new Cliver.ProductIdentifier.Engine(true));
                 else if (!ipl.is_corresponding(controller, product1_ids, company2_id))
                     ipl = new IdenticalProductList(controller, product1_ids, company2_id, ipl.engine);
                 controller.Session[IdenticalProductList.SESSION_KEY] = ipl;
@@ -310,7 +310,7 @@ GROUP BY a.LinkId";
                 Cliver.ProductIdentifier.Engine engine;
                 IdenticalProductList ipl = get_from_session(controller, null, 0);
                 if (ipl == null)
-                    engine = new Cliver.ProductIdentifier.Engine();
+                    engine = new Cliver.ProductIdentifier.Engine(true);
                 else
                     engine = ipl.engine;
                 engine.SaveLink(product_ids);

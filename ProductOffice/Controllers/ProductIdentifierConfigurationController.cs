@@ -77,7 +77,7 @@ namespace Cliver.ProductOffice.Controllers
                 return new HttpStatusCodeResult(System.Net.HttpStatusCode.BadRequest);
             }
             ViewBag.CompanyId = id;
-            ProductIdentifier.Engine e = new ProductIdentifier.Engine();
+            ProductIdentifier.Engine e = new ProductIdentifier.Engine(false);
             ViewBag.Synonyms = e.Configuration.Get((int)id).GetSynonymsAsString();
             if (Request.IsAjaxRequest())
                 return PartialView();
@@ -88,7 +88,7 @@ namespace Cliver.ProductOffice.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult EditSynonyms(int company_id, string synonyms)
         {
-            ProductIdentifier.Engine e = new ProductIdentifier.Engine();
+            ProductIdentifier.Engine e = new ProductIdentifier.Engine(false);
             e.Configuration.Get(company_id).SetSynonymsFromString(synonyms);
             e.Configuration.Get(company_id).SaveSynonyms();
 
@@ -104,7 +104,7 @@ namespace Cliver.ProductOffice.Controllers
                 return new HttpStatusCodeResult(System.Net.HttpStatusCode.BadRequest);
             }
             ViewBag.CompanyId = id;
-            ProductIdentifier.Engine e = new ProductIdentifier.Engine();
+            ProductIdentifier.Engine e = new ProductIdentifier.Engine(false);
             ViewBag.IgnoredWords = e.Configuration.Get((int)id).GetIgnoredWordsAsString();
             if (Request.IsAjaxRequest())
                 return PartialView();
@@ -115,7 +115,7 @@ namespace Cliver.ProductOffice.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult EditIgnoredWords(int company_id, string ignored_words)
         {
-            ProductIdentifier.Engine e = new ProductIdentifier.Engine();
+            ProductIdentifier.Engine e = new ProductIdentifier.Engine(false);
             e.Configuration.Get(company_id).SetIgnoredWordsFromString(ignored_words);
             e.Configuration.Get(company_id).SaveWordWeights();
 
@@ -131,7 +131,7 @@ namespace Cliver.ProductOffice.Controllers
                 return new HttpStatusCodeResult(System.Net.HttpStatusCode.BadRequest);
             }
             ViewBag.CompanyId = id;
-            ProductIdentifier.Engine e = new ProductIdentifier.Engine();
+            ProductIdentifier.Engine e = new ProductIdentifier.Engine(false);
             ViewBag.WordWeights = e.Configuration.Get((int)id).GetWordWeightsAsString();
             if (Request.IsAjaxRequest())
                 return PartialView();
@@ -142,7 +142,7 @@ namespace Cliver.ProductOffice.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult EditWordWeights(int company_id, string synonyms, string word_weights, string ignored_words)
         {
-            ProductIdentifier.Engine e = new ProductIdentifier.Engine();
+            ProductIdentifier.Engine e = new ProductIdentifier.Engine(false);
             e.Configuration.Get(company_id).SetWordWeightsFromString(word_weights);
             e.Configuration.Get(company_id).SaveWordWeights();
 
@@ -196,7 +196,7 @@ CREATE TABLE [#ProductIdentifierConfig2] ([C1IdC2Id] NVARCHAR (100) NOT NULL" + 
             ViewBag.Company2Name = db.Companies.Where(c => c.Id == c2_i).Select(c => c.Name).FirstOrDefault();
 
             string mapped_categories;
-            ProductIdentifier.Engine e = new ProductIdentifier.Engine();
+            ProductIdentifier.Engine e = new ProductIdentifier.Engine(false);
             e.Configuration.GetMappedCategoriesAsString(c1_i, c2_i, out mapped_categories);
             ViewBag.MappedCategories = mapped_categories;
 
@@ -213,7 +213,7 @@ CREATE TABLE [#ProductIdentifierConfig2] ([C1IdC2Id] NVARCHAR (100) NOT NULL" + 
             int c1_i = int.Parse(m.Groups[1].Value);
             int c2_i = int.Parse(m.Groups[2].Value);
 
-            ProductIdentifier.Engine e = new ProductIdentifier.Engine();
+            ProductIdentifier.Engine e = new ProductIdentifier.Engine(false);
             e.Configuration.SaveMappedCategoriesFromString(c1_i, c2_i, mapped_categories);
 
             if (Request.IsAjaxRequest())
@@ -224,7 +224,7 @@ CREATE TABLE [#ProductIdentifierConfig2] ([C1IdC2Id] NVARCHAR (100) NOT NULL" + 
         [ValidateAntiForgeryToken]
         public ActionResult PerformSelfTraining()
         {
-            ProductIdentifier.Engine e = new ProductIdentifier.Engine();
+            ProductIdentifier.Engine e = new ProductIdentifier.Engine(false);
             e.PerformSelfTraining();
             ProductLinksController.IdenticalProductList.DestroyProductIdentifierEngineIfAny(Session);
 
@@ -236,7 +236,7 @@ CREATE TABLE [#ProductIdentifierConfig2] ([C1IdC2Id] NVARCHAR (100) NOT NULL" + 
         [ValidateAntiForgeryToken]
         public ActionResult PerformDataAnalysis(int company_id)
         {
-            ProductIdentifier.Engine e = new ProductIdentifier.Engine();
+            ProductIdentifier.Engine e = new ProductIdentifier.Engine(false);
             e.PerformDataAnalysis(company_id);
             ProductLinksController.IdenticalProductList.DestroyProductIdentifierEngineIfAny(Session);
 

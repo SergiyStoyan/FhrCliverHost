@@ -30,9 +30,10 @@ namespace Cliver.ProductIdentifier
     {
         public const int NO_COMPANY_DEPENDENT = -1;
 
-        public Configuration(Engine engine)
+        public Configuration(Engine engine, bool auto_data_analysing)
         {
             this.engine = engine;
+            this.auto_data_analysing = auto_data_analysing;
             
             //default_word_weights = default_word_weights.ToDictionary(x => x.Key.Trim().ToLower(), x => x.Value);
 
@@ -42,19 +43,31 @@ namespace Cliver.ProductIdentifier
             default_synonyms = default_synonyms.ToDictionary(x => x.Key.Trim().ToLower(), x => x.Value.Trim().ToLower());            
         }
         readonly Engine engine;
+        readonly bool auto_data_analysing;
 
         public Company Get(Product product)
         {
             return Get(product.DbProduct.CompanyId);
         }
 
-        public Company Get(int company_id = NO_COMPANY_DEPENDENT)
+        //public void Renew(int company_id)
+        //{
+
+        //}
+
+        public Company Get(int company_id)
         {
             Company c;
             if (!company_ids2Company.TryGetValue(company_id, out c))
             {
                 c = new Company(this, company_id);
                 company_ids2Company[company_id] = c;
+                if (auto_data_analysing && c.IsDataAnalysisRequired())
+                {
+                    engine.PerformDataAnalysis(company_id);
+                    c = new Company(this, company_id);
+                    company_ids2Company[company_id] = c;
+                }
             }
             return c;
         }
@@ -247,7 +260,7 @@ namespace Cliver.ProductIdentifier
             "the", "a", "an", "some","this","there","their","it",
             "and", "or",
             "so", "that", "then","only","currently","available","big","new","reasonable","advisable","more","much","as","such","with","other","each","not","during",
-            "of", "in", "on", "at", "by", "off","for",
+            "of", "in", "on", "at", "by", "off","for","all",
             "is", "are","be","was", "were",
             ".", ",", ";", "'", "\"", "!", "?", ":", "-",            
             "size", "inch", "inches", "cm","pixel","pixels",

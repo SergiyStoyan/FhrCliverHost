@@ -38,20 +38,17 @@ namespace Cliver.ProductIdentifier
                     configuration.default_synonyms.Keys.ToList().ForEach(x => synonyms[x] = configuration.default_synonyms[x]);
                 }
 
-                DateTime t = Cliver.Bot.DbSettings.Get<DateTime>(configuration.engine.Dbc, Cliver.ProductIdentifier.SettingsKey.SCOPE, Cliver.ProductIdentifier.SettingsKey.COMPANY + company_id + Cliver.ProductIdentifier.SettingsKey.ANALYSIS_TIME);
-                if (t == null || t <= configuration.engine.Db.Products.Max(p => p.UpdateTime).Value)
-                {
-                    ClearBeforeDataAnalysis();
-                    foreach (string w in configuration.engine.Companies.Get(company_id).Words2ProductIds(Field.Name).Keys)
-                        DefineWordWeight(w);
-                    SaveAfterDataAnalysis();
-                }
-
                 ignored_words_regex = create_ignored_words_regex();
                 synonyms_regex = create_synonyms_regex();
             }
             readonly int company_id;
             readonly Configuration configuration;
+
+            internal bool IsDataAnalysisRequired()
+            {
+                DateTime t = Cliver.Bot.DbSettings.Get<DateTime>(configuration.engine.Dbc, Cliver.ProductIdentifier.SettingsKey.SCOPE, Cliver.ProductIdentifier.SettingsKey.COMPANY + company_id + Cliver.ProductIdentifier.SettingsKey.ANALYSIS_TIME);
+                return t == null || t <= configuration.engine.Db.Products.Max(p => p.UpdateTime).Value;
+            }
 
             public void SaveWordWeights()
             {
@@ -74,21 +71,20 @@ namespace Cliver.ProductIdentifier
                     weight = 1;
 
                     Word w = configuration.engine.Words.Get(word);
+                    
+                    if (!Regex.IsMatch(word, @"\d"))
+                        weight *= .5;
+
                     //if (w.IsInDictionary)
-                    //    weight *= 0.3;
+                    //    weight *= 0.5;
 
                     Word.Company c = w.Get(company_id);
-                    weight *= .5 * (1 + c.ProductFrequency(Field.Category));
+                    weight *= (.1 + c.ProductFrequency(Field.Category)) / 1.1;
                     //weight *= (1 - c.WordDensity(Field.Category));
-                    weight *= .5 * (1 + c.ProductFrequency(Field.Name));
+                    weight *= (1 + c.ProductFrequency(Field.Name)) / 2;
                     //weight *= (1 - c.WordDensity(Field.Name));
-                    weight *= 0.5 * (2 - c.ProductFrequency(Field.Description));
-                    weight *= 0.5 * (2 - c.WordDensity(Field.Description));
-
-                    //if (Regex.IsMatch(word, @"\d"))
-                    //    weight *= .7;
-                    //else
-                    //    weight *= .1;
+                    weight *= (2 - c.ProductFrequency(Field.Description)) / 2;
+                    weight *= (2 - c.WordDensity(Field.Description)) / 2;
 
                     word_weights[word] = weight;
                 }

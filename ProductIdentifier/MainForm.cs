@@ -50,7 +50,7 @@ namespace Cliver.ProductIdentifier
             }
         }
 
-        Engine engine = new Engine();
+        Engine engine = new Engine(true);
 
         private void Compare_Click(object sender, EventArgs e)
         {

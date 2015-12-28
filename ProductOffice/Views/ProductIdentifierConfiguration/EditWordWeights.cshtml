@@ -10,10 +10,14 @@
     @Html.ValidationSummary(true)
     
     <input type="hidden" value="@ViewBag.CompanyId" name="company_id" />
-  
-    <textarea name="word_weights" style="resize:both;overflow:auto;height:200px;width:100%;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing: border-box;">@ViewBag.WordWeights</textarea>
+
+    <textarea id="word_weights" name="word_weights" style="resize:both;overflow:auto;height:400px;width:800px;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing: border-box;">@ViewBag.WordWeights</textarea>
 
     <p>
         <input type="submit" value="Save" />
     </p>
 }
+<script>
+    $('#word_weights').width($(window).width() - 100);
+    $('#word_weights').height($(window).height() - 200);
+</script>

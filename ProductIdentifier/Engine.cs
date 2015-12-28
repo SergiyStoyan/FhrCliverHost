@@ -15,11 +15,11 @@ namespace Cliver.ProductIdentifier
 {
     public class Engine
     {
-        public Engine()
+        public Engine(bool auto_data_analysing)
         {
             this.Db = Fhr.ProductOffice.Models.DbApi.Create();
             Dbc = Bot.DbConnection.Create(Fhr.ProductOffice.Models.DbApi.GetProviderConnectionString());
-            Configuration = new Configuration(this);
+            Configuration = new Configuration(this, auto_data_analysing);
             Companies = new Companies(this);
             Products = new Products(this);
             Words = new Words(this);
@@ -37,6 +37,20 @@ namespace Cliver.ProductIdentifier
             Fhr.ProductOffice.Models.Product p1 = Db.Products.Where(p => product1_ids.Contains(p.Id) && p.CompanyId == company2_id).FirstOrDefault();
             if (p1 != null)
                 throw new Exception("Product Id:" + p1.Id + " already belongs to company Id:" + p1.CompanyId + " " + p1.Company.Name + " so no more link can be found.");
+
+            //List<int> cis = (from x in Db.Products.Where(p => product1_ids.Contains(p.Id)) join y in Db.Products on x.LinkId equals y.LinkId select y.CompanyId).ToList();
+            //cis.Add(company2_id);
+            //HashSet<int> cis_ = new HashSet<int>(cis);
+            //foreach (int company_id in cis_)
+            //{
+            //    Configuration.Company c = Configuration.Get(company_id);
+            //    if (c.IsDataAnalysisRequired())
+            //    {
+            //        PerformDataAnalysis(company_id);
+            //        c = new Company(this, company_id);
+            //        company_ids2Company[company_id] = c;
+            //    }
+            //}
 
             Product[] product1s = (from x in product1_ids select Products.Get(x)).ToArray();
             List<ProductLink> pls;
