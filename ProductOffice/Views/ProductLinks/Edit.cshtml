@@ -333,10 +333,6 @@
                     }
                     $("#FilteredProductCount").html(data.CurrentProductLinksCount);
                     $("#ShownProductCount").html('from ' + FilteredProductStartIndex + ' to ' + (data.CurrentProductLinkRangeEndIndex + 1));
-                    //if (forward)
-                    //    show_message("End of list is reached.");
-                    //else
-                    //    show_message("Start of list is reached.");
                     if(forward){
                         if (data.CurrentProductLinkRangeEndIndex + 1 >= data.CurrentProductLinksCount) 
                             $('#Notification').html("End of list");

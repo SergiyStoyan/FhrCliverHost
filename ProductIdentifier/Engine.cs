@@ -43,6 +43,9 @@ namespace Cliver.ProductIdentifier
         {
             lock (this)
             {
+                if (product1_ids.Length < 1)
+                    throw new Exception("product1_ids is empty");
+
                 Fhr.ProductOffice.Models.Product p1 = Db.Products.Where(p => product1_ids.Contains(p.Id) && p.CompanyId == company2_id).FirstOrDefault();
                 if (p1 != null)
                     throw new Exception("Product Id:" + p1.Id + " already belongs to company Id:" + p1.CompanyId + " " + p1.Company.Name + " so no more link can be found.");
@@ -167,7 +170,7 @@ WHERE b.LinkId IS NULL"].GetSingleValue();
                 Product product1 = Products.Get(pi);
                 if (product1.DbProduct.LinkId == null || product1.DbProduct.LinkId < 0)
                     continue;
-                var p1_category_ps = Db.Products.Where(p => p.Category == product1.DbProduct.Category && p.Id != pi);
+                var p1_category_ps = Db.Products.Where(p => p.Category == product1.DbProduct.Category && p.Id != pi).ToList();
                 var p1_old_linked_ps = (from x in Db.Products where x.LinkId == product1.DbProduct.LinkId && !product_ids.Contains(x.Id) select x).ToList();
                 foreach (Fhr.ProductOffice.Models.Product p1_old_linked_p in p1_old_linked_ps)
                 {
@@ -178,7 +181,7 @@ WHERE b.LinkId IS NULL"].GetSingleValue();
             }
 
             for (int i = 0; i < product_ids.Length; i++)
-                for (int j = i + 1; i < product_ids.Length; i++)
+                for (int j = i + 1; j < product_ids.Length; j++)
                 {
                     Product p1 = Products.Get(product_ids[i]);
                     Product p2 = Products.Get(product_ids[j]);
