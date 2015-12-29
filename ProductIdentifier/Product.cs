@@ -24,7 +24,7 @@ namespace Cliver.ProductIdentifier
     {
         public readonly Fhr.ProductOffice.Models.Product DbProduct;
 
-        public string NormalizedText(Field field)
+        public string Normalized(Field field)
         {
             string t;
             if (!field2text.TryGetValue(field, out t))
@@ -32,27 +32,34 @@ namespace Cliver.ProductIdentifier
                 switch (field)
                 {
                     case Field.Name:
-                        t = DbProduct.Name;
+                        t = get_normalized(DbProduct.Name);
                         break;
                     case Field.Description:
-                        t = DbProduct.Description;
+                        t = get_normalized(DbProduct.Description);
+                        field2text[field] = t;
                         break;
                     case Field.Category:
-                        t = Regex.Replace(DbProduct.Category == null ? "" : DbProduct.Category, Regex.Escape(Fhr.ProductOffice.DataApi.Product.CATEGORY_SEPARATOR), " ", RegexOptions.Compiled | RegexOptions.Singleline);
+                        t = engine.Companies.Get(DbProduct.CompanyId).NormalizedCategory(DbProduct.Category);
+                        field2text[field] = t;
                         break;
                     default:
                         throw new Exception("untreated case");
                 }
-                t = Cliver.PrepareField.Html.GetDbField(t);
-                t = t.ToLower();
-                t = engine.Configuration.Get(DbProduct.CompanyId).ReplaceWithSynonyms(t);
-                t = engine.Configuration.Get(DbProduct.CompanyId).StripOfIgnoredWords(t);
-                t = Regex.Replace(t, @"\s\s+", " ", RegexOptions.Compiled | RegexOptions.Singleline);
-                field2text[field] = t.Trim();
             }
+            field2text[field] = t;
             return t;
         }
         readonly Dictionary<Field, string> field2text = new Dictionary<Field, string>();
+
+        internal string get_normalized(string text)
+        {
+            string t = Cliver.PrepareField.Html.GetDbField(text);
+            t = t.ToLower();
+            t = engine.Configuration.Get(DbProduct.CompanyId).ReplaceWithSynonyms(t);
+            t = engine.Configuration.Get(DbProduct.CompanyId).StripOfIgnoredWords(t);
+            t = Regex.Replace(t, @"\s\s+", " ", RegexOptions.Compiled | RegexOptions.Singleline);
+            return t.Trim();
+        }
 
         public Dictionary<string, int> Words2Count(Field field)
         {
@@ -60,7 +67,7 @@ namespace Cliver.ProductIdentifier
             if (!field2word2count.TryGetValue(field, out w2c))
             {
                 w2c = new Dictionary<string, int>();
-                foreach (Match m in Regex.Matches(NormalizedText(field), @"\w+|\d+[\:\.]\d+", RegexOptions.Singleline))
+                foreach (Match m in Regex.Matches(Normalized(field), @"\w+|\d+[\:\.]\d+", RegexOptions.Singleline))
                 {
                     string word = m.Value.Trim().ToLower();
                     //if(w != w.ToUpper())

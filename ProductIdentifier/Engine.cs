@@ -22,7 +22,7 @@ namespace Cliver.ProductIdentifier
             Configuration = new Configuration(this, auto_data_analysing);
             Companies = new Companies(this);
             Products = new Products(this);
-            Words = new Words(this);
+            //Words = new Words(this);
         }
 
         public readonly Configuration Configuration;
@@ -33,7 +33,7 @@ namespace Cliver.ProductIdentifier
         //Configuration Configuration_;
         internal readonly Companies Companies;
         internal readonly Products Products;
-        internal readonly Words Words;
+        //internal readonly Words Words;
         internal readonly Cliver.Fhr.ProductOffice.Models.DbApi Db;
         internal readonly Cliver.Bot.DbConnection Dbc;
 

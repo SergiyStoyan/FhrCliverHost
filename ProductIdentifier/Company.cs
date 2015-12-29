@@ -13,9 +13,27 @@ using System.Reflection;
 
 namespace Cliver.ProductIdentifier
 {
-    internal class Company
+    internal partial class Company
     {
         internal readonly Fhr.ProductOffice.Models.Company DbCompany;
+                        
+        internal string NormalizedCategory(string category)
+        {
+            string nc;
+            if (!categorys2normalized_category.TryGetValue(category, out nc))
+            {
+                //nc = Regex.Replace(category == null ? "" : category, Regex.Escape(Fhr.ProductOffice.DataApi.Product.CATEGORY_SEPARATOR), " ", RegexOptions.Compiled | RegexOptions.Singleline);
+                nc = Cliver.PrepareField.Html.GetDbField(nc);
+                nc = nc.ToLower();
+                //t = engine.Configuration.Get(DbProduct.CompanyId).ReplaceWithSynonyms(t);
+                //t = engine.Configuration.Get(DbProduct.CompanyId).StripOfIgnoredWords(t);
+                nc = Regex.Replace(nc, @"\s\s+", " ", RegexOptions.Compiled | RegexOptions.Singleline);
+                nc =  nc.Trim();                
+                categorys2normalized_category[category] = nc;
+            }
+            return nc;
+        }
+        Dictionary<string, string> categorys2normalized_category = new Dictionary<string, string>();
         
         internal int WordNumber(Field field)
         {

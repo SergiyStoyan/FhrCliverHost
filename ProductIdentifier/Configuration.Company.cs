@@ -69,22 +69,20 @@ namespace Cliver.ProductIdentifier
                 if (!word_weights.TryGetValue(word, out weight))
                 {
                     weight = 1;
-
-                    Word w = configuration.engine.Words.Get(word);
-                    
+                                        
                     if (!Regex.IsMatch(word, @"\d"))
                         weight *= .5;
 
                     //if (w.IsInDictionary)
                     //    weight *= 0.5;
-
-                    Word.Company c = w.Get(company_id);
-                    weight *= (.1 + c.ProductFrequency(Field.Category)) / 1.1;
+                    
+                    ProductIdentifier.Company c = configuration.engine.Companies.Get(company_id);
+                    weight *= (.1 + c.WordProductFrequency(Field.Category, word)) / 1.1;
                     //weight *= (1 - c.WordDensity(Field.Category));
-                    weight *= (1 + c.ProductFrequency(Field.Name)) / 2;
+                    weight *= (1 + c.WordProductFrequency(Field.Name, word)) / 2;
                     //weight *= (1 - c.WordDensity(Field.Name));
-                    weight *= (2 - c.ProductFrequency(Field.Description)) / 2;
-                    weight *= (2 - c.WordDensity(Field.Description)) / 2;
+                    weight *= (2 - c.WordProductFrequency(Field.Description, word)) / 2;
+                    weight *= (2 - c.WordDensity(Field.Description, word)) / 2;
 
                     word_weights[word] = weight;
                 }

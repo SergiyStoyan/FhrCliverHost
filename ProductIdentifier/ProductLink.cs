@@ -16,7 +16,7 @@ namespace Cliver.ProductIdentifier
     {
         public class PairStatistics
         {
-            public Dictionary<Field, List<string>> MatchedWords = new Dictionary<Field, List<string>>();
+            //public Dictionary<Field, List<string>> MatchedWords = new Dictionary<Field, List<string>>();
             public double CategoryScore = 0;
             public double NameScore = 0;
 
@@ -29,12 +29,9 @@ namespace Cliver.ProductIdentifier
                     foreach (string word in product1.Words(Field.Category))
                     {
                         if (product2.Words2Count(Field.Category).ContainsKey(word))
-                        {
-                            Word w = engine.Words.Get(word);
-                            word2category_score[word] = w.Get(product1.DbProduct.CompanyId).Weight * w.Get(product2.DbProduct.CompanyId).Weight;
-                        }
+                            word2category_score[word] = engine.Configuration.Get(product1.DbProduct.CompanyId).GetWordWeight(word) * engine.Configuration.Get(product2.DbProduct.CompanyId).GetWordWeight(word);
                     }
-                    MatchedWords[Field.Category] = word2category_score.Keys.ToList();
+                    //MatchedWords[Field.Category] = word2category_score.Keys.ToList();
                     if (word2category_score.Count > 0)
                     {
                         CategoryScore = ((double)word2category_score.Values.Sum() / word2category_score.Count)
@@ -51,13 +48,10 @@ namespace Cliver.ProductIdentifier
                     foreach (string word in product1.Words(Field.Name))
                     {
                         if (product2.Words2Count(Field.Name).ContainsKey(word))
-                        {
-                            Word w = engine.Words.Get(word);
-                            word2name_score[word] = w.Get(product1.DbProduct.CompanyId).Weight * w.Get(product2.DbProduct.CompanyId).Weight;
-                        }
+                            word2name_score[word] = engine.Configuration.Get(product1.DbProduct.CompanyId).GetWordWeight(word) * engine.Configuration.Get(product2.DbProduct.CompanyId).GetWordWeight(word);
                     }
                     engine.sw5.Stop();
-                    MatchedWords[Field.Name] = word2name_score.Keys.ToList();
+                    //MatchedWords[Field.Name] = word2name_score.Keys.ToList();
                     if (word2name_score.Count > 0)
                     {
                         NameScore = ((double)word2name_score.Values.Sum() / word2name_score.Count)

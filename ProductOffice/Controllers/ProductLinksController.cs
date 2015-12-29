@@ -243,7 +243,7 @@ GROUP BY a.LinkId";
                     bool match = true;
                     foreach (Regex r in rs)
                     {
-                        if (!r.IsMatch(p.NormalizedText(ProductIdentifier.Field.Name)))
+                        if (!r.IsMatch(p.Normalized(ProductIdentifier.Field.Name)))
                         {
                             match = false;
                             break;

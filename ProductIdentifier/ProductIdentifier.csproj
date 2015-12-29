@@ -103,6 +103,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="BaseForm.Designer.cs" />
+    <Compile Include="Company.word.cs" />
     <Compile Include="Configuration.Company.cs" />
     <Compile Include="HelpForm.cs">
       <SubType>Form</SubType>
@@ -140,7 +141,6 @@
     <Compile Include="SynonymForm.Designer.cs">
       <DependentUpon>SynonymForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Word.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
