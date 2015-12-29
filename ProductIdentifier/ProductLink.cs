@@ -24,19 +24,19 @@ namespace Cliver.ProductIdentifier
             {
                 this.engine = engine;
                 {
-                    engine.sw4.Start();
+                    //engine.sw4.Start();
                     CategoryScore = engine.CompanyPairs.GetCategoryComparisonScore(product1, product2);
-                    engine.sw4.Stop();
+                    //engine.sw4.Stop();
                 }
                 {
-                    engine.sw5.Start();
+                    //engine.sw5.Start();
                     Dictionary<string, double> word2name_score = new Dictionary<string, double>();
                     foreach (string word in product1.Words(Field.Name))
                     {
                         if (product2.Words2Count(Field.Name).ContainsKey(word))
                             word2name_score[word] = engine.Companies.Get(product1.DbProduct.CompanyId).WordWeight(Field.Name, word) * engine.Companies.Get(product2.DbProduct.CompanyId).WordWeight(Field.Name, word);
                     }
-                    engine.sw5.Stop();
+                    //engine.sw5.Stop();
                     //MatchedWords[Field.Name] = word2name_score.Keys.ToList();
                     if (word2name_score.Count > 0)
                     {
@@ -117,24 +117,24 @@ namespace Cliver.ProductIdentifier
 
         public ProductLink(Engine engine, Product[] product1s, Product[] product2s)
         {
-            engine.sw8.Start();
+           // engine.sw8.Start();
             this.Engine = engine;
             Product1s = product1s;
             Product2s = product2s;
 
-            engine.sw6.Start();
+           // engine.sw6.Start();
             MutualCompanyIds = (from p1 in product1s join p2 in product2s on p1.DbProduct.CompanyId equals p2.DbProduct.CompanyId where p1 != null && p2 != null select p1.DbProduct.CompanyId).ToList();
-            engine.sw6.Stop();
+           // engine.sw6.Stop();
             if (MutualCompanyIds.Count > 0)
             {
-                engine.sw7.Start();
+              //  engine.sw7.Start();
                 MutualProductIds = (from p1 in product1s join p2 in product2s on p1.DbProduct.Id equals p2.DbProduct.Id where p1 != null && p2 != null select p1.DbProduct.Id).ToList();
                 if (MutualProductIds.Count < MutualCompanyIds.Count)//chains contain different products of the same company so cannot be linked
                     Score = -1.1;
                 else  //chains contain the same products so should be considered linked
                     Score = 1.1;
-                engine.sw7.Stop();
-                engine.sw8.Stop();
+               // engine.sw7.Stop();
+               // engine.sw8.Stop();
                 return;
             }
 
@@ -149,7 +149,7 @@ namespace Cliver.ProductIdentifier
             NameScore = (double)product1_id_product2_id_s2PairStatistics.Values.Select(x => x.NameScore).Sum() / product1_id_product2_id_s2PairStatistics.Count;
             Score = 0.6 * CategoryScore + 0.4 * NameScore;
 
-            engine.sw8.Stop();
+           // engine.sw8.Stop();
         }
         //public ProductLink(Engine engine, Product[] product1s, Product[] product2s)
         //{

@@ -107,6 +107,7 @@
     <Compile Include="Company.word.cs" />
     <Compile Include="CompanyPairs.cs" />
     <Compile Include="Company.settings.cs" />
+    <Compile Include="Engine.training.cs" />
     <Compile Include="HelpForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -120,6 +121,7 @@
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Engine.settings.cs" />
+    <Compile Include="Products.cs" />
     <Compile Include="Product.cs" />
     <Compile Include="ProductControl.cs">
       <SubType>UserControl</SubType>

@@ -85,36 +85,36 @@ namespace Cliver.ProductIdentifier
                 //}
                 //else
                 //{
-                sw1.Start();
+               // sw1.Start();
                 List<int> link_ids = (from p in Companies.Get(company2_id).DbCompany.Products where p.LinkId > 0 group p by p.LinkId into g select (int)g.Key).ToList();
                 pls = (from x in link_ids select new ProductLink(this, product1s, Products.GetLinked(x))).ToList();
-                sw2.Start();
+               // sw2.Start();
                 List<int> free_product_ids = (from p in Companies.Get(company2_id).DbCompany.Products where p.LinkId == null || p.LinkId <= 0 select p.Id).ToList();
-                sw2.Stop();
-                sw3.Start();
+               // sw2.Stop();
+              //  sw3.Start();
                 List<ProductLink> pls2 = (from x in free_product_ids select new ProductLink(this, product1s, new Product[] { Products.Get(x) })).ToList();
-                sw3.Stop();
+               // sw3.Stop();
                 pls.AddRange(pls2);
                 //}
                 pls = pls.OrderByDescending(x => x.Score).OrderByDescending(x => x.SecondaryScore).ToList();
-                sw1.Stop();
-                string s = "1: " + sw1.ElapsedMilliseconds + ", 2: " + sw2.ElapsedMilliseconds + ", 3: " + sw3.ElapsedMilliseconds + ", 4: " + sw4.ElapsedMilliseconds
-                    + ", 5: " + sw5.ElapsedMilliseconds + ", 6: " + sw6.ElapsedMilliseconds + ", 7: " + sw7.ElapsedMilliseconds
-                    + ", 8: " + sw8.ElapsedMilliseconds + ", 9: " + sw9.ElapsedMilliseconds + ", 10: " + sw10.ElapsedMilliseconds;
+              //  sw1.Stop();
+                //string s = "1: " + sw1.ElapsedMilliseconds + ", 2: " + sw2.ElapsedMilliseconds + ", 3: " + sw3.ElapsedMilliseconds + ", 4: " + sw4.ElapsedMilliseconds
+                //    + ", 5: " + sw5.ElapsedMilliseconds + ", 6: " + sw6.ElapsedMilliseconds + ", 7: " + sw7.ElapsedMilliseconds
+                //    + ", 8: " + sw8.ElapsedMilliseconds + ", 9: " + sw9.ElapsedMilliseconds + ", 10: " + sw10.ElapsedMilliseconds;
                 return pls;
             }
         }
 
-        public System.Diagnostics.Stopwatch sw1 = new System.Diagnostics.Stopwatch();
-        public System.Diagnostics.Stopwatch sw2 = new System.Diagnostics.Stopwatch();
-        public System.Diagnostics.Stopwatch sw3 = new System.Diagnostics.Stopwatch();
-        public System.Diagnostics.Stopwatch sw4 = new System.Diagnostics.Stopwatch();
-        public System.Diagnostics.Stopwatch sw5 = new System.Diagnostics.Stopwatch();
-        public System.Diagnostics.Stopwatch sw6 = new System.Diagnostics.Stopwatch();
-        public System.Diagnostics.Stopwatch sw7 = new System.Diagnostics.Stopwatch();
-        public System.Diagnostics.Stopwatch sw8 = new System.Diagnostics.Stopwatch();
-        public System.Diagnostics.Stopwatch sw9 = new System.Diagnostics.Stopwatch();
-        public System.Diagnostics.Stopwatch sw10 = new System.Diagnostics.Stopwatch();
+        //public System.Diagnostics.Stopwatch sw1 = new System.Diagnostics.Stopwatch();
+        //public System.Diagnostics.Stopwatch sw2 = new System.Diagnostics.Stopwatch();
+        //public System.Diagnostics.Stopwatch sw3 = new System.Diagnostics.Stopwatch();
+        //public System.Diagnostics.Stopwatch sw4 = new System.Diagnostics.Stopwatch();
+        //public System.Diagnostics.Stopwatch sw5 = new System.Diagnostics.Stopwatch();
+        //public System.Diagnostics.Stopwatch sw6 = new System.Diagnostics.Stopwatch();
+        //public System.Diagnostics.Stopwatch sw7 = new System.Diagnostics.Stopwatch();
+        //public System.Diagnostics.Stopwatch sw8 = new System.Diagnostics.Stopwatch();
+        //public System.Diagnostics.Stopwatch sw9 = new System.Diagnostics.Stopwatch();
+        //public System.Diagnostics.Stopwatch sw10 = new System.Diagnostics.Stopwatch();
 
         /// <summary>
         /// Valid LinkId is > 0

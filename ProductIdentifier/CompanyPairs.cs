@@ -119,10 +119,10 @@ namespace Cliver.ProductIdentifier
                 return false;
             HashSet<string> mapped_category2s;
             foreach(string c1 in category1s_to_mapped_category2s.Keys)
-                if (is_child_of_category(product1.Normalized(Field.Category), c1))
+                if (is_child_of_category(product1.DbProduct.Category, c1))
                   if (category1s_to_mapped_category2s.TryGetValue(c1, out mapped_category2s))
                       foreach(string c2 in mapped_category2s)
-                          if (is_child_of_category(product2.Normalized(Field.Category), c2))
+                          if (is_child_of_category(product2.DbProduct.Category, c2))
                               return true;
             return false;
         }
@@ -142,7 +142,7 @@ namespace Cliver.ProductIdentifier
                 company1_id_company2_id_to_category1_category2_to_score[company1_id_company2_id] = category1_category2_to_score;
             }
             double score;
-            string category1_category2 = product1.Normalized(Field.Category) + "~" + product2.Normalized(Field.Category);
+            string category1_category2 = product1.DbProduct.Category + "=" + product2.DbProduct.Category;
             if (!category1_category2_to_score.TryGetValue(category1_category2, out score))
             {
                 score = get_category_comparison_score(product1, product2);
@@ -169,7 +169,7 @@ namespace Cliver.ProductIdentifier
                     * ((double)word2category_score.Count / product2.Words(Field.Category).Count)
                     * (1 - 0.3 * word2category_score.Count);
             }
-            score = (do_categories_belong2mapped_ones(product1, product2) ? 1 : 0.5) * score;
+            score = (do_categories_belong2mapped_ones(product1, product2) ? 1 : 0.3) * score;
             return score;
         }
 

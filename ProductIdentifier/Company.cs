@@ -22,7 +22,7 @@ namespace Cliver.ProductIdentifier
             string t;
             if (!categorys2normalized_category.TryGetValue(category, out t))
             {
-                //nc = Regex.Replace(category == null ? "" : category, Regex.Escape(Fhr.ProductOffice.DataApi.Product.CATEGORY_SEPARATOR), " ", RegexOptions.Compiled | RegexOptions.Singleline);
+                t = Regex.Replace(category == null ? "" : category, Regex.Escape(Fhr.ProductOffice.DataApi.Product.CATEGORY_SEPARATOR), " ", RegexOptions.Compiled | RegexOptions.Singleline);
                 t = Cliver.PrepareField.Html.GetDbField(t);
                 t = t.ToLower();
                 t = ReplaceWithSynonyms(t);

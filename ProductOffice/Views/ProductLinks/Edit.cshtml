@@ -270,7 +270,7 @@
     <div id="accumulate_pages_navigation" style="display:inline;">
         <b><a class="_to_next_product" title="Add products with lower match score" href="#" onclick="javascript: get_next_product2_range(true);">Get</a></b>
     </div>   
-     Filtered products: <span id="FilteredProductCount"></span>   
+     Filtered products: <span id="FilteredProductCount"></span>
      Shown products: <span id="ShownProductCount"></span>
     <hr />
 
@@ -285,6 +285,7 @@
 </style>
 
     <script>
+
         $("#ProductMatchesList table").on('click', 'tr', function () {
             var row = $(this);
             row.parent().find('tr.ProductMatch_selected').removeClass('ProductMatch_selected');
@@ -314,7 +315,8 @@
                 function (data) {
                     if(data.Is_CurrentProductLinks_Changed){
                         $('#ProductMatchesList table').empty();
-                        $("#ShownProductCount").html(0);
+                        FilteredProductIndex1 = 0;
+                        FilteredProductIndex2 = 0;
                     }
                     var product2_matches = data.Product2s;
                     $("#FilteredProductCount").html(data.Product2sCount);
@@ -325,7 +327,8 @@
                             show_message("Start of list is reached.");
                         return;
                     }
-                    $("#ShownProductCount").html(product2_matches.length + Number($("#ShownProductCount").html()));
+                    FilteredProductIndex2 += product2_matches.length;
+                    $("#ShownProductCount").html('from ' + FilteredProductIndex1 + ' to ' + FilteredProductIndex2);
                     for(var i in product2_matches){                    
                         for(var j in product2_matches[i]){
                             var product = product2_matches[i][j];
@@ -353,6 +356,8 @@
                 }
             );
         }
+        var FilteredProductIndex1 = 0;
+        var FilteredProductIndex2 = 0;
         var ProductIds2LinkedProducts = Array();
     </script>
 
