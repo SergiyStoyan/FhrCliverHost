@@ -25,21 +25,7 @@ namespace Cliver.ProductIdentifier
                 this.engine = engine;
                 {
                     engine.sw4.Start();
-                    Dictionary<string, double> word2category_score = new Dictionary<string, double>();
-                    foreach (string word in product1.Words(Field.Category))
-                    {
-                        if (product2.Words2Count(Field.Category).ContainsKey(word))
-                            word2category_score[word] = engine.Companies.Get(product1.DbProduct.CompanyId).WordWeight(Field.Category, word) * engine.Companies.Get(product2.DbProduct.CompanyId).WordWeight(Field.Category, word);
-                    }
-                    //MatchedWords[Field.Category] = word2category_score.Keys.ToList();
-                    if (word2category_score.Count > 0)
-                    {
-                        CategoryScore = ((double)word2category_score.Values.Sum() / word2category_score.Count)
-                            * ((double)word2category_score.Count / product1.Words(Field.Category).Count)
-                            * ((double)word2category_score.Count / product2.Words(Field.Category).Count)
-                            * (1 - 0.3 * word2category_score.Count);
-                    }
-                    CategoryScore = (engine.CompanyPairs.DoCategoriesBelong2MappedOnes(product1, product2) ? 1 : 0.5) * CategoryScore;
+                    CategoryScore = engine.CompanyPairs.GetCategoryComparisonScore(product1, product2);
                     engine.sw4.Stop();
                 }
                 {

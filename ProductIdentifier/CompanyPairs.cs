@@ -98,7 +98,7 @@ namespace Cliver.ProductIdentifier
 
         Dictionary<string, Dictionary<string, HashSet<string>>> company1_id_company2_id_to_category1s_to_mapped_category2s = new Dictionary<string, Dictionary<string, HashSet<string>>>();
 
-        public bool DoCategoriesBelong2MappedOnes(Product product1, Product product2)
+        bool do_categories_belong2mapped_ones(Product product1, Product product2)
         {
             Dictionary<string, HashSet<string>> category1s_to_mapped_category2s;
             string company1_id_company2_id = get_company_pair_key(ref product1, ref product2);
@@ -165,11 +165,11 @@ namespace Cliver.ProductIdentifier
             if (word2category_score.Count > 0)
             {
                 score = ((double)word2category_score.Values.Sum() / word2category_score.Count)
-                    * ((double)word2category_score.Count / product1.Words2Count(Field.Category).Count)
-                    * ((double)word2category_score.Count / product2.Words2Count(Field.Category).Count)
+                    * ((double)word2category_score.Count / product1.Words(Field.Category).Count)
+                    * ((double)word2category_score.Count / product2.Words(Field.Category).Count)
                     * (1 - 0.3 * word2category_score.Count);
             }
-            score = (DoCategoriesBelong2MappedOnes(product1, product2) ? 1 : 0.5) * score;
+            score = (do_categories_belong2mapped_ones(product1, product2) ? 1 : 0.5) * score;
             return score;
         }
 
