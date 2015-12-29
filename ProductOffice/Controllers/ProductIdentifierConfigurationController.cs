@@ -40,7 +40,7 @@ namespace Cliver.ProductOffice.Controllers
             else
                 ViewBag.SelfTrainingDate = "no training was done yet.";
             ViewBag.Companies = db.Companies;
-            ViewBag.DefaultSettingsId = ProductIdentifier.Configuration.NO_COMPANY_DEPENDENT;
+            ViewBag.DefaultSettingsId = ProductIdentifier.Engine.NO_COMPANY_ID;
             return View();
         }
 
@@ -78,7 +78,7 @@ namespace Cliver.ProductOffice.Controllers
             }
             ViewBag.CompanyId = id;
             ProductIdentifier.Engine e = new ProductIdentifier.Engine(false);
-            ViewBag.Synonyms = e.Configuration.Get((int)id).GetSynonymsAsString();
+            ViewBag.Synonyms = e.Companies.Get((int)id).GetSynonymsAsString();
             if (Request.IsAjaxRequest())
                 return PartialView();
             return View();
@@ -89,8 +89,8 @@ namespace Cliver.ProductOffice.Controllers
         public ActionResult EditSynonyms(int company_id, string synonyms)
         {
             ProductIdentifier.Engine e = new ProductIdentifier.Engine(false);
-            e.Configuration.Get(company_id).SetSynonymsFromString(synonyms);
-            e.Configuration.Get(company_id).SaveSynonyms();
+            e.Companies.Get(company_id).SetSynonymsFromString(synonyms);
+            e.Companies.Get(company_id).SaveSynonyms();
 
             if (Request.IsAjaxRequest())
                 return Content(null);
@@ -105,7 +105,7 @@ namespace Cliver.ProductOffice.Controllers
             }
             ViewBag.CompanyId = id;
             ProductIdentifier.Engine e = new ProductIdentifier.Engine(false);
-            ViewBag.IgnoredWords = e.Configuration.Get((int)id).GetIgnoredWordsAsString();
+            ViewBag.IgnoredWords = e.Companies.Get((int)id).GetIgnoredWordsAsString();
             if (Request.IsAjaxRequest())
                 return PartialView();
             return View();
@@ -116,8 +116,8 @@ namespace Cliver.ProductOffice.Controllers
         public ActionResult EditIgnoredWords(int company_id, string ignored_words)
         {
             ProductIdentifier.Engine e = new ProductIdentifier.Engine(false);
-            e.Configuration.Get(company_id).SetIgnoredWordsFromString(ignored_words);
-            e.Configuration.Get(company_id).SaveWordWeights();
+            e.Companies.Get(company_id).SetIgnoredWordsFromString(ignored_words);
+            e.Companies.Get(company_id).SaveWordWeights();
 
             if (Request.IsAjaxRequest())
                 return Content(null);
@@ -132,7 +132,7 @@ namespace Cliver.ProductOffice.Controllers
             }
             ViewBag.CompanyId = id;
             ProductIdentifier.Engine e = new ProductIdentifier.Engine(false);
-            ViewBag.WordWeights = e.Configuration.Get((int)id).GetWordWeightsAsString();
+            ViewBag.WordWeights = e.Companies.Get((int)id).GetWordWeightsAsString();
             if (Request.IsAjaxRequest())
                 return PartialView();
             return View();
@@ -143,8 +143,8 @@ namespace Cliver.ProductOffice.Controllers
         public ActionResult EditWordWeights(int company_id, string synonyms, string word_weights, string ignored_words)
         {
             ProductIdentifier.Engine e = new ProductIdentifier.Engine(false);
-            e.Configuration.Get(company_id).SetWordWeightsFromString(word_weights);
-            e.Configuration.Get(company_id).SaveWordWeights();
+            e.Companies.Get(company_id).SetWordWeightsFromString(word_weights);
+            e.Companies.Get(company_id).SaveWordWeights();
 
             if (Request.IsAjaxRequest())
                 return Content(null);
@@ -197,7 +197,7 @@ CREATE TABLE [#ProductIdentifierConfig2] ([C1IdC2Id] NVARCHAR (100) NOT NULL" + 
 
             string mapped_categories;
             ProductIdentifier.Engine e = new ProductIdentifier.Engine(false);
-            e.Configuration.GetMappedCategoriesAsString(c1_i, c2_i, out mapped_categories);
+            e.CompanyPairs.GetMappedCategoriesAsString(c1_i, c2_i, out mapped_categories);
             ViewBag.MappedCategories = mapped_categories;
 
             if (Request.IsAjaxRequest())
@@ -214,7 +214,7 @@ CREATE TABLE [#ProductIdentifierConfig2] ([C1IdC2Id] NVARCHAR (100) NOT NULL" + 
             int c2_i = int.Parse(m.Groups[2].Value);
 
             ProductIdentifier.Engine e = new ProductIdentifier.Engine(false);
-            e.Configuration.SaveMappedCategoriesFromString(c1_i, c2_i, mapped_categories);
+            e.CompanyPairs.SaveMappedCategoriesFromString(c1_i, c2_i, mapped_categories);
 
             if (Request.IsAjaxRequest())
                 return Content(null);

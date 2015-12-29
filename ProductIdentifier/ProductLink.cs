@@ -29,7 +29,7 @@ namespace Cliver.ProductIdentifier
                     foreach (string word in product1.Words(Field.Category))
                     {
                         if (product2.Words2Count(Field.Category).ContainsKey(word))
-                            word2category_score[word] = engine.Configuration.Get(product1.DbProduct.CompanyId).GetWordWeight(word) * engine.Configuration.Get(product2.DbProduct.CompanyId).GetWordWeight(word);
+                            word2category_score[word] = engine.Companies.Get(product1.DbProduct.CompanyId).WordWeight(Field.Category, word) * engine.Companies.Get(product2.DbProduct.CompanyId).WordWeight(Field.Category, word);
                     }
                     //MatchedWords[Field.Category] = word2category_score.Keys.ToList();
                     if (word2category_score.Count > 0)
@@ -39,7 +39,7 @@ namespace Cliver.ProductIdentifier
                             * ((double)word2category_score.Count / product2.Words(Field.Category).Count)
                             * (1 - 0.3 * word2category_score.Count);
                     }
-                    CategoryScore = (engine.Configuration.DoCategoriesBelong2MappedOnes(product1, product2) ? 1 : 0.5) * CategoryScore;
+                    CategoryScore = (engine.CompanyPairs.DoCategoriesBelong2MappedOnes(product1, product2) ? 1 : 0.5) * CategoryScore;
                     engine.sw4.Stop();
                 }
                 {
@@ -48,7 +48,7 @@ namespace Cliver.ProductIdentifier
                     foreach (string word in product1.Words(Field.Name))
                     {
                         if (product2.Words2Count(Field.Name).ContainsKey(word))
-                            word2name_score[word] = engine.Configuration.Get(product1.DbProduct.CompanyId).GetWordWeight(word) * engine.Configuration.Get(product2.DbProduct.CompanyId).GetWordWeight(word);
+                            word2name_score[word] = engine.Companies.Get(product1.DbProduct.CompanyId).WordWeight(Field.Name, word) * engine.Companies.Get(product2.DbProduct.CompanyId).WordWeight(Field.Name, word);
                     }
                     engine.sw5.Stop();
                     //MatchedWords[Field.Name] = word2name_score.Keys.ToList();

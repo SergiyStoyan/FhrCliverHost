@@ -13,11 +13,11 @@ using System.Reflection;
 
 namespace Cliver.ProductIdentifier
 {
-    internal partial class Company
+    public partial class Company
     {
         public double WordWeight(Field field, string word)
         {
-            return engine.Configuration.Get(DbCompany.Id).GetWordWeight(word);
+            return GetWordWeight(word);
         }
 
         internal int WordCount(Field field, string word)

@@ -13,27 +13,55 @@ using System.Reflection;
 
 namespace Cliver.ProductIdentifier
 {
-    internal partial class Company
+    public partial class Company
     {
         internal readonly Fhr.ProductOffice.Models.Company DbCompany;
-                        
+        
         internal string NormalizedCategory(string category)
         {
-            string nc;
-            if (!categorys2normalized_category.TryGetValue(category, out nc))
+            string t;
+            if (!categorys2normalized_category.TryGetValue(category, out t))
             {
                 //nc = Regex.Replace(category == null ? "" : category, Regex.Escape(Fhr.ProductOffice.DataApi.Product.CATEGORY_SEPARATOR), " ", RegexOptions.Compiled | RegexOptions.Singleline);
-                nc = Cliver.PrepareField.Html.GetDbField(nc);
-                nc = nc.ToLower();
-                //t = engine.Configuration.Get(DbProduct.CompanyId).ReplaceWithSynonyms(t);
-                //t = engine.Configuration.Get(DbProduct.CompanyId).StripOfIgnoredWords(t);
-                nc = Regex.Replace(nc, @"\s\s+", " ", RegexOptions.Compiled | RegexOptions.Singleline);
-                nc =  nc.Trim();                
-                categorys2normalized_category[category] = nc;
+                t = Cliver.PrepareField.Html.GetDbField(t);
+                t = t.ToLower();
+                t = ReplaceWithSynonyms(t);
+                t = StripOfIgnoredWords(t);
+                t = Regex.Replace(t, @"\s\s+", " ", RegexOptions.Compiled | RegexOptions.Singleline);
+                t = t.Trim();
+                categorys2normalized_category[category] = t;
             }
-            return nc;
+            return t;
         }
         Dictionary<string, string> categorys2normalized_category = new Dictionary<string, string>();
+
+        public Dictionary<string, int> CategoryWords2Count(string normalized_category)
+        {
+            Dictionary<string, int> cw2c;
+            if (!categories2words2count.TryGetValue(normalized_category, out cw2c))
+            {
+                cw2c = GetWords2Count(normalized_category);
+                categories2words2count[normalized_category] = cw2c;
+            }
+            return cw2c;
+        }
+        readonly Dictionary<string, Dictionary<string, int>> categories2words2count = new Dictionary<string,Dictionary<string,int>>();
+    
+        internal Dictionary<string, int> GetWords2Count(string normalized_text)
+        {
+            Dictionary<string, int> w2c = new Dictionary<string, int>();
+            foreach (Match m in Regex.Matches(normalized_text, @"\w+|\d+[\:\.]\d+", RegexOptions.Singleline))
+            {
+                string word = m.Value.Trim().ToLower();
+                //if(w != w.ToUpper())
+                //string word = Char.ToLowerInvariant(w[0]) + w.Substring(1);
+                word = Regex.Replace(word, "-", "", RegexOptions.Singleline);
+                if (!w2c.ContainsKey(word))
+                    w2c[word] = 0;
+                w2c[word]++;
+            }
+            return w2c;
+        }
         
         internal int WordNumber(Field field)
         {
@@ -135,33 +163,10 @@ namespace Cliver.ProductIdentifier
 
             List<string> categories = engine.Db.Products.Where(p => p.CompanyId == company.Id).GroupBy(p => p.Category).Select(c => c.Key).ToList();
             this.categories = new HashSet<string>(categories);
+
+            initialize_settings();
         }
         readonly Engine engine;
-    }
-
-    internal class Companies
-    {
-        internal Companies(Engine engine)
-        {
-            this.engine = engine;
-        }
-        readonly Engine engine;
-
-        internal Company Get(int company_id)
-        {
-            Company c = null;
-            if (!company_ids2Company.TryGetValue(company_id, out c))
-            {
-                Fhr.ProductOffice.Models.Company dc = engine.Db.Companies.Where(x => x.Id == company_id).FirstOrDefault();
-                if (dc == null)
-                    throw new Exception("No Company for Id=" + company_id);
-                c = new Company(engine, dc);
-                company_ids2Company[company_id] = c;
-                engine.Products.Ininitalize(dc.Products);
-            }
-            return c;
-        }
-        Dictionary<int, Company> company_ids2Company = new Dictionary<int, Company>();
     }
 }
 

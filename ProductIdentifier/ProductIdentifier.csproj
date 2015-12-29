@@ -103,8 +103,10 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="BaseForm.Designer.cs" />
+    <Compile Include="Companies.cs" />
     <Compile Include="Company.word.cs" />
-    <Compile Include="Configuration.Company.cs" />
+    <Compile Include="CompanyPairs.cs" />
+    <Compile Include="Company.settings.cs" />
     <Compile Include="HelpForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -117,7 +119,7 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Configuration.cs" />
+    <Compile Include="Engine.settings.cs" />
     <Compile Include="Product.cs" />
     <Compile Include="ProductControl.cs">
       <SubType>UserControl</SubType>

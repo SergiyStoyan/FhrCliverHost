@@ -39,9 +39,7 @@ namespace Cliver.ProductIdentifier
                         field2text[field] = t;
                         break;
                     case Field.Category:
-                        t = engine.Companies.Get(DbProduct.CompanyId).NormalizedCategory(DbProduct.Category);
-                        field2text[field] = t;
-                        break;
+                        return engine.Companies.Get(DbProduct.CompanyId).NormalizedCategory(DbProduct.Category);
                     default:
                         throw new Exception("untreated case");
                 }
@@ -55,34 +53,27 @@ namespace Cliver.ProductIdentifier
         {
             string t = Cliver.PrepareField.Html.GetDbField(text);
             t = t.ToLower();
-            t = engine.Configuration.Get(DbProduct.CompanyId).ReplaceWithSynonyms(t);
-            t = engine.Configuration.Get(DbProduct.CompanyId).StripOfIgnoredWords(t);
+            t = engine.Companies.Get(DbProduct.CompanyId).ReplaceWithSynonyms(t);
+            t = engine.Companies.Get(DbProduct.CompanyId).StripOfIgnoredWords(t);
             t = Regex.Replace(t, @"\s\s+", " ", RegexOptions.Compiled | RegexOptions.Singleline);
             return t.Trim();
         }
 
         public Dictionary<string, int> Words2Count(Field field)
         {
+            if (field == Field.Category)
+                return engine.Companies.Get(DbProduct.Id).CategoryWords2Count(Normalized(Field.Category));
+
             Dictionary<string, int> w2c;
             if (!field2word2count.TryGetValue(field, out w2c))
             {
-                w2c = new Dictionary<string, int>();
-                foreach (Match m in Regex.Matches(Normalized(field), @"\w+|\d+[\:\.]\d+", RegexOptions.Singleline))
-                {
-                    string word = m.Value.Trim().ToLower();
-                    //if(w != w.ToUpper())
-                    //string word = Char.ToLowerInvariant(w[0]) + w.Substring(1);
-                    word = Regex.Replace(word, "-", "", RegexOptions.Singleline);
-                    if (!w2c.ContainsKey(word))
-                        w2c[word] = 0;
-                    w2c[word]++;
-                }
+                w2c = engine.Companies.Get(DbProduct.Id).GetWords2Count(Normalized(field));
                 field2word2count[field] = w2c;
             }
             return w2c;
         }
         readonly Dictionary<Field, Dictionary<string, int>> field2word2count = new Dictionary<Field, Dictionary<string, int>>();
-
+        
         public Dictionary<string, int>.KeyCollection Words(Field field)
         {
             return Words2Count(field).Keys;
