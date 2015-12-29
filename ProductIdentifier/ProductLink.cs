@@ -14,13 +14,13 @@ namespace Cliver.ProductIdentifier
 {
     public class ProductLink
     {
-        public class PairStatistics
+        public class ProductPair
         {
             //public Dictionary<Field, List<string>> MatchedWords = new Dictionary<Field, List<string>>();
             public double CategoryScore = 0;
             public double NameScore = 0;
 
-            public PairStatistics(Engine engine, Product product1, Product product2)
+            public ProductPair(Engine engine, Product product1, Product product2)
             {
                 this.engine = engine;
                 {
@@ -34,16 +34,16 @@ namespace Cliver.ProductIdentifier
                     foreach (string word in product1.Words(Field.Name))
                     {
                         if (product2.Words2Count(Field.Name).ContainsKey(word))
-                            word2name_score[word] = engine.Companies.Get(product1.DbProduct.CompanyId).WordWeight(Field.Name, word) * engine.Companies.Get(product2.DbProduct.CompanyId).WordWeight(Field.Name, word);
+                            word2name_score[word] = .5 * engine.Companies.Get(product1.DbProduct.CompanyId).WordWeight(Field.Name, word)
+                                + .5 * engine.Companies.Get(product2.DbProduct.CompanyId).WordWeight(Field.Name, word);
                     }
                     //engine.sw5.Stop();
                     //MatchedWords[Field.Name] = word2name_score.Keys.ToList();
                     if (word2name_score.Count > 0)
                     {
-                        NameScore = ((double)word2name_score.Values.Sum() / word2name_score.Count)
-                            * ((double)word2name_score.Count / product1.Words(Field.Name).Count)
-                            * ((double)word2name_score.Count / product2.Words(Field.Name).Count)
-                            * (1 - 0.3 / word2name_score.Count);
+                        NameScore = .5 * ((double)word2name_score.Values.Sum() / word2name_score.Count)
+                            + .25 * ((double)word2name_score.Count / product1.Words(Field.Name).Count)
+                            + .25 * ((double)word2name_score.Count / product2.Words(Field.Name).Count);
                     }
                 }
                 //    decimal p1 = product1.DbProduct.Price;
@@ -63,14 +63,14 @@ namespace Cliver.ProductIdentifier
             readonly Engine engine;
         }
 
-        public PairStatistics Get(int product1_id, int product2_id)
+        public ProductPair Get(int product1_id, int product2_id)
         {
-            PairStatistics ps = null;
-            product1_id_product2_id_s2PairStatistics.TryGetValue(new IdPair { Id1 = product1_id, Id2 = product2_id }, out ps);
+            ProductPair ps = null;
+            product1_id_product2_id_s2ProductPair.TryGetValue(new IdPair { Id1 = product1_id, Id2 = product2_id }, out ps);
             return ps;
         }
 
-        public PairStatistics GetByCompanies(int company1_id, int company2_id)
+        public ProductPair GetByCompanies(int company1_id, int company2_id)
         {
             Product p1 = Product1s.Where(x => x.DbProduct.CompanyId == company1_id).FirstOrDefault();
             if (p1 == null)
@@ -78,16 +78,16 @@ namespace Cliver.ProductIdentifier
             Product p2 = Product2s.Where(x => x.DbProduct.CompanyId == company2_id).FirstOrDefault();
             if (p2 == null)
                 throw new Exception("No PairStatistics found for company Id=" + company2_id);
-            PairStatistics ps = null;
-            product1_id_product2_id_s2PairStatistics.TryGetValue(new IdPair { Id1 = p1.DbProduct.Id, Id2 = p1.DbProduct.Id }, out ps);
+            ProductPair ps = null;
+            product1_id_product2_id_s2ProductPair.TryGetValue(new IdPair { Id1 = p1.DbProduct.Id, Id2 = p1.DbProduct.Id }, out ps);
             return ps;
         }
 
-        public void Set(int product1_id, int product2_id, PairStatistics ps)
+        public void Set(int product1_id, int product2_id, ProductPair ps)
         {
-            product1_id_product2_id_s2PairStatistics[new IdPair { Id1 = product1_id, Id2 = product2_id }] = ps;
+            product1_id_product2_id_s2ProductPair[new IdPair { Id1 = product1_id, Id2 = product2_id }] = ps;
         }
-        Dictionary<IdPair, PairStatistics> product1_id_product2_id_s2PairStatistics = new Dictionary<IdPair, PairStatistics>();
+        Dictionary<IdPair, ProductPair> product1_id_product2_id_s2ProductPair = new Dictionary<IdPair, ProductPair>();
 
         public struct IdPair
         {
@@ -99,13 +99,13 @@ namespace Cliver.ProductIdentifier
         public readonly double NameScore = 0;
         public readonly double Score = 0;
 
-        public double SecondaryScore
-        {
-            get
-            {
-                return 0;
-            }
-        }
+        //public double SecondaryScore
+        //{
+        //    get
+        //    {
+        //        return 0;
+        //    }
+        //}
 
         public readonly Product[] Product1s;
         public readonly Product[] Product2s;
@@ -140,13 +140,13 @@ namespace Cliver.ProductIdentifier
 
             foreach (Product product1 in Product1s)
                 foreach (Product product2 in Product2s)
-                    Set(product1.DbProduct.Id, product2.DbProduct.Id, new PairStatistics(engine, product1, product2));
+                    Set(product1.DbProduct.Id, product2.DbProduct.Id, new ProductPair(engine, product1, product2));
 
             //word order
             //word density
 
-            CategoryScore = (double)product1_id_product2_id_s2PairStatistics.Values.Select(x => x.CategoryScore).Sum() / product1_id_product2_id_s2PairStatistics.Count;
-            NameScore = (double)product1_id_product2_id_s2PairStatistics.Values.Select(x => x.NameScore).Sum() / product1_id_product2_id_s2PairStatistics.Count;
+            CategoryScore = (double)product1_id_product2_id_s2ProductPair.Values.Select(x => x.CategoryScore).Sum() / product1_id_product2_id_s2ProductPair.Count;
+            NameScore = (double)product1_id_product2_id_s2ProductPair.Values.Select(x => x.NameScore).Sum() / product1_id_product2_id_s2ProductPair.Count;
             Score = 0.6 * CategoryScore + 0.4 * NameScore;
 
            // engine.sw8.Stop();

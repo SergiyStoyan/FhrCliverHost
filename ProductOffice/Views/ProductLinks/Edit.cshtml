@@ -19,9 +19,6 @@
                         <a class="bFind" href="#" onclick="javascript: show_ProductMatchesDlg(@c.Id);">Find</a>
                         <script>
                             function show_ProductMatchesDlg(company2_id){
-                                if(company2_id != CurrentCompany2Id){
-                                    $('#CategoryTreeViewContent').html('');
-                                }
                                 if(!ProductMatchesDlg){
                                     ProductMatchesDlg = show_dialog({
                                         content_div_id: "ProductMatchesContent",
@@ -39,20 +36,24 @@
                                     });  
                                     //ProductLinksTable.modalBox.on('dialogclose', function(event) {
                                         //ProductMatchesDlg = null;
-                                        //CurrentCompany2Id = null;
                                     //});
                                 }
                                 else 
                                     ProductMatchesDlg.dialog("open");
-                                
-                                if(CurrentCompany2Id == company2_id)
+                                                                
+                                var product1_ids = [];
+                                $("input[name='ProductId']").each(function () {
+                                    product1_ids.push($(this).val());
+                                });
+                                if(!$(CurrentProduct1Ids).not(product1_ids).length && !$(product1_ids).not(CurrentProduct1Ids).length
+                                    && CurrentCompany2Id == company2_id
+                                    )
                                     return;
-                                
+                                CurrentProduct1Ids = product1_ids;
                                 CurrentCompany2Id = company2_id;
+                                
                                 $('#ProductMatchesList table').empty();
-                                $("#Categories").empty();
                                 $("#Keyword2s").val('');
-                                $("#ProductCount").html('');
                                 if(CategoryTreeView)
                                     CategoryTreeView.jstree('destroy');
                                 set_Category2('');
@@ -197,10 +198,12 @@
 }
 
 <div id="ProductMatchesContent" style="display:none;">
-    Keyword: <input type="text" name="Keyword2s" id="Keyword2s" style="box-sizing:border-box;" /><br />
+    Keyword:
+    <a class="button" href="#" onclick='javascript: if($("#Keyword2s").val()) {$("#Keyword2s").val(""); get_next_product2_range(true);}' style="">X</a>
+    <input type="text" name="Keyword2s" id="Keyword2s" style="box-sizing:border-box;" onchange="javascript: get_next_product2_range(true);" /><br />
     <a href="#" onclick="javascript: show_CategoryTreeView();" style="">Category:</a> 
-    <a class="button" href="#" onclick='javascript: set_Category2("");' style="">X</a>
-    <span id="Category2" name="Category2" style="box-sizing:border-box;" class="form-control"></span>
+    <a class="button" href="#" onclick='javascript: if(Category2) {set_Category2(""); get_next_product2_range(true);}' style="">X</a>
+    <span id="Category2" name="Category2" style="box-sizing:border-box;" class="form-control" onchange="javascript: get_next_product2_range(true);"></span>
     <br />
     <link rel="stylesheet" href="https://static.jstree.com/3.2.1/assets/dist/themes/default/style.min.css" />
     <script src="https://static.jstree.com/3.2.1/assets/dist/jstree.min.js"></script>
@@ -213,7 +216,15 @@
                     dialog: {
                         buttons: {
                             Close: function () { CategoryTreeView.close(); },
-                        }
+                        },
+                        close: function(){
+                            var t = $('#CategoryTreeViewContent').jstree(true);
+                            var path = t.get_path(t.get_selected(), "@Html.Raw(ViewBag.CATEGORY_SEPARATOR)");
+                            if(Category2 != path){
+                                set_Category2(path); 
+                                get_next_product2_range(true);
+                            }
+                        },
                     },
                 });
             }
@@ -255,9 +266,7 @@
                 }
             );
         }
-        $('#CategoryTreeViewContent').on('select_node.jstree', function (e, data) {
-            var path = $('#CategoryTreeViewContent').jstree(true).get_path(data.node, "@Html.Raw(ViewBag.CATEGORY_SEPARATOR)");            
-            set_Category2(path);
+        $('#CategoryTreeViewContent').on('select_node.jstree', function (e, data) {            
             $('#CategoryTreeViewContent').jstree(true).toggle_node(data.node);
             //CategoryTreeView.close();
         })
@@ -276,7 +285,7 @@
             <b><a class="_to_next_product" title="Get products with lower match score" href="#" onclick="javascript: get_next_product2_range(true);">Next</a></b>
         </div>*@
     <div id="accumulate_pages_navigation" style="display:inline;">
-        <b><a class="_to_next_product" title="Add products with lower match score" href="#" onclick="javascript: get_next_product2_range(true);">Get</a></b>
+        <b><a class="_to_next_product" title="Add products with lower match score" href="#" onclick="javascript: get_next_product2_range(true);">More</a></b>
     </div>   
      Filtered products: <span id="FilteredProductCount"></span>    Shown products: <span id="ShownProductCount"></span>    <span id="Notification" style="color:red;"></span>
     <hr />
@@ -298,19 +307,16 @@
             row.parent().find('tr.ProductMatch_selected').removeClass('ProductMatch_selected');
             row.addClass('ProductMatch_selected');
         });
-
+        
+        var CurrentProduct1Ids;
         var CurrentCompany2Id;
 
         function get_next_product2_range(forward) {
-            var product1_ids = [];
-            $("input[name='ProductId']").each(function () {
-                product1_ids.push($(this).val());
-            });
             ProductMatchesDlg.getContentByAjax(
                 {
                     type: 'GET',
                     data: {
-                        "product1_ids": product1_ids,
+                        "product1_ids": CurrentProduct1Ids,
                         "company2_id": CurrentCompany2Id,
                         "keyword2s": $('#Keyword2s').val(),
                         "category2": Category2,
@@ -323,29 +329,35 @@
                     if(data.Is_CurrentProductLinks_Changed){
                         $('#ProductMatchesList table').empty();
                         FilteredProductStartIndex = 0;
+                        ProductIds2LinkedProducts = Array();
                     }
-                    var product2_matches = data.Product2s;
-                    $("#FilteredProductCount").html(data.Product2sCount);
-                    $("#ShownProductCount").html('from ' + FilteredProductStartIndex + ' to ' + data.CurrentProductLinkRangeEndIndex + 1);
-                    if (!product2_matches.length) {
-                        //if (forward)
-                        //    show_message("End of list is reached.");
-                        //else
-                        //    show_message("Start of list is reached.");
-                        if (forward)
-                            $('#Notification').html("End of list is reached.");
+                    $("#FilteredProductCount").html(data.CurrentProductLinksCount);
+                    $("#ShownProductCount").html('from ' + FilteredProductStartIndex + ' to ' + (data.CurrentProductLinkRangeEndIndex + 1));
+                    //if (forward)
+                    //    show_message("End of list is reached.");
+                    //else
+                    //    show_message("Start of list is reached.");
+                    if(forward){
+                        if (data.CurrentProductLinkRangeEndIndex + 1 >= data.CurrentProductLinksCount) 
+                            $('#Notification').html("End of list");
                         else
-                            $('#Notification').html("Start of list is reached.");
-                        return;
+                            $('#Notification').html('');
                     }
-                    $('#Notification').html('');
-                    for(var i in product2_matches){                    
-                        for(var j in product2_matches[i]){
-                            var product = product2_matches[i][j];
+                    else
+                    {
+                        if (data.CurrentProductLinkRangeStartIndex <= 0) 
+                            $('#Notification').html("Start of list");
+                        else
+                            $('#Notification').html('');
+                    }
+                    for(var i in data.Product2s){              
+                        var linked_product2s = data.Product2s[i];
+                        for(var j in linked_product2s){
+                            var product = linked_product2s[j];
                             if(product.CompanyId != CurrentCompany2Id)
                                 continue;
                             
-                            ProductIds2LinkedProducts[product.Id] = product2_matches[i];
+                            ProductIds2LinkedProducts[product.Id] = linked_product2s;
 
                             var image_urls = '';
                             for (var i in product.ImageUrls) {
@@ -354,7 +366,7 @@
 
                             var name = '<a href="' + product.Url + '" target="_blank">' + product.Name + '</a>';
                
-                            var label = product._Index + " - Score: " + Math.round(product._Score * 10000) + "/" + Math.round(product._CategoryScore * 10000) + "/" + Math.round(product._NameScore * 10000) + "/" + Math.round(product._SecondaryScore * 10000);
+                            var label = product._Index + " - Score: " + Math.round(product._Score * 1000) + "/" + Math.round(product._CategoryScore * 1000) + "/" + Math.round(product._NameScore * 1000);// + "/" + Math.round(product._SecondaryScore * 10000);
                         
                             var product_html = "<tr><td>" + image_urls + "</td><td>" + name + "</td><td>" + label + "</td><td><a href='#' onclick='javascript: add_product2s_to_LinkedProductsTable(ProductIds2LinkedProducts[" + product.Id + "]); ProductMatchesDlg.close();'>link</a></td></tr>";
                             var r = $(product_html);
@@ -427,11 +439,11 @@
         $('#LinkedProductsTable tr td:nth-child(' + column_id + ')').find(".bRemove").show();
     }
 
-    function add_product2s_to_LinkedProductsTable(products){
-        for(var i in products){
-            add_product_to_LinkedProductsTable(products[i]);
+    function add_product2s_to_LinkedProductsTable(product2s){
+        for(var i in product2s){
+            add_product_to_LinkedProductsTable(product2s[i]);
         }
-        mark_added_product2s(products[0].LinkId);
+        mark_added_product2s(product2s[0].LinkId);
         arrange_dialog_window(ProductLinksTable.modalBox);
     }
 

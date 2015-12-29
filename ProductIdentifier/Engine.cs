@@ -96,7 +96,8 @@ namespace Cliver.ProductIdentifier
                // sw3.Stop();
                 pls.AddRange(pls2);
                 //}
-                pls = pls.OrderByDescending(x => x.Score).OrderByDescending(x => x.SecondaryScore).ToList();
+                //pls = pls.OrderByDescending(x => x.Score).OrderByDescending(x => x.SecondaryScore).ToList();
+                pls = pls.OrderByDescending(x => x.Score).ToList();
               //  sw1.Stop();
                 //string s = "1: " + sw1.ElapsedMilliseconds + ", 2: " + sw2.ElapsedMilliseconds + ", 3: " + sw3.ElapsedMilliseconds + ", 4: " + sw4.ElapsedMilliseconds
                 //    + ", 5: " + sw5.ElapsedMilliseconds + ", 6: " + sw6.ElapsedMilliseconds + ", 7: " + sw7.ElapsedMilliseconds
@@ -164,13 +165,15 @@ WHERE b.LinkId IS NULL"].GetSingleValue();
             foreach (int pi in product_ids)
             {
                 Product product1 = Products.Get(pi);
-                var p1_s = Db.Products.Where(p => p.Category == product1.DbProduct.Category && p.Id != pi);
-                var p2s = (from x in Db.Products.Where(p => p.Id == pi) join y in Db.Products on x.LinkId equals y.LinkId where !product_ids.Contains(y.Id) select y).ToList();
-                foreach (Fhr.ProductOffice.Models.Product p2 in p2s)
+                if (product1.DbProduct.LinkId == null || product1.DbProduct.LinkId < 0)
+                    continue;
+                var p1_category_ps = Db.Products.Where(p => p.Category == product1.DbProduct.Category && p.Id != pi);
+                var p1_old_linked_ps = (from x in Db.Products where x.LinkId == product1.DbProduct.LinkId && !product_ids.Contains(x.Id) select x).ToList();
+                foreach (Fhr.ProductOffice.Models.Product p1_old_linked_p in p1_old_linked_ps)
                 {
-                    if (null == (from x in p1_s join y in Db.Products.Where(p => p.Category == p2.Category && p.Id != p2.Id) on x.LinkId equals y.LinkId select y).FirstOrDefault())
+                    if (null == (from x in p1_category_ps join y in Db.Products.Where(p => p.Category == p1_old_linked_p.Category && p.Id != p1_old_linked_p.Id) on x.LinkId equals y.LinkId select y).FirstOrDefault())
                         //remove mapping 
-                        CompanyPairs.UnmapCategoriesAndSave(product1, Products.Get(p2.Id));
+                        CompanyPairs.UnmapCategoriesAndSave(product1, Products.Get(p1_old_linked_p.Id));
                 }
             }
 

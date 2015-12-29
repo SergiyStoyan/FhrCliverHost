@@ -63,12 +63,12 @@ namespace Cliver.ProductIdentifier
                 company1_id_company2_id_to_category1s_to_mapped_category2s[company1_id_company2_id] = category1s_to_mapped_category2s;
             }
             HashSet<string> mapped_category2s;
-            if (!category1s_to_mapped_category2s.TryGetValue(product1.Normalized(Field.Category), out mapped_category2s))
+            if (!category1s_to_mapped_category2s.TryGetValue(product1.DbProduct.Category, out mapped_category2s))
             {
                 mapped_category2s = new HashSet<string>();
-                category1s_to_mapped_category2s[product1.Normalized(Field.Category)] = mapped_category2s;
+                category1s_to_mapped_category2s[product1.DbProduct.Category] = mapped_category2s;
             }
-            mapped_category2s.Add(product2.Normalized(Field.Category));
+            mapped_category2s.Add(product2.DbProduct.Category);
         }
         #endregion
 
@@ -80,11 +80,11 @@ namespace Cliver.ProductIdentifier
             if (!company1_id_company2_id_to_category1s_to_mapped_category2s.TryGetValue(company1_id_company2_id, out category1s_to_mapped_category2s))
                 return;
             HashSet<string> category2s;
-            if (!category1s_to_mapped_category2s.TryGetValue(product1.Normalized(Field.Category), out category2s))
+            if (!category1s_to_mapped_category2s.TryGetValue(product1.DbProduct.Category, out category2s))
                 return;
-            category2s.Remove(product2.Normalized(Field.Category));
+            category2s.Remove(product2.DbProduct.Category);
             if (category2s.Count < 1)
-                category1s_to_mapped_category2s.Remove(product1.Normalized(Field.Category));
+                category1s_to_mapped_category2s.Remove(product1.DbProduct.Category);
             save_mapped_categories(company1_id_company2_id);
         }
 
@@ -158,16 +158,16 @@ namespace Cliver.ProductIdentifier
             foreach (string word in product1.Words2Count(Field.Category).Keys)
             {
                 if (product2.Words2Count(Field.Category).ContainsKey(word))
-                    word2category_score[word] = engine.Companies.Get(product1.DbProduct.CompanyId).WordWeight(Field.Category, word) * engine.Companies.Get(product2.DbProduct.CompanyId).WordWeight(Field.Category, word);
+                    word2category_score[word] = .5 * engine.Companies.Get(product1.DbProduct.CompanyId).WordWeight(Field.Category, word)
+                        + .5 * engine.Companies.Get(product2.DbProduct.CompanyId).WordWeight(Field.Category, word);
             }
 
             double score = 0;
             if (word2category_score.Count > 0)
             {
-                score = ((double)word2category_score.Values.Sum() / word2category_score.Count)
-                    * ((double)word2category_score.Count / product1.Words(Field.Category).Count)
-                    * ((double)word2category_score.Count / product2.Words(Field.Category).Count)
-                    * (1 - 0.3 * word2category_score.Count);
+                score = .5 * ((double)word2category_score.Values.Sum() / word2category_score.Count)
+                    + .25 * ((double)word2category_score.Count / product1.Words(Field.Category).Count)
+                    + .25 * ((double)word2category_score.Count / product2.Words(Field.Category).Count);
             }
             score = (do_categories_belong2mapped_ones(product1, product2) ? 1 : 0.3) * score;
             return score;

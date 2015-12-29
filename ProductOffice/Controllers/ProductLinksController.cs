@@ -364,7 +364,7 @@ GROUP BY a.LinkId";
                 pss.Add(get_ProductLink_objects(ipl.CurrentProductLinks[i], i, ipl.ScoreFactor));
             Dictionary<string, object> json_o = new Dictionary<string, object>();
             json_o["Product2s"] = pss;
-            json_o["Product2sCount"] = ipl.CurrentProductLinks.Count;
+            json_o["CurrentProductLinksCount"] = ipl.CurrentProductLinks.Count;
             json_o["Is_CurrentProductLinks_Changed"] = is_CurrentProductLinks_changed;
             json_o["CurrentProductLinkRangeStartIndex"] = ipl.CurrentProductLinkRangeStartIndex;
             json_o["CurrentProductLinkRangeEndIndex"] = ipl.CurrentProductLinkRangeEndIndex;
@@ -405,7 +405,7 @@ GROUP BY a.LinkId";
                     _Score = (!double.IsNaN(pl.Score) ? pl.Score : 1) * score_factor,
                     _CategoryScore = (!double.IsNaN(pl.CategoryScore) ? pl.CategoryScore : 1) * score_factor,
                     _NameScore = (!double.IsNaN(pl.NameScore) ? pl.NameScore : 1) * score_factor,
-                    _SecondaryScore = (!double.IsNaN(pl.SecondaryScore) ? pl.SecondaryScore : 1) * score_factor,
+                    //_SecondaryScore = (!double.IsNaN(pl.SecondaryScore) ? pl.SecondaryScore : 1) * score_factor,
                 };
                 d = Cliver.PrepareField.Html.GetDbObject(d);
                 ds.Add(d);
