@@ -105,7 +105,10 @@ GROUP BY a.LinkId";
         }
 
         public ActionResult Edit([Bind(Prefix = "id")]int? link_id)
-        {//link_id can also be negative in which case it contains id of the first product
+        {
+            IdenticalProductList.RestartIdenticalProductListIfAny(Session);
+
+            //link_id can also be negative in which case it contains id of the first product
             if (link_id == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             List<Product> products;
@@ -255,14 +258,38 @@ GROUP BY a.LinkId";
 
             public double ScoreFactor = 1;
 
-            public static void DestroyProductIdentifierEngineIfAny(HttpSessionStateBase session)
+            //public static void RenewProductIdentifierEngineConfigurationIfAny(HttpSessionStateBase session)
+            //{
+            //    IdenticalProductList ipl = (IdenticalProductList)session[IdenticalProductList.IdenticalProductList_SESSION_KEY];
+            //    if (ipl != null)
+            //    {
+            //        ipl.engine.RenewConfiguration(true);
+            //        ipl.CurrentProductLinkRangeStartIndex = INITIAL_INDEX;
+            //        ipl.CurrentProductLinkRangeEndIndex = INITIAL_INDEX;
+            //    }
+            //}
+
+            public static ProductIdentifier.Engine GetProductIdentifierEngineIfAny(HttpSessionStateBase session)
             {
-                session[IdenticalProductList.SESSION_KEY] = null;
+                IdenticalProductList ipl = (IdenticalProductList)session[IdenticalProductList.IdenticalProductList_SESSION_KEY];
+                if (ipl != null)
+                    return ipl.engine;
+                return null;
+            }
+
+            public static void RestartIdenticalProductListIfAny(HttpSessionStateBase session)
+            {
+                IdenticalProductList ipl = (IdenticalProductList)session[IdenticalProductList.IdenticalProductList_SESSION_KEY];
+                if (ipl != null)
+                {
+                    ipl.CurrentProductLinkRangeStartIndex = INITIAL_INDEX;
+                    ipl.CurrentProductLinkRangeEndIndex = INITIAL_INDEX;
+                }
             }
 
             static IdenticalProductList get_from_session(ProductLinksController controller, int[] product1_ids, int company2_id)
             {
-                IdenticalProductList ipl = (IdenticalProductList)controller.Session[IdenticalProductList.SESSION_KEY];
+                IdenticalProductList ipl = (IdenticalProductList)controller.Session[IdenticalProductList.IdenticalProductList_SESSION_KEY];
                 //IdenticalProductList ipl = (IdenticalProductList)System.Runtime.Caching.MemoryCache.Default.Get(IdenticalProductList.CacheKey);
                 if (product1_ids == null)
                     return ipl;
@@ -270,13 +297,14 @@ GROUP BY a.LinkId";
                     ipl = new IdenticalProductList(controller, product1_ids, company2_id, new Cliver.ProductIdentifier.Engine(true));
                 else if (!ipl.is_corresponding(controller, product1_ids, company2_id))
                     ipl = new IdenticalProductList(controller, product1_ids, company2_id, ipl.engine);
-                controller.Session[IdenticalProductList.SESSION_KEY] = ipl;
+                controller.Session[IdenticalProductList.IdenticalProductList_SESSION_KEY] = ipl;
                 //System.Runtime.Caching.MemoryCache.Default.Set(IdenticalProductList.CacheKey, ipl, DateTimeOffset.Now.AddSeconds(3600));
                 if (ipl.product_links.Count > 0)
                     ipl.ScoreFactor = 1D / ipl.product_links[0].Score;
                 return ipl;
             }
-            const string SESSION_KEY = "IDENTICAL_PRODUCT_LIST";
+            const string IdenticalProductList_SESSION_KEY = "IDENTICAL_PRODUCT_LIST";
+            //const string Engine_SESSION_KEY = "IDENTICAL_PRODUCT_LIST";
             bool is_corresponding(ProductLinksController controller, int[] product1_ids, int company2_id)
             {
                 if (Company2Id != company2_id)

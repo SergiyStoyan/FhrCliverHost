@@ -57,7 +57,6 @@ namespace Cliver.ProductIdentifier
                         }
                     }
                     engine.sw5.Stop();
-                    engine.sw6.Start();
                     MatchedWords[Field.Name] = word2name_score.Keys.ToList();
                     if (word2name_score.Count > 0)
                     {
@@ -66,7 +65,6 @@ namespace Cliver.ProductIdentifier
                             * ((double)word2name_score.Count / product2.Words(Field.Name).Count)
                             * (1 - 0.3 / word2name_score.Count);
                     }
-                    engine.sw6.Stop();
                 }
                 //    decimal p1 = product1.DbProduct.Price;
 
@@ -144,14 +142,18 @@ namespace Cliver.ProductIdentifier
             Product1s = product1s;
             Product2s = product2s;
 
+            engine.sw6.Start();
             MutualCompanyIds = (from p1 in product1s join p2 in product2s on p1.DbProduct.CompanyId equals p2.DbProduct.CompanyId where p1 != null && p2 != null select p1.DbProduct.CompanyId).ToList();
+            engine.sw6.Stop();
             if (MutualCompanyIds.Count > 0)
             {
+                engine.sw7.Start();
                 MutualProductIds = (from p1 in product1s join p2 in product2s on p1.DbProduct.Id equals p2.DbProduct.Id where p1 != null && p2 != null select p1.DbProduct.Id).ToList();
                 if (MutualProductIds.Count < MutualCompanyIds.Count)//chains contain different products of the same company so cannot be linked
                     Score = -1.1;
                 else  //chains contain the same products so should be considered linked
                     Score = 1.1;
+                engine.sw7.Stop();
                 engine.sw8.Stop();
                 return;
             }
@@ -164,11 +166,43 @@ namespace Cliver.ProductIdentifier
             //word density
 
             CategoryScore = (double)product1_id_product2_id_s2PairStatistics.Values.Select(x => x.CategoryScore).Sum() / product1_id_product2_id_s2PairStatistics.Count;
-            NameScore = (double)product1_id_product2_id_s2PairStatistics.Values.Select(x => x.NameScore).Sum() / product1_id_product2_id_s2PairStatistics.Count;            
+            NameScore = (double)product1_id_product2_id_s2PairStatistics.Values.Select(x => x.NameScore).Sum() / product1_id_product2_id_s2PairStatistics.Count;
             Score = 0.6 * CategoryScore + 0.4 * NameScore;
 
             engine.sw8.Stop();
         }
+        //public ProductLink(Engine engine, Product[] product1s, Product[] product2s)
+        //{
+        //    engine.sw8.Start();
+        //    this.Engine = engine;
+        //    Product1s = product1s;
+        //    Product2s = product2s;
+
+        //    MutualCompanyIds = (from p1 in product1s join p2 in product2s on p1.DbProduct.CompanyId equals p2.DbProduct.CompanyId where p1 != null && p2 != null select p1.DbProduct.CompanyId).ToList();
+        //    if (MutualCompanyIds.Count > 0)
+        //    {
+        //        MutualProductIds = (from p1 in product1s join p2 in product2s on p1.DbProduct.Id equals p2.DbProduct.Id where p1 != null && p2 != null select p1.DbProduct.Id).ToList();
+        //        if (MutualProductIds.Count < MutualCompanyIds.Count)//chains contain different products of the same company so cannot be linked
+        //            Score = -1.1;
+        //        else  //chains contain the same products so should be considered linked
+        //            Score = 1.1;
+        //        engine.sw8.Stop();
+        //        return;
+        //    }
+
+        //    foreach (Product product1 in Product1s)
+        //        foreach (Product product2 in Product2s)
+        //            Set(product1.DbProduct.Id, product2.DbProduct.Id, new PairStatistics(engine, product1, product2));
+
+        //    //word order
+        //    //word density
+
+        //    CategoryScore = (double)product1_id_product2_id_s2PairStatistics.Values.Select(x => x.CategoryScore).Sum() / product1_id_product2_id_s2PairStatistics.Count;
+        //    NameScore = (double)product1_id_product2_id_s2PairStatistics.Values.Select(x => x.NameScore).Sum() / product1_id_product2_id_s2PairStatistics.Count;
+        //    Score = 0.6 * CategoryScore + 0.4 * NameScore;
+
+        //    engine.sw8.Stop();
+        //}
         readonly public Engine Engine;
 
         /// <summary>

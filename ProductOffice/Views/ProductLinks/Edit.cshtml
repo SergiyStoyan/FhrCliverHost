@@ -312,8 +312,10 @@
                     url: "@Url.Action("GetNextProductLinks")"
                 },
                 function (data) {
-                    if(data.Is_CurrentProductLinks_Changed)
+                    if(data.Is_CurrentProductLinks_Changed){
                         $('#ProductMatchesList table').empty();
+                        $("#ShownProductCount").html(0);
+                    }
                     var product2_matches = data.Product2s;
                     $("#FilteredProductCount").html(data.Product2sCount);
                     if (!product2_matches.length) {
@@ -323,7 +325,7 @@
                             show_message("Start of list is reached.");
                         return;
                     }
-                    $("#ShownProductCount").html(product2_matches.length + $("#ShownProductCount").html());
+                    $("#ShownProductCount").html(product2_matches.length + Number($("#ShownProductCount").html()));
                     for(var i in product2_matches){                    
                         for(var j in product2_matches[i]){
                             var product = product2_matches[i][j];

@@ -224,9 +224,11 @@ CREATE TABLE [#ProductIdentifierConfig2] ([C1IdC2Id] NVARCHAR (100) NOT NULL" + 
         [ValidateAntiForgeryToken]
         public ActionResult PerformSelfTraining()
         {
-            ProductIdentifier.Engine e = new ProductIdentifier.Engine(false);
+            //getting the using Engine to update its Configuration
+            ProductIdentifier.Engine e = ProductLinksController.IdenticalProductList.GetProductIdentifierEngineIfAny(Session);
+            if (e == null)
+                e = new ProductIdentifier.Engine(false);
             e.PerformSelfTraining();
-            ProductLinksController.IdenticalProductList.DestroyProductIdentifierEngineIfAny(Session);
 
             if (Request.IsAjaxRequest())
                 return Content("Done!");
@@ -236,9 +238,11 @@ CREATE TABLE [#ProductIdentifierConfig2] ([C1IdC2Id] NVARCHAR (100) NOT NULL" + 
         [ValidateAntiForgeryToken]
         public ActionResult PerformDataAnalysis(int company_id)
         {
-            ProductIdentifier.Engine e = new ProductIdentifier.Engine(false);
+            //getting the using Engine to update its Configuration
+            ProductIdentifier.Engine e = ProductLinksController.IdenticalProductList.GetProductIdentifierEngineIfAny(Session);
+            if(e == null)
+                e = new ProductIdentifier.Engine(false);
             e.PerformDataAnalysis(company_id);
-            ProductLinksController.IdenticalProductList.DestroyProductIdentifierEngineIfAny(Session);
 
             if (Request.IsAjaxRequest())
                 return Content("Done!");

@@ -50,11 +50,6 @@ namespace Cliver.ProductIdentifier
             return Get(product.DbProduct.CompanyId);
         }
 
-        //public void Renew(int company_id)
-        //{
-
-        //}
-
         public Company Get(int company_id)
         {
             Company c;
@@ -73,8 +68,8 @@ namespace Cliver.ProductIdentifier
         }
         Dictionary<int, Company> company_ids2Company = new Dictionary<int, Company>();
 
-        #region API for self-training
-        public void ClearBeforeSelfTraining()
+        #region API for general self-training
+        public void PrepareForSelfTraining()
         {
             company1_id_company2_id_to_category1s_to_mapped_category2s.Clear();
         }
@@ -83,9 +78,31 @@ namespace Cliver.ProductIdentifier
         {
             Cliver.Bot.DbSettings.Delete(engine.Dbc, SettingsKey.SCOPE, "%");
             company_ids2Company.Values.ToList().ForEach(x => { x.SaveWordWeights(); x.SaveSynonyms(); });
-            SaveMappedCategories();
+
+            foreach (string company1_id_company2_id in company1_id_company2_id_to_category1s_to_mapped_category2s.Keys)
+                save_mapped_categories(company1_id_company2_id);
+  
             if (update_traning_time)
                 Cliver.Bot.DbSettings.Save(engine.Dbc, SettingsKey.SCOPE, SettingsKey.TRAINING_TIME, DateTime.Now);
+        }
+
+        string get_company_pair_key(int company1_id, int company2_id)
+        {
+            if(company1_id > company2_id)
+            {
+                int ci = company1_id;
+                company1_id = company2_id;
+                company2_id = ci;
+            }
+            return company1_id.ToString() + "," + company2_id;
+        }
+
+        void save_mapped_categories(string company1_id_company2_id)
+        {
+            Dictionary<string, HashSet<string>> category1s_to_mapped_category2s;
+            if (!company1_id_company2_id_to_category1s_to_mapped_category2s.TryGetValue(company1_id_company2_id, out category1s_to_mapped_category2s))
+                return;
+            Cliver.Bot.DbSettings.Save(engine.Dbc, SettingsKey.SCOPE, SettingsKey.CATEGORY_MAP + company1_id_company2_id, category1s_to_mapped_category2s);
         }
 
         public void MapCategories(Product product1, Product product2)
@@ -97,7 +114,7 @@ namespace Cliver.ProductIdentifier
                 product2 = p;
             }
             Dictionary<string, HashSet<string>> category1s_to_mapped_category2s;
-            string company1_id_company2_id = product1.DbProduct.CompanyId.ToString() + "," + product2.DbProduct.CompanyId;
+            string company1_id_company2_id = get_company_pair_key(product1.DbProduct.CompanyId, product2.DbProduct.CompanyId);
             if (!company1_id_company2_id_to_category1s_to_mapped_category2s.TryGetValue(company1_id_company2_id, out category1s_to_mapped_category2s))
             {
                 category1s_to_mapped_category2s = new Dictionary<string, HashSet<string>>();
@@ -111,6 +128,31 @@ namespace Cliver.ProductIdentifier
             }
             mapped_category2s.Add(product2.DbProduct.Category);
         }
+        #endregion
+
+        #region API for self-training during linking
+        public void UnmapCategoriesAndSave(Fhr.ProductOffice.Models.Product product1, Fhr.ProductOffice.Models.Product product2)
+        {
+            Dictionary<string, HashSet<string>> category1s_to_mapped_category2s;
+            string company1_id_company2_id = get_company_pair_key(product1.CompanyId, product2.CompanyId);
+            if (!company1_id_company2_id_to_category1s_to_mapped_category2s.TryGetValue(company1_id_company2_id, out category1s_to_mapped_category2s))
+                return;
+            HashSet<string> category2s;
+            if (!category1s_to_mapped_category2s.TryGetValue(product1.Category, out category2s))
+                return;
+            category2s.Remove(product2.Category);
+            if (category2s.Count < 1)
+                category1s_to_mapped_category2s.Remove(product1.Category);
+            save_mapped_categories(company1_id_company2_id);
+        }
+
+        public void MapCategoriesAndSave(Product product1, Product product2)
+        {
+            MapCategories(product1, product2);
+            string company1_id_company2_id = get_company_pair_key(product1.DbProduct.CompanyId, product2.DbProduct.CompanyId);
+            save_mapped_categories(company1_id_company2_id);
+        }
+        #endregion
 
         Dictionary<string, Dictionary<string, HashSet<string>>> company1_id_company2_id_to_category1s_to_mapped_category2s = new Dictionary<string, Dictionary<string, HashSet<string>>>();
 
@@ -123,7 +165,7 @@ namespace Cliver.ProductIdentifier
                 product2 = p;
             }
             Dictionary<string, HashSet<string>> category1s_to_mapped_category2s;
-            string company1_id_company2_id = product1.DbProduct.CompanyId.ToString() + "," + product2.DbProduct.CompanyId;
+            string company1_id_company2_id = get_company_pair_key(product1.DbProduct.CompanyId, product2.DbProduct.CompanyId);
             if (!company1_id_company2_id_to_category1s_to_mapped_category2s.TryGetValue(company1_id_company2_id, out category1s_to_mapped_category2s))
             {
                 var category1s_to_mapped_category2s_ = Cliver.Bot.DbSettings.Get<Dictionary<string, List<string>>>(engine.Dbc, SettingsKey.SCOPE, SettingsKey.CATEGORY_MAP + company1_id_company2_id);
@@ -154,70 +196,55 @@ namespace Cliver.ProductIdentifier
             return Regex.IsMatch(child_category, @"^\s*" + Regex.Escape(category), RegexOptions.IgnoreCase | RegexOptions.Multiline);
         }
 
-        public double GetCategoryScore(Product product1, Product product2)
-        {
-            if (product2.DbProduct.CompanyId < product1.DbProduct.CompanyId)
-            {
-                Product p = product1;
-                product1 = product2;
-                product2 = p;
-            }
-            Dictionary<string, double> category1_category2_to_score;
-            string company1_id_company2_id = product1.DbProduct.CompanyId.ToString() + "," + product2.DbProduct.CompanyId;
-            if (!company1_id_company2_id_to_category1_category2_to_score.TryGetValue(company1_id_company2_id, out category1_category2_to_score))
-            {
-                category1_category2_to_score = new Dictionary<string, double>();
-                company1_id_company2_id_to_category1_category2_to_score[company1_id_company2_id] = category1_category2_to_score;
-            }
-            double score;
-            string category1_category2 = product1.DbProduct.Category + Fhr.ProductOffice.DataApi.Product.CATEGORY_SEPARATOR + product2.DbProduct.Category;
-            if (!category1_category2_to_score.TryGetValue(category1_category2, out score))
-            {
-                score = get_category_score(product1, product2);
-                category1_category2_to_score[category1_category2] = score;
-            }
-            return score;
-        }
-        Dictionary<string, Dictionary<string, double>> company1_id_company2_id_to_category1_category2_to_score = new Dictionary<string, Dictionary<string, double>>();
+        //public double GetCategoryScore(int company1_id, string category1, int company2_id, string category2)
+        //{
+        //    Dictionary<string, double> category1_category2_to_score;
+        //    string company1_id_company2_id = get_company_pair_key(company1_id, company2_id);
+        //    if (!company1_id_company2_id_to_category1_category2_to_score.TryGetValue(company1_id_company2_id, out category1_category2_to_score))
+        //    {
+        //        category1_category2_to_score = new Dictionary<string, double>();
+        //        company1_id_company2_id_to_category1_category2_to_score[company1_id_company2_id] = category1_category2_to_score;
+        //    }
+        //    double score;
+        //    string category1_category2 = category1 + "~" + category2;
+        //    if (!category1_category2_to_score.TryGetValue(category1_category2, out score))
+        //    {
+        //        score = get_category_score(product1, product2);
+        //        category1_category2_to_score[category1_category2] = score;
+        //    }
+        //    return score;
+        //}
+        //Dictionary<string, Dictionary<string, double>> company1_id_company2_id_to_category1_category2_to_score = new Dictionary<string, Dictionary<string, double>>();
 
-        double get_category_score(Product product1, Product product2)
-        {
-            Dictionary<string, double> word2category_score = new Dictionary<string, double>();
-            foreach (string word in product1.Words(Field.Category))
-            {
-                if (product2.Words2Count(Field.Category).ContainsKey(word))
-                {
-                    Word w = engine.Words.Get(word);
-                    word2category_score[word] = w.Get(product1.DbProduct.CompanyId).Weight * w.Get(product2.DbProduct.CompanyId).Weight;
-                }
-            }
+        //double get_category_score(Product product1, Product product2)
+        //{
+        //    Dictionary<string, double> word2category_score = new Dictionary<string, double>();
+        //    foreach (string word in product1.Words(Field.Category))
+        //    {
+        //        if (product2.Words2Count(Field.Category).ContainsKey(word))
+        //        {
+        //            Word w = engine.Words.Get(word);
+        //            word2category_score[word] = w.Get(product1.DbProduct.CompanyId).Weight * w.Get(product2.DbProduct.CompanyId).Weight;
+        //        }
+        //    }
 
-            double score = 0;
-            if (word2category_score.Count > 0)
-            {
-                score = ((double)word2category_score.Values.Sum() / word2category_score.Count)
-                    * ((double)word2category_score.Count / product1.Words(Field.Category).Count)
-                    * ((double)word2category_score.Count / product2.Words(Field.Category).Count)
-                    * (1 - 0.3 * word2category_score.Count);
-            }
-            score = (engine.Configuration.DoCategoriesBelong2MappedOnes(product1, product2) ? 1 : 0.5) * score;
-            return score;
-        }
-
-        public void SaveMappedCategories()
-        {
-            foreach (string company1_id_company2_id in company1_id_company2_id_to_category1s_to_mapped_category2s.Keys)
-                Cliver.Bot.DbSettings.Save(engine.Dbc, SettingsKey.SCOPE, SettingsKey.CATEGORY_MAP + company1_id_company2_id, company1_id_company2_id_to_category1s_to_mapped_category2s[company1_id_company2_id]);
-        }
-        #endregion
+        //    double score = 0;
+        //    if (word2category_score.Count > 0)
+        //    {
+        //        score = ((double)word2category_score.Values.Sum() / word2category_score.Count)
+        //            * ((double)word2category_score.Count / product1.Words(Field.Category).Count)
+        //            * ((double)word2category_score.Count / product2.Words(Field.Category).Count)
+        //            * (1 - 0.3 * word2category_score.Count);
+        //    }
+        //    score = (engine.Configuration.DoCategoriesBelong2MappedOnes(product1, product2) ? 1 : 0.5) * score;
+        //    return score;
+        //}
 
         #region API for editing configuration
 
         public void GetMappedCategoriesAsString(int company1_id, int company2_id, out string mapped_categories)
         {
-            if (company2_id < company1_id)
-                throw new Exception("company1_id must be < company2_id");
-            string company1_id_company2_id = company1_id.ToString() + "," + company2_id;
+            string company1_id_company2_id = get_company_pair_key(company1_id, company2_id);
             //Dictionary<string, HashSet<string>> category1s_to_mapped_category2s;
             //if (!company1_id_company2_id_to_category1s_to_mapped_category2s.TryGetValue(company1_id_company2_id, out category1s_to_mapped_category2s))
             //    mapped_categories = null;
@@ -231,14 +258,10 @@ namespace Cliver.ProductIdentifier
 
         public void SaveMappedCategoriesFromString(int company1_id, int company2_id, string mapped_categories)
         {
-            if (company2_id < company1_id)
-                throw new Exception("company1_id must be < company2_id");
-            string company1_id_company2_id = company1_id.ToString() + "," + company2_id;
-            company1_id_company2_id_to_category1s_to_mapped_category2s.Remove(company1_id_company2_id);
             Dictionary<string, HashSet<string>> category1s_to_mapped_category2s = Cliver.Bot.SerializationRoutines.Json.Get<Dictionary<string, HashSet<string>>>(mapped_categories);
+            string company1_id_company2_id = get_company_pair_key(company1_id, company2_id);
             company1_id_company2_id_to_category1s_to_mapped_category2s[company1_id_company2_id] = category1s_to_mapped_category2s;
-
-            Cliver.Bot.DbSettings.Save(engine.Dbc, SettingsKey.SCOPE, SettingsKey.CATEGORY_MAP + company1_id_company2_id, company1_id_company2_id_to_category1s_to_mapped_category2s[company1_id_company2_id]);
+            save_mapped_categories(company1_id_company2_id);
         }
         #endregion
 

@@ -184,7 +184,7 @@ namespace Cliver.ProductIdentifier
 
             #region API for data analysis
 
-            public void ClearBeforeDataAnalysis()
+            public void PrepareForDataAnalysis()
             {
                 Dictionary<string, double> wws = new Dictionary<string,double>();
                 foreach (KeyValuePair<string, double> w2w in word_weights)
