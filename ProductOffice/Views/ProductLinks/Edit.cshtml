@@ -19,20 +19,28 @@
                         <a class="bFind" href="#" onclick="javascript: show_ProductMatchesDlg(@c.Id);">Find</a>
                         <script>
                             function show_ProductMatchesDlg(company2_id){
+                                if(company2_id != CurrentCompany2Id){
+                                    $('#CategoryTreeViewContent').html('');
+                                }
                                 if(!ProductMatchesDlg){
                                     ProductMatchesDlg = show_dialog({
                                         content_div_id: "ProductMatchesContent",
                                         dialog: {
                                             title: "Product Matches",
                                             buttons: {
-                                                Close: function () { ProductMatchesDlg.close(); },
-                                            }
+                                                Close: function () {
+                                                    ProductMatchesDlg.close();
+                                                },
+                                            },
+                                            close: function(){
+                                                //$('#CategoryTreeViewContent').html('');
+                                            },
                                         },
                                     });  
-                                    ProductLinksTable.modalBox.on('dialogclose', function(event) {
-                                        ProductMatchesDlg = null;
-                                        CurrentCompany2Id = null;
-                                    });
+                                    //ProductLinksTable.modalBox.on('dialogclose', function(event) {
+                                        //ProductMatchesDlg = null;
+                                        //CurrentCompany2Id = null;
+                                    //});
                                 }
                                 else 
                                     ProductMatchesDlg.dialog("open");
@@ -270,8 +278,7 @@
     <div id="accumulate_pages_navigation" style="display:inline;">
         <b><a class="_to_next_product" title="Add products with lower match score" href="#" onclick="javascript: get_next_product2_range(true);">Get</a></b>
     </div>   
-     Filtered products: <span id="FilteredProductCount"></span>
-     Shown products: <span id="ShownProductCount"></span>
+     Filtered products: <span id="FilteredProductCount"></span>    Shown products: <span id="ShownProductCount"></span>    <span id="Notification" style="color:red;"></span>
     <hr />
 
     <div id="ProductMatchesList" style="overflow: auto;">
@@ -315,20 +322,23 @@
                 function (data) {
                     if(data.Is_CurrentProductLinks_Changed){
                         $('#ProductMatchesList table').empty();
-                        FilteredProductIndex1 = 0;
-                        FilteredProductIndex2 = 0;
+                        FilteredProductStartIndex = 0;
                     }
                     var product2_matches = data.Product2s;
                     $("#FilteredProductCount").html(data.Product2sCount);
+                    $("#ShownProductCount").html('from ' + FilteredProductStartIndex + ' to ' + data.CurrentProductLinkRangeEndIndex + 1);
                     if (!product2_matches.length) {
+                        //if (forward)
+                        //    show_message("End of list is reached.");
+                        //else
+                        //    show_message("Start of list is reached.");
                         if (forward)
-                            show_message("End of list is reached.");
+                            $('#Notification').html("End of list is reached.");
                         else
-                            show_message("Start of list is reached.");
+                            $('#Notification').html("Start of list is reached.");
                         return;
                     }
-                    FilteredProductIndex2 += product2_matches.length;
-                    $("#ShownProductCount").html('from ' + FilteredProductIndex1 + ' to ' + FilteredProductIndex2);
+                    $('#Notification').html('');
                     for(var i in product2_matches){                    
                         for(var j in product2_matches[i]){
                             var product = product2_matches[i][j];
@@ -356,8 +366,7 @@
                 }
             );
         }
-        var FilteredProductIndex1 = 0;
-        var FilteredProductIndex2 = 0;
+        var FilteredProductStartIndex = 0;
         var ProductIds2LinkedProducts = Array();
     </script>
 

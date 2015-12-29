@@ -366,6 +366,8 @@ GROUP BY a.LinkId";
             json_o["Product2s"] = pss;
             json_o["Product2sCount"] = ipl.CurrentProductLinks.Count;
             json_o["Is_CurrentProductLinks_Changed"] = is_CurrentProductLinks_changed;
+            json_o["CurrentProductLinkRangeStartIndex"] = ipl.CurrentProductLinkRangeStartIndex;
+            json_o["CurrentProductLinkRangeEndIndex"] = ipl.CurrentProductLinkRangeEndIndex;
             return Json(json_o, JsonRequestBehavior.AllowGet);
         }
 
