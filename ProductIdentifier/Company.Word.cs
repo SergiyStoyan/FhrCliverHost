@@ -15,7 +15,7 @@ namespace Cliver.ProductIdentifier
 {
     public partial class Company
     {
-        public double WordWeight(Field field, string word)
+        internal double WordWeight(Field field, string word)
         {
             return GetWordWeight(word);
         }

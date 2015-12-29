@@ -55,7 +55,7 @@ namespace Cliver.ProductIdentifier
             Cliver.Bot.DbSettings.Save(engine.Dbc, SettingsKey.SCOPE, SettingsKey.COMPANY + DbCompany.Id + SettingsKey.SYNONYMS, synonyms);
         }
 
-        public double GetWordWeight(string word)
+        internal double GetWordWeight(string word)
         {
             word = GetSynonym(word);
             double weight = 0;
@@ -98,7 +98,7 @@ namespace Cliver.ProductIdentifier
         Dictionary<string, double> word_weights;
         Dictionary<string, string> synonyms;
 
-        public void SetWordWeight(string word, double weight)
+        internal void SetWordWeight(string word, double weight)
         {
             word = word.Trim().ToLower();
             word = GetSynonym(word);
@@ -113,12 +113,12 @@ namespace Cliver.ProductIdentifier
             word_weights[word] = weight;
         }
 
-        public void SetIgnoredWord(string word)
+        internal void SetIgnoredWord(string word)
         {
             SetWordWeight(word, -1);
         }
 
-        public void UnSetWord(string word)
+        internal void UnSetWord(string word)
         {
             word = GetSynonym(word);
             word = word.Trim().ToLower();
@@ -145,7 +145,7 @@ namespace Cliver.ProductIdentifier
             return new Regex(@"(?<!\w)(?'Word'" + synonyms.Keys.Aggregate((x, y) => x + "|" + Regex.Escape(y)) + @")(?!\w)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
         }
 
-        public string GetSynonym(string word)
+        internal string GetSynonym(string word)
         {
             string synonym;
             if (synonyms.TryGetValue(word, out synonym))
@@ -153,7 +153,7 @@ namespace Cliver.ProductIdentifier
             return word;
         }
 
-        public void SetSynonym(string word, string synonym)
+        internal void SetSynonym(string word, string synonym)
         {
             word = word.Trim().ToLower();
             synonym = synonym.Trim().ToLower();
@@ -166,7 +166,7 @@ namespace Cliver.ProductIdentifier
             //UnSetWord(word);
         }
 
-        public void UnSetSynonym(string word)
+        internal void UnSetSynonym(string word)
         {
             word = word.Trim().ToLower();
             synonyms.Remove(word);
@@ -176,7 +176,7 @@ namespace Cliver.ProductIdentifier
 
         #region API for data analysis
 
-        public void PrepareForDataAnalysis()
+        internal void PrepareForDataAnalysis()
         {
             Dictionary<string, double> wws = new Dictionary<string, double>();
             foreach (KeyValuePair<string, double> w2w in word_weights)
@@ -185,12 +185,12 @@ namespace Cliver.ProductIdentifier
             word_weights = wws;
         }
 
-        public void DefineWordWeight(string word)
+        internal void DefineWordWeight(string word)
         {
             GetWordWeight(word);
         }
 
-        public void SaveAfterDataAnalysis()
+        internal void SaveAfterDataAnalysis()
         {
             SaveWordWeights();
             Cliver.Bot.DbSettings.Save(engine.Dbc, SettingsKey.SCOPE, SettingsKey.COMPANY + DbCompany.Id + SettingsKey.ANALYSIS_TIME, DateTime.Now);

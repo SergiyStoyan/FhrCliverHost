@@ -15,7 +15,7 @@ namespace Cliver.ProductIdentifier
 {
     public class CompanyPairs
     {
-        public CompanyPairs(Engine engine)
+        internal CompanyPairs(Engine engine)
         {
             this.engine = engine;
         }
@@ -53,7 +53,7 @@ namespace Cliver.ProductIdentifier
             Cliver.Bot.DbSettings.Save(engine.Dbc, SettingsKey.SCOPE, SettingsKey.CATEGORY_MAP + company1_id_company2_id, category1s_to_mapped_category2s);
         }
 
-        public void MapCategories(Product product1, Product product2)
+        internal void MapCategories(Product product1, Product product2)
         {
             Dictionary<string, HashSet<string>> category1s_to_mapped_category2s;
             string company1_id_company2_id = get_company_pair_key(ref product1, ref product2);
@@ -73,7 +73,7 @@ namespace Cliver.ProductIdentifier
         #endregion
 
         #region API for self-training during linking
-        public void UnmapCategoriesAndSave(Product product1, Product product2)
+        internal void UnmapCategoriesAndSave(Product product1, Product product2)
         {
             Dictionary<string, HashSet<string>> category1s_to_mapped_category2s;
             string company1_id_company2_id = get_company_pair_key(ref product1, ref product2);
@@ -88,7 +88,7 @@ namespace Cliver.ProductIdentifier
             save_mapped_categories(company1_id_company2_id);
         }
 
-        public void MapCategoriesAndSave(Product product1, Product product2)
+        internal void MapCategoriesAndSave(Product product1, Product product2)
         {
             MapCategories(product1, product2);
             string company1_id_company2_id = get_company_pair_key(ref product1, ref product2);
@@ -132,7 +132,7 @@ namespace Cliver.ProductIdentifier
             return Regex.IsMatch(child_category, @"^\s*" + Regex.Escape(category), RegexOptions.IgnoreCase | RegexOptions.Multiline);
         }
 
-        public double GetCategoryComparisonScore(Product product1, Product product2)
+        internal double GetCategoryComparisonScore(Product product1, Product product2)
         {
             Dictionary<string, double> category1_category2_to_score;
             string company1_id_company2_id = get_company_pair_key(ref product1, ref product2);
@@ -185,6 +185,7 @@ namespace Cliver.ProductIdentifier
             }
             return company1_id.ToString() + "," + company2_id;
         }
+
         public void GetMappedCategoriesAsString(int company1_id, int company2_id, out string mapped_categories)
         {
             string company1_id_company2_id = get_company_pair_key(ref company1_id, ref company2_id);

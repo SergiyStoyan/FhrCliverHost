@@ -21,7 +21,7 @@ namespace Cliver.ProductIdentifier
         }
         readonly Engine engine;
 
-        public Company Get(Product product)
+        internal Company Get(Product product)
         {
             return Get(product.DbProduct.CompanyId);
         }

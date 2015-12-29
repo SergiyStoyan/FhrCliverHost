@@ -35,7 +35,7 @@ namespace Cliver.ProductIdentifier
         }
         Dictionary<string, string> categorys2normalized_category = new Dictionary<string, string>();
 
-        public Dictionary<string, int> CategoryWords2Count(string normalized_category)
+        internal Dictionary<string, int> CategoryWords2Count(string normalized_category)
         {
             Dictionary<string, int> cw2c;
             if (!categories2words2count.TryGetValue(normalized_category, out cw2c))
@@ -129,7 +129,7 @@ namespace Cliver.ProductIdentifier
             return tree;
         }
 
-        static Dictionary<string, dynamic> build_tree_from_paths(List<string> paths)
+        Dictionary<string, dynamic> build_tree_from_paths(List<string> paths)
         {
             Dictionary<string, dynamic> tree = new Dictionary<string, dynamic>();
             foreach (string path in paths)
@@ -138,7 +138,7 @@ namespace Cliver.ProductIdentifier
             return tree;
         }
 
-        static void add_path(string path, Dictionary<string, dynamic> tree)
+        void add_path(string path, Dictionary<string, dynamic> tree)
         {
             Match m = Regex.Match(path, "^(.*?)" + Regex.Escape(Fhr.ProductOffice.DataApi.Product.CATEGORY_SEPARATOR) + "+(.+)", RegexOptions.Compiled | RegexOptions.Singleline);
             if (m.Success)
