@@ -81,10 +81,12 @@ namespace Cliver.ProductIdentifier
 
         internal Product(Engine engine, Fhr.ProductOffice.Models.Product product)
         {
+            engine.sw10.Start();
             this.engine = engine;
             if (product == null)
                 throw new Exception("product is null");
             DbProduct = product;
+            engine.sw10.Stop();
         }
         readonly Engine engine;
     }

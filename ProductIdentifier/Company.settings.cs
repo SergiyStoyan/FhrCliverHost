@@ -57,6 +57,7 @@ namespace Cliver.ProductIdentifier
 
         internal double GetWordWeight(string word)
         {
+            engine.sw6.Start();
             word = GetSynonym(word);
             double weight = 0;
             if (!word_weights.TryGetValue(word, out weight))
@@ -80,6 +81,7 @@ namespace Cliver.ProductIdentifier
 
                 word_weights[word] = weight;
             }
+            engine.sw6.Stop();
             return weight;
         }
 
