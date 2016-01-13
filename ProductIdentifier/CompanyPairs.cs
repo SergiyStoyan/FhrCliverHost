@@ -155,7 +155,7 @@ namespace Cliver.ProductIdentifier
         double get_category_comparison_score(Product product1, Product product2)
         {
             Dictionary<string, double> word2category_score = new Dictionary<string, double>();
-            foreach (string word in product1.Words2Count(Field.Category).Keys)
+            foreach (string word in product1.Words(Field.Category))
             {
                 if (product2.Words2Count(Field.Category).ContainsKey(word))
                     word2category_score[word] = .5 * engine.Companies.Get(product1.DbProduct.CompanyId).WordWeight(Field.Category, word)

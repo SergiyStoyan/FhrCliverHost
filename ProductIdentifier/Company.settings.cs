@@ -57,7 +57,6 @@ namespace Cliver.ProductIdentifier
 
         internal double GetWordWeight(string word)
         {
-            engine.sw6.Start();
             word = GetSynonym(word);
             double weight = 0;
             if (!word_weights.TryGetValue(word, out weight))
@@ -65,15 +64,16 @@ namespace Cliver.ProductIdentifier
                 //if (w.IsInDictionary)
                 //    weight *= 0.5;
 
-                int containing_category_count = 0;
+                bool contained_in_category = false;
                 foreach (string c in Categories)
                     if (NormalizedCategory(c).Contains(word))
-                        containing_category_count++;
-                double category_frequency = (double)containing_category_count / Categories.Count;
+                    {
+                        contained_in_category = true;
+                        break;
+                    }
 
                 weight =
-                    1 * (containing_category_count > 0 && Regex.IsMatch(word, @"\d") ? 1 : 0) +
-                    30 * category_frequency +
+                    50 * (contained_in_category && Regex.IsMatch(word, @"\d") ? 1 : 0.3) +
                     10 * WordProductFrequency(Field.Name, word) +
                     10 * (1 - WordDensity(Field.Name, word)) +
                     10 * (1 - WordProductFrequency(Field.Description, word)) +
@@ -81,7 +81,6 @@ namespace Cliver.ProductIdentifier
 
                 word_weights[word] = weight;
             }
-            engine.sw6.Stop();
             return weight;
         }
 

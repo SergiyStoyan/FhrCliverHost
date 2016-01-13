@@ -27,24 +27,28 @@ namespace Cliver.ProductIdentifier
         public string Normalized(Field field)
         {
             string t;
-            if (!field2text.TryGetValue(field, out t))
+            switch (field)
             {
-                switch (field)
-                {
-                    case Field.Name:
+                case Field.Name:
+                    if (!field2text.TryGetValue(field, out t))
+                    {
                         t = get_normalized(DbProduct.Name);
-                        break;
-                    case Field.Description:
+                        field2text[field] = t;
+                    }
+                    break;
+                case Field.Description:
+                    if (!field2text.TryGetValue(field, out t))
+                    {
                         t = get_normalized(DbProduct.Description);
                         field2text[field] = t;
-                        break;
-                    case Field.Category:
-                        return engine.Companies.Get(DbProduct.CompanyId).NormalizedCategory(DbProduct.Category);
-                    default:
-                        throw new Exception("untreated case");
-                }
+                    }
+                    break;
+                case Field.Category:
+                    t = engine.Companies.Get(DbProduct.CompanyId).NormalizedCategory(DbProduct.Category);
+                    break;
+                default:
+                    throw new Exception("untreated case");
             }
-            field2text[field] = t;
             return t;
         }
         readonly Dictionary<Field, string> field2text = new Dictionary<Field, string>();
@@ -81,12 +85,10 @@ namespace Cliver.ProductIdentifier
 
         internal Product(Engine engine, Fhr.ProductOffice.Models.Product product)
         {
-            engine.sw10.Start();
             this.engine = engine;
             if (product == null)
                 throw new Exception("product is null");
             DbProduct = product;
-            engine.sw10.Stop();
         }
         readonly Engine engine;
     }

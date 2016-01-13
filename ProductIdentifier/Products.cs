@@ -23,7 +23,6 @@ namespace Cliver.ProductIdentifier
 
         internal Product Get(int product_id)
         {
-            engine.sw9.Start();
             Product p = null;
             if (!product_ids2Product.TryGetValue(product_id, out p))
             {
@@ -33,7 +32,6 @@ namespace Cliver.ProductIdentifier
                 p = new Product(engine, product);
                 product_ids2Product[product.Id] = p;
             }
-            engine.sw9.Stop();
             return p;
         }
 

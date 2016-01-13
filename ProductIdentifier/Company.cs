@@ -45,7 +45,7 @@ namespace Cliver.ProductIdentifier
             }
             return cw2c;
         }
-        readonly Dictionary<string, Dictionary<string, int>> categories2words2count = new Dictionary<string,Dictionary<string,int>>();
+        readonly Dictionary<string, Dictionary<string, int>> categories2words2count = new Dictionary<string, Dictionary<string, int>>();
     
         internal Dictionary<string, int> GetWords2Count(string normalized_text)
         {
