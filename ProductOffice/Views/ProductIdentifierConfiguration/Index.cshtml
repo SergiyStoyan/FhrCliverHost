@@ -37,12 +37,11 @@ Last autotraining date: @ViewBag.SelfTrainingDate
     <img src="/Images/ajax-loader.gif" style="display:block;margin:auto;position:relative;top:50%;transform:translateY(-50%);"></div>
 
 Initial settings:
-<a href="#" onclick="javascript: edit_default('EditSynonyms');" class="button">Sysnonyms</a>
-<a href="#" onclick="javascript: edit_default('EditIgnoredWords');" class="button">Ignored Words</a>
+<a href="#" onclick="javascript: edit_default('EditDefaultSynonyms');" class="button">Sysnonyms</a>
+<a href="#" onclick="javascript: edit_default('EditDefaultIgnoredWords');" class="button">Ignored Words</a>
 <script>
     function edit_default(action) {
-        var e = table1.definition.show_row_editor("@Request.Path/" + action + "?id=@ViewBag.DefaultSettingsId", "OK", function () {
-        });
+        var e = table1.definition.show_row_editor("@Request.Path/" + action, "Save", function () { });
     }
 </script>
 
@@ -76,19 +75,19 @@ Company related settings:
                 ignored_words: {
                     text: "Ignored Words",
                     onclick: function () {
-                        table1.definition.show_row_editor("@Request.Path/EditIgnoredWords?id=" + table1.api().row('.selected').data()[0], "OK");
+                        table1.definition.show_row_editor("@Request.Path/EditIgnoredWords?id=" + table1.api().row('.selected').data()[0], "Save", function () { });
                     }
                 },
                 word_weights: {
                     text: "Word Weights",
                     onclick: function () {
-                        table1.definition.show_row_editor("@Request.Path/EditWordWeights?id=" + table1.api().row('.selected').data()[0], "OK");
+                        table1.definition.show_row_editor("@Request.Path/EditWordWeights?id=" + table1.api().row('.selected').data()[0], "Save", function () { });
                     }
                 },
                 synonyms: {
                     text: "Synonyms",
                     onclick: function () {
-                        table1.definition.show_row_editor("@Request.Path/EditSynonyms?id=" + table1.api().row('.selected').data()[0], "OK");
+                        table1.definition.show_row_editor("@Request.Path/EditSynonyms?id=" + table1.api().row('.selected').data()[0], "Save", function () { });
                     }
                 },
                 delete: false,

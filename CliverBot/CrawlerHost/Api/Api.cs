@@ -64,7 +64,8 @@ namespace Cliver.CrawlerHost
                 p = System.Web.Compilation.BuildManager.GetGlobalAsaxType().BaseType.Assembly.GetName(false).CodeBase;
             else
                 p = System.Reflection.Assembly.GetEntryAssembly().GetName(false).CodeBase;
-            return Regex.Replace(p, @"^\s*file:///", "", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            p = Regex.Replace(p, @"^\s*file:///", "", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            return Regex.Replace(p, @"[\\\/]*[^\\\/]*$", "", RegexOptions.Singleline | RegexOptions.IgnoreCase);
         }
     }
 }

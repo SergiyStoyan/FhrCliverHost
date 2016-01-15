@@ -31,6 +31,38 @@ namespace Cliver.ProductOffice.Controllers
         //    ViewBag.CompanyId = new SelectList(CompanySelect, "Value", "Name");
         //    return View();
         //}
+        
+        public ActionResult EditDefaultSynonyms()
+        {
+            ProductIdentifier.Engine e = new ProductIdentifier.Engine(false);
+            ViewBag.Synonyms = e.GetDefaultSynonymsAsString();
+            return PartialView("EditSynonyms");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditDefaultSynonyms(string synonyms)
+        {
+            ProductIdentifier.Engine e = new ProductIdentifier.Engine(false);
+            e.SaveDefaultSynonymsFromString(synonyms);
+            return Content(null);
+        }
+
+        public ActionResult EditDefaultIgnoredWords()
+        {
+            ProductIdentifier.Engine e = new ProductIdentifier.Engine(false);
+            ViewBag.IgnoredWords = e.GetDefaultIgnoredWordsAsString();
+            return PartialView("EditIgnoredWords");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditDefaultIgnoredWords(string ignored_words)
+        {
+            ProductIdentifier.Engine e = new ProductIdentifier.Engine(false);
+            e.SaveDefaultIgnoredWordsFromString(ignored_words);
+            return Content(null);
+        }
 
         public ActionResult Index()
         {
@@ -40,7 +72,6 @@ namespace Cliver.ProductOffice.Controllers
             else
                 ViewBag.SelfTrainingDate = "no training was done yet.";
             ViewBag.Companies = db.Companies;
-            ViewBag.DefaultSettingsId = ProductIdentifier.Engine.NO_COMPANY_ID;
             return View();
         }
 

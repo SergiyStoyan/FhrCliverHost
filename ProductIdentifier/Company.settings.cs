@@ -20,17 +20,15 @@ namespace Cliver.ProductIdentifier
             word_weights = Cliver.Bot.DbSettings.Get<Dictionary<string, double>>(engine.Dbc, SettingsKey.SCOPE, SettingsKey.COMPANY + DbCompany.Id + SettingsKey.WORD_WEIGHTS);
             if (word_weights == null)
             {
-                word_weights = new Dictionary<string, double>();
-                //configuration.default_word_weights.Keys.ToList().ForEach(x => word_weights[x] = configuration.default_word_weights[x]);
-                foreach (string iw in engine.DefaultIgnoredWords)
-                    this.word_weights[iw] = -1;
+                SetIgnoredWordsFromString(engine.GetDefaultIgnoredWordsAsString());
+                SaveWordWeights();
             }
 
             synonyms = Cliver.Bot.DbSettings.Get<Dictionary<string, string>>(engine.Dbc, SettingsKey.SCOPE, SettingsKey.COMPANY + DbCompany.Id + SettingsKey.SYNONYMS);
             if (synonyms == null)
             {
-                this.synonyms = new Dictionary<string, string>();
-                engine.DefaultSynonyms.Keys.ToList().ForEach(x => synonyms[x] = engine.DefaultSynonyms[x]);
+                SetSynonymsFromString(engine.GetDefaultSynonymsAsString());
+                SaveSynonyms();
             }
 
             ignored_words_regex = create_ignored_words_regex();
@@ -99,34 +97,14 @@ namespace Cliver.ProductIdentifier
         Dictionary<string, double> word_weights;
         Dictionary<string, string> synonyms;
 
-        internal void SetWordWeight(string word, double weight)
-        {
-            word = word.Trim().ToLower();
-            word = GetSynonym(word);
-            if (weight < 0)
-            {
-                word_weights[word] = -1;
+        //internal void UnSetWord(string word)
+        //{
+        //    word = GetSynonym(word);
+        //    word = word.Trim().ToLower();
+        //    word_weights.Remove(word);
 
-                ignored_words_regex = create_ignored_words_regex();
-                //UnSetSynonym(word);
-                return;
-            }
-            word_weights[word] = weight;
-        }
-
-        internal void SetIgnoredWord(string word)
-        {
-            SetWordWeight(word, -1);
-        }
-
-        internal void UnSetWord(string word)
-        {
-            word = GetSynonym(word);
-            word = word.Trim().ToLower();
-            word_weights.Remove(word);
-
-            ignored_words_regex = create_ignored_words_regex();
-        }
+        //    ignored_words_regex = create_ignored_words_regex();
+        //}
 
         internal string ReplaceWithSynonyms(string text)
         {
@@ -154,26 +132,13 @@ namespace Cliver.ProductIdentifier
             return word;
         }
 
-        internal void SetSynonym(string word, string synonym)
-        {
-            word = word.Trim().ToLower();
-            synonym = synonym.Trim().ToLower();
-            if (word == synonym)
-                return;
-            synonyms.Where(x => x.Value == word).ToList().ForEach(x => synonyms[x.Key] = synonym);
-            synonyms[word] = synonym;
+        //internal void UnSetSynonym(string word)
+        //{
+        //    word = word.Trim().ToLower();
+        //    synonyms.Remove(word);
 
-            synonyms_regex = create_synonyms_regex();
-            //UnSetWord(word);
-        }
-
-        internal void UnSetSynonym(string word)
-        {
-            word = word.Trim().ToLower();
-            synonyms.Remove(word);
-
-            synonyms_regex = create_synonyms_regex();
-        }
+        //    synonyms_regex = create_synonyms_regex();
+        //}
 
         #region API for data analysis
 
@@ -194,6 +159,7 @@ namespace Cliver.ProductIdentifier
         internal void SaveAfterDataAnalysis()
         {
             SaveWordWeights();
+            SaveSynonyms();
             Cliver.Bot.DbSettings.Save(engine.Dbc, SettingsKey.SCOPE, SettingsKey.COMPANY + DbCompany.Id + SettingsKey.ANALYSIS_TIME, DateTime.Now);
         }
 
@@ -242,8 +208,10 @@ namespace Cliver.ProductIdentifier
                 if (this.word_weights.TryGetValue(word, out weight))
                     if (weight < 1)
                         continue;
-                SetWordWeight(word, double.Parse(m.Groups["Weight"].Value));
+                set_word_weight(word, double.Parse(m.Groups["Weight"].Value));
             }
+
+            ignored_words_regex = create_ignored_words_regex();
         }
 
         public void SetIgnoredWordsFromString(string ignored_words)
@@ -255,14 +223,51 @@ namespace Cliver.ProductIdentifier
             this.word_weights = wws;
 
             for (Match m = Regex.Match(ignored_words, @"(?'Word'[^\s]+)", RegexOptions.Singleline | RegexOptions.IgnoreCase); m.Success; m = m.NextMatch())
-                SetIgnoredWord(m.Groups["Word"].Value);
+                set_ignored_word(m.Groups["Word"].Value);
+
+            ignored_words_regex = create_ignored_words_regex();
+        }
+
+        internal void set_ignored_word(string word)
+        {
+            set_word_weight(word, -1);
+        }
+
+        void set_word_weight(string word, double weight)
+        {
+            word = word.Trim().ToLower();
+            word = GetSynonym(word);
+            if (weight < 0)
+            {
+                word_weights[word] = -1;
+
+                //ignored_words_regex = create_ignored_words_regex();
+                //UnSetSynonym(word);
+                return;
+            }
+            word_weights[word] = weight;
         }
 
         public void SetSynonymsFromString(string synonyms)
         {
-            this.synonyms.Clear();
+            this.synonyms = new Dictionary<string, string>();
             for (Match m = Regex.Match(synonyms, @"(?'Word'[^\s>]+)\s*>\s*(?'Synonym'[^\s>]+)", RegexOptions.Singleline | RegexOptions.IgnoreCase); m.Success; m = m.NextMatch())
-                SetSynonym(m.Groups["Word"].Value, m.Groups["Synonym"].Value);
+                set_synonym(m.Groups["Word"].Value, m.Groups["Synonym"].Value);
+
+            synonyms_regex = create_synonyms_regex();
+        }
+
+        void set_synonym(string word, string synonym)
+        {
+            word = word.Trim().ToLower();
+            synonym = synonym.Trim().ToLower();
+            if (word == synonym)
+                return;
+            synonyms.Where(x => x.Value == word).ToList().ForEach(x => synonyms[x.Key] = synonym);
+            synonyms[word] = synonym;
+
+            //synonyms_regex = create_synonyms_regex();
+            //UnSetWord(word);
         }
 
         #endregion

@@ -196,7 +196,7 @@ function show_dialog(definition) {
             
     e.dialog(definition.dialog);
 
-    e.dialog().dialog("widget").draggable("option", "containment", false);
+    e.dialog().dialog("widget").draggable("option", "containment", [-2000, 0, 2000, 1000]);
 
     if (definition.background) {
         e.parent().find('*[class^="ui-resizable-handle"]').css('background-color', definition.background);

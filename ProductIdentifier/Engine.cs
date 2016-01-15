@@ -23,8 +23,6 @@ namespace Cliver.ProductIdentifier
             Companies = new Companies(this);
             Products = new Products(this);
             CompanyPairs = new ProductIdentifier.CompanyPairs(this);
-
-            initialize_settings();
         }
 
         public readonly Companies Companies;
