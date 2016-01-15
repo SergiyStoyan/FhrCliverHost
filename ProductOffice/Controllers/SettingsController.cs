@@ -13,6 +13,7 @@ using System.Text.RegularExpressions;
 
 namespace Cliver.ProductOffice.Controllers
 {
+    [HandleActionError]
     [Authorize]
     public class SettingsController : Controller
     {
@@ -38,13 +39,16 @@ namespace Cliver.ProductOffice.Controllers
         {
             string database_ = request.Columns.ToList()[1].Search.Value;
             if (database_ == null)
-                return Json(new { });
+                throw new Exception("No database specified");
             Match m = Regex.Match(database_, @"Database\s*=\s*(.+)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
             if (!m.Success)
-                return Json(new { });
+                throw new Exception("No database found: " + database_);
             string database = m.Groups[1].Value;
             Session["Database"] = database;
             Cliver.Bot.DbConnection dbc = GetDbc(database);
+            if (null == dbc.Get("SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME LIKE 'Settings'").GetSingleValue())
+                throw new DatatableException("No table 'Settings' found in " + database_);
+
             JqueryDataTable.Field[] fields = new JqueryDataTable.Field[] {                 
                 new JqueryDataTable.Field("Scope", true), 
                 new JqueryDataTable.Field("[Key]", true),                               

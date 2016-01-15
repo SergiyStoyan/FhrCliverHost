@@ -72,12 +72,11 @@ namespace Cliver.ProductIdentifier
                         break;
                     }
 
-                weight =
-                    50 * (contained_in_category && Regex.IsMatch(word, @"\d") ? 1 : 0.3) +
-                    10 * WordProductFrequency(Field.Name, word) +
-                    10 * (1 - WordDensity(Field.Name, word)) +
-                    10 * (1 - WordProductFrequency(Field.Description, word)) +
-                    10 * (1 - WordDensity(Field.Description, word));
+                weight = contained_in_category ? (Regex.IsMatch(word, @"\d") ? 1 : 0.3) : .1;
+         //           10 * WordProductFrequency(Field.Name, word) +
+           //         10 * (1 - WordDensity(Field.Name, word)) +
+             //       10 * (1 - WordProductFrequency(Field.Description, word)) +
+               //     10 * (1 - WordDensity(Field.Description, word));
 
                 word_weights[word] = weight;
             }

@@ -473,12 +473,9 @@ function init_table(definition) {
         },
         datatable: {
             serverSide: true,
-            ajax: {
-                url: null,
-                type: 'POST',
-            },
-            //ajax: function (data, callback, settings) {
-            //    callback(data);
+            //ajax: {
+            //    url: null,
+            //    type: 'POST',
             //},
             columnDefs: [
                 {
@@ -535,9 +532,29 @@ function init_table(definition) {
     var definition = definition_._merge(definition, definition_);
 
     if (!definition.server.actions_prefix)
-        definition.server.actions_prefix = '';    
-    if (!definition.datatable.ajax.url)
-        definition.datatable.ajax.url = definition.server.request_path + "/TableJson" + definition.server.actions_prefix;
+        definition.server.actions_prefix = '';
+    //if (!definition.datatable.ajax.url)
+    //    definition.datatable.ajax.url = definition.server.request_path + "/TableJson" + definition.server.actions_prefix;    
+    if (!definition.datatable.ajax){
+        definition.datatable.ajax = function (data, callback, settings) {
+            $.ajax({
+                type: 'POST',
+                url: definition.server.request_path + "/TableJson" + definition.server.actions_prefix,
+                data: data,
+                success: function (data) {
+                    if ($.type(data) == 'string') {
+                        show_error(data);
+                        data = { draw: 0, recordsTotal: 0, recordsFiltered: 0, data: [] };
+                    }
+                    callback(data);
+                },
+                error: function (xhr, error) {
+                    console.log(error, xhr);
+                    show_error(xhr.responseText);
+                }
+            });
+        }
+    }
     if (!definition.datatable.createdRow)
         definition.datatable.createdRow = definition.on_row_filling;
 

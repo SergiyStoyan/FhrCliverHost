@@ -109,7 +109,7 @@ namespace Cliver.ProductIdentifier
 
         #region API for analysing data
         //!!!Update Configuration in Engine being kept for reuse, after performing self-training!!!
-        public void PerformDataAnalysis(int company_id)
+        public void PerformDataAnalysis(int company_id)        
         {
             lock (this)
             {

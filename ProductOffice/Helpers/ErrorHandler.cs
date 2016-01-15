@@ -13,27 +13,38 @@ using System.Collections.Specialized;
 
 namespace Cliver.ProductOffice
 {
+    public class DatatableException : Exception
+    {
+        public DatatableException(string message) : base(message) { }
+    }
+
     public class HandleActionError : HandleErrorAttribute
     {
-        public override void OnException(ExceptionContext filterContext)
+        public override void OnException(ExceptionContext context)
         {
-            if (filterContext.Controller is System.Web.Mvc.Controller)
+            if (context.Controller is System.Web.Mvc.Controller)
             {
-                Controller c = (Controller)filterContext.Controller;
-                if (c.Request.IsAjaxRequest())
+                Controller c = (Controller)context.Controller;
+                if (context.Exception is DatatableException)
                 {
-//                    filterContext.ExceptionHandled = true;
-//                    Exception e = filterContext.Exception;
-//                    for (; e.InnerException != null; e = e.InnerException) ;
-//                    string message = "Exception: <br>" + e.Message;
-//#if DEBUG
-//                    message += "<br><hr>Module:<br>" + e.TargetSite.Module + "<br><br>Stack:<br>" + e.StackTrace;
-//#else
-//#endif
-//                    Errors.Add(message);
-//                    filterContext.Result = new ViewResult { ViewName = "_Notifications" };
-//                    c.Response.StatusCode = (int)System.Net.HttpStatusCode.BadRequest; 
+                    context.HttpContext.Response.Write(context.Exception.Message);
+                    context.HttpContext.Response.Flush();
+                    context.ExceptionHandled = true;
                 }
+                //                if (c.Request.IsAjaxRequest())
+                //                {
+                //                    context.ExceptionHandled = true;
+                //                    Exception e = context.Exception;
+                //                    for (; e.InnerException != null; e = e.InnerException) ;
+                //                    string message = "Exception: <br>" + e.Message;
+                //#if DEBUG
+                //                    message += "<br><hr>Module:<br>" + e.TargetSite.Module + "<br><br>Stack:<br>" + e.StackTrace;
+                //#else
+                //#endif
+                //                    Errors.Add(message);
+                //                    context.Result = new ViewResult { ViewName = "_Notifications" };
+                //                    c.Response.StatusCode = (int)System.Net.HttpStatusCode.BadRequest; 
+                //                }
             }
         }
     }

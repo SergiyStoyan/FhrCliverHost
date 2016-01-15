@@ -299,7 +299,7 @@ GROUP BY a.LinkId";
                     ipl = new IdenticalProductList(controller, product1_ids, company2_id, ipl.engine);
                 controller.Session[IdenticalProductList.IdenticalProductList_SESSION_KEY] = ipl;
                 //System.Runtime.Caching.MemoryCache.Default.Set(IdenticalProductList.CacheKey, ipl, DateTimeOffset.Now.AddSeconds(3600));
-                if (ipl.product_links.Count > 0)
+                if (ipl.product_links.Count > 0 && ipl.product_links[0].Score > 1)
                     ipl.ScoreFactor = 1D / ipl.product_links[0].Score;
                 return ipl;
             }

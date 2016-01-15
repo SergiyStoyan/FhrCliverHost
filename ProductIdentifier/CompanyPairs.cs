@@ -36,6 +36,8 @@ namespace Cliver.ProductIdentifier
 
         string get_company_pair_key(ref Product product1, ref Product product2)
         {
+            if (product1.DbProduct.CompanyId == product2.DbProduct.CompanyId)
+                throw new Exception("Company cannot be mapped to iteslf.\r\nDd:" + product1.DbProduct.CompanyId);
             if (product1.DbProduct.CompanyId > product2.DbProduct.CompanyId)
             {
                 Product p = product1;
@@ -177,6 +179,8 @@ namespace Cliver.ProductIdentifier
         
         string get_company_pair_key(ref int company1_id, ref int company2_id)
         {
+            if (company1_id == company2_id)
+                throw new Exception("Company cannot be mapped to iteslf.\r\nDd:" + company1_id);
             if (company1_id > company2_id)
             {
                 int ci = company1_id;
