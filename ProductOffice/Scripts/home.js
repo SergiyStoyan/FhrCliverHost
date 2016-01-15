@@ -28,6 +28,8 @@ function show_message(content, title) {
             duration: 400
         }
     });
+
+    e.dialog().dialog("widget").draggable("option", "containment", false);
     
     arrange_dialog_window(e);
     return e;
@@ -64,6 +66,8 @@ function show_error(content, title) {
             duration: 400
         }
     });
+
+    e.dialog().dialog("widget").draggable("option", "containment", false);
 
     arrange_dialog_window(e);
     return e;
@@ -191,6 +195,8 @@ function show_dialog(definition) {
     e.append(content_e);
             
     e.dialog(definition.dialog);
+
+    e.dialog().dialog("widget").draggable("option", "containment", false);
 
     if (definition.background) {
         e.parent().find('*[class^="ui-resizable-handle"]').css('background-color', definition.background);

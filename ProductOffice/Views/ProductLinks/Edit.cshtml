@@ -300,28 +300,28 @@
 
     <script>
 
-        $("#ProductMatchesList table").on('click', 'tr', function () {
-            var row = $(this);
-            row.parent().find('tr.ProductMatch_selected').removeClass('ProductMatch_selected');
-            row.addClass('ProductMatch_selected');
-        });
-        
-        var CurrentProduct1Ids;
-        var CurrentCompany2Id;
+    $("#ProductMatchesList table").on('click', 'tr', function () {
+        var row = $(this);
+        row.parent().find('tr.ProductMatch_selected').removeClass('ProductMatch_selected');
+        row.addClass('ProductMatch_selected');
+    });
 
-        function get_next_product2_range(forward) {
-            ProductMatchesDlg.getContentByAjax(
-                {
-                    type: 'GET',
-                    data: {
-                        "product1_ids": CurrentProduct1Ids,
-                        "company2_id": CurrentCompany2Id,
-                        "keyword2s": $('#Keyword2s').val(),
-                        "category2": Category2,
-                        "range_size": $('#RangeSize').val(),
-                        "forward": forward || forward == undefined ? true : false
-                    },
-                    url: "@Url.Action("GetNextProductLinks")"
+    var CurrentProduct1Ids;
+    var CurrentCompany2Id;
+
+    function get_next_product2_range(forward) {
+        ProductMatchesDlg.getContentByAjax(
+            {
+                type: 'GET',
+                data: {
+                    "product1_ids": CurrentProduct1Ids,
+                    "company2_id": CurrentCompany2Id,
+                    "keyword2s": $('#Keyword2s').val(),
+                    "category2": Category2,
+                    "range_size": $('#RangeSize').val(),
+                    "forward": forward || forward == undefined ? true : false
+                },
+                url: "@Url.Action("GetNextProductLinks")"
                 },
                 function (data) {
                     if(data.Is_CurrentProductLinks_Changed){
@@ -332,25 +332,25 @@
                     $("#FilteredProductCount").html(data.CurrentProductLinksCount);
                     $("#ShownProductCount").html('from ' + FilteredProductStartIndex + ' to ' + (data.CurrentProductLinkRangeEndIndex + 1));
                     if(forward){
-                        if (data.CurrentProductLinkRangeEndIndex + 1 >= data.CurrentProductLinksCount) 
+                        if (data.CurrentProductLinkRangeEndIndex + 1 >= data.CurrentProductLinksCount)
                             $('#Notification').html("End of list");
                         else
                             $('#Notification').html('');
                     }
                     else
                     {
-                        if (data.CurrentProductLinkRangeStartIndex <= 0) 
+                        if (data.CurrentProductLinkRangeStartIndex <= 0)
                             $('#Notification').html("Start of list");
                         else
                             $('#Notification').html('');
                     }
-                    for(var i in data.Product2s){              
+                    for(var i in data.Product2s){
                         var linked_product2s = data.Product2s[i];
                         for(var j in linked_product2s){
                             var product = linked_product2s[j];
                             if(product.CompanyId != CurrentCompany2Id)
                                 continue;
-                            
+
                             ProductIds2LinkedProducts[product.Id] = linked_product2s;
 
                             var image_urls = '';
@@ -358,10 +358,11 @@
                                 image_urls += '<a href="' + product.ImageUrls[i] + '" target="_blank"><img src="' + product.ImageUrls[i] + '" style="height:50px; width:50px;" /></a>';
                             }
 
-                            var name = '<a href="' + product.Url + '" target="_blank">' + product.Name + '</a>';
-               
+                            //var name = '<a href="' + product.Url + '" target="_blank">' + product.Name + '</a>';
+                            var name = '<a href="#" onclick="javascript:show_product_details(' + product.Id + ');">' + product.Name + '</a>';
+
                             var label = product._Index + " - Score: " + Math.round(product._Score * 1000) + "/" + Math.round(product._CategoryScore * 1000) + "/" + Math.round(product._NameScore * 1000);// + "/" + Math.round(product._SecondaryScore * 10000);
-                        
+
                             var product_html = "<tr><td>" + image_urls + "</td><td>" + name + "</td><td>" + label + "</td><td><a href='#' onclick='javascript: add_product2s_to_LinkedProductsTable(ProductIds2LinkedProducts[" + product.Id + "]); ProductMatchesDlg.close();'>link</a></td></tr>";
                             var r = $(product_html);
                             r.attr("product_id", product.Id);
@@ -374,6 +375,10 @@
         }
         var FilteredProductStartIndex = 0;
         var ProductIds2LinkedProducts = Array();
+
+        function show_product_details(product_id){
+            init_table().show_row_editor('/Products/Details?id=' + product_id, "Close");
+        }
     </script>
 
 

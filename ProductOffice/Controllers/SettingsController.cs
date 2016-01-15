@@ -47,7 +47,8 @@ namespace Cliver.ProductOffice.Controllers
             Session["Database"] = database;
             Cliver.Bot.DbConnection dbc = GetDbc(database);
             if (null == dbc.Get("SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME LIKE 'Settings'").GetSingleValue())
-                throw new DatatableException("No table 'Settings' found in " + database_);
+                //this way is a plain error message is shown
+                return Content("No table 'Settings' found in " + database_);
 
             JqueryDataTable.Field[] fields = new JqueryDataTable.Field[] {                 
                 new JqueryDataTable.Field("Scope", true), 
