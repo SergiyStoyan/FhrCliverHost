@@ -574,11 +574,13 @@ function init_table(definition) {
     if (!definition.datatable.serverSide)
         definition.datatable.ajax = false;
 
-    var table;
+    var t;
     if (definition.table_id)
-        table = $("#" + definition.table_id).dataTable(definition.datatable);
+        t = $("#" + definition.table_id);
     else
-        table = $("table:last").dataTable(definition.datatable);
+        t = $("table:last");
+    t.css('width', '100%');
+    var table = t.dataTable(definition.datatable);
     //actually defintion's functions are using the object where they are defined, so table is to be passed there!
     definition_._table = table;
     //also some redefined functions may come from the customer's defintion, so table is to be passed there as well.

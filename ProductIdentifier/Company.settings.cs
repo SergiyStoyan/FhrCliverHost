@@ -17,18 +17,18 @@ namespace Cliver.ProductIdentifier
     {
         void initialize_settings()
         {
-            word_weights = Cliver.Bot.DbSettings.Get<Dictionary<string, double>>(engine.Dbc, SettingsKey.SCOPE, SettingsKey.COMPANY + DbCompany.Id + SettingsKey.WORD_WEIGHTS);
-            if (word_weights == null)
-            {
-                SetIgnoredWordsFromString(engine.GetDefaultIgnoredWordsAsString());
-                SaveWordWeights();
-            }
-
             synonyms = Cliver.Bot.DbSettings.Get<Dictionary<string, string>>(engine.Dbc, SettingsKey.SCOPE, SettingsKey.COMPANY + DbCompany.Id + SettingsKey.SYNONYMS);
             if (synonyms == null)
             {
                 SetSynonymsFromString(engine.GetDefaultSynonymsAsString());
                 SaveSynonyms();
+            }
+
+            word_weights = Cliver.Bot.DbSettings.Get<Dictionary<string, double>>(engine.Dbc, SettingsKey.SCOPE, SettingsKey.COMPANY + DbCompany.Id + SettingsKey.WORD_WEIGHTS);
+            if (word_weights == null)
+            {
+                SetIgnoredWordsFromString(engine.GetDefaultIgnoredWordsAsString());
+                SaveWordWeights();
             }
 
             ignored_words_regex = create_ignored_words_regex();
@@ -195,6 +195,8 @@ namespace Cliver.ProductIdentifier
 
         public void SetWordWeightsFromString(string word_weights)
         {
+            if (this.word_weights == null)
+                this.word_weights = new Dictionary<string, double>();
             Dictionary<string, double> wws = new Dictionary<string, double>();
             foreach (KeyValuePair<string, double> w2w in this.word_weights)
                 if (w2w.Value < 0)
@@ -216,6 +218,8 @@ namespace Cliver.ProductIdentifier
 
         public void SetIgnoredWordsFromString(string ignored_words)
         {
+            if (this.word_weights == null)
+                this.word_weights = new Dictionary<string, double>();
             Dictionary<string, double> wws = new Dictionary<string, double>();
             foreach (KeyValuePair<string, double> w2w in this.word_weights)
                 if (w2w.Value >= 0)
