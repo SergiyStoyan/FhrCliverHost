@@ -198,6 +198,7 @@
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>ProductOfficeEntities.Designer.cs</LastGenOutput>
     </EntityDeploy>
+    <None Include="ClassDiagram1.cd" />
     <None Include="packages.config" />
     <None Include="ProductOffice\Models\ProductOfficeEntities.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>

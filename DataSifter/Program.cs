@@ -12,11 +12,37 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Linq;
 
 namespace Cliver.DataSifter
 {
     static class Program
     {
+        //TEST
+        static int[] A = new int[] { -1, 3, -4, 5, 1, -6, 2, 1 };
+
+        static  int g = solution(A);
+
+        public static int solution(int[] A)
+        {
+            if (A.Length < 1)
+                return -1;
+            int s = A.Sum();            
+            int s1 = 0;
+            int s2 = s - A[0];
+            for (int i = 0; i < A.Length - 1; i++)
+            {
+                if (s1 == s2)
+                    return i;
+                s1 += A[i];
+                s2 -= A[i + 1];
+            }
+            if (s1 == 0)
+                return A.Length - 1;
+            return -1;
+        }
+        //END OF TEST
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>

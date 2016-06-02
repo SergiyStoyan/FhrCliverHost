@@ -1,0 +1,151 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Cliver.Fhr.CrawlerHost.Crawler" Collapsed="true">
+    <Position X="8.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CrawlerHost\Crawler.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cliver.Fhr.CrawlerHost.CrawlerApi" Collapsed="true">
+    <Position X="10" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CrawlerHost\Crawler.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cliver.Fhr.CrawlerHost.Product" Collapsed="true">
+    <Position X="6.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAAYCgAAAAAAAAAAQAgAAAAAAAEAAAAgAAAAA=</HashCode>
+      <FileName>CrawlerHost\Product.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cliver.Fhr.ProductOffice.DataApi.Companies" Collapsed="true">
+    <Position X="3" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ProductOffice\DataApi\Company.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cliver.Fhr.ProductOffice.DataApi.Product" Collapsed="true">
+    <Position X="10" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAAAAAAAAAAAAEAAAAAAAAAgAAAAAA=</HashCode>
+      <FileName>ProductOffice\DataApi\Product.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cliver.Fhr.ProductOffice.Models.Company" Collapsed="true">
+    <Position X="4.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAEABAAAAAAAAAAAAwAAAAAAAAACAAAAAAAAAQ=</HashCode>
+      <FileName>ProductOffice\Models\CompanyAttributes.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cliver.Fhr.ProductOffice.Models.CompanyAttributes" Collapsed="true">
+    <Position X="6.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAEAAAAAAAAAAAAAAwAAAAAAAAACAAAAAAAAAA=</HashCode>
+      <FileName>ProductOffice\Models\CompanyAttributes.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cliver.Fhr.ProductOffice.Models.Currency" Collapsed="true">
+    <Position X="3" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAARAAAAAAAAAAAAQAAAAAAAAAAAAAAAAACAA=</HashCode>
+      <FileName>ProductOffice\Models\CurrencyAttributes.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cliver.Fhr.ProductOffice.Models.CurrencyAttributes" Collapsed="true">
+    <Position X="4.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAACAA=</HashCode>
+      <FileName>ProductOffice\Models\CurrencyAttributes.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cliver.Fhr.ProductOffice.Models.ProductOfficeEntities">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAARAAAAAAAAAAAAAAGgQgAAAAgAAAAAAAAAQ=</HashCode>
+      <FileName>ProductOffice\Models\DbApi.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cliver.Fhr.ProductOffice.Models.DbApi" Collapsed="true">
+    <Position X="1.25" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQAAAAAAEACAAAAAAAAAAAIEAAAAAAAAAAAAA=</HashCode>
+      <FileName>ProductOffice\Models\DbApi.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cliver.Fhr.ProductOffice.Models.ImportMap" Collapsed="true">
+    <Position X="8.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAECAAAAAgIAAAAAABAgAAQACAACAACAAAAIBAAEAAA=</HashCode>
+      <FileName>ProductOffice\Models\ImportMapAttributes.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cliver.Fhr.ProductOffice.Models.ImportMapAttributes" Collapsed="true">
+    <Position X="10" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAECAAAAAgIAAAAAABAgAAQAAAACAACAAAAIAAAEAAA=</HashCode>
+      <FileName>ProductOffice\Models\ImportMapAttributes.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cliver.Fhr.ProductOffice.Models.Product" Collapsed="true">
+    <Position X="8.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACQAQAAwIgAQAAAAAAAAQAgAEgAAIAGAAABAAACAA=</HashCode>
+      <FileName>ProductOffice\Models\ProductAttributes.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cliver.Fhr.ProductOffice.Models.ProductAttributes" Collapsed="true">
+    <Position X="3" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACQAAAAgIgAAAAAAAAAAQAgAEgAAIAGAAAAAAACAA=</HashCode>
+      <FileName>ProductOffice\Models\ProductAttributes.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cliver.Fhr.ProductOffice.Models.Event" Collapsed="true">
+    <Position X="6.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAEAAAAAAAAABAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ProductOffice\Models\Event.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cliver.Fhr.ProductOffice.Models.LinkCategory" Collapsed="true">
+    <Position X="3" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAQAAAAAAAAAAgAAAAAAAAA=</HashCode>
+      <FileName>ProductOffice\Models\LinkCategory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cliver.Fhr.ProductOffice.Models.Price" Collapsed="true">
+    <Position X="4.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAACAAAAAgAAAAAAAAAAAAAACAAAAAAAAAAgAAAAAQA=</HashCode>
+      <FileName>ProductOffice\Models\Price.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cliver.Fhr.ProductOffice.Models.Setting" Collapsed="true">
+    <Position X="4.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAACQAAAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>ProductOffice\Models\Setting.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cliver.Fhr.ProductOffice.Models.UserProfile" Collapsed="true">
+    <Position X="6.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAgAQAAAAAAAAA=</HashCode>
+      <FileName>ProductOffice\Models\UserProfile.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="Cliver.Fhr.ProductOffice.DataApi.Currency" Collapsed="true">
+    <Position X="3" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAEAAAAAAAAAAAQAAAAAAAAAAAAAAAEg=</HashCode>
+      <FileName>ProductOffice\DataApi\Currency.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -39,6 +39,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "unionrepair.com", "Crawlers
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "crawlers", "crawlers", "{404937EA-A7B7-4464-938C-DB34666B30B7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataSifter", "DataSifter\DataSifter.csproj", "{1C93A1E3-2825-41A3-9F0F-DEE78C3DFBD6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -155,6 +157,12 @@ Global
 		{4A4AFCCB-7CA5-4621-A697-A7D8C7276E1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4A4AFCCB-7CA5-4621-A697-A7D8C7276E1B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4A4AFCCB-7CA5-4621-A697-A7D8C7276E1B}.Release|x86.ActiveCfg = Release|Any CPU
+		{1C93A1E3-2825-41A3-9F0F-DEE78C3DFBD6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C93A1E3-2825-41A3-9F0F-DEE78C3DFBD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C93A1E3-2825-41A3-9F0F-DEE78C3DFBD6}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1C93A1E3-2825-41A3-9F0F-DEE78C3DFBD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C93A1E3-2825-41A3-9F0F-DEE78C3DFBD6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C93A1E3-2825-41A3-9F0F-DEE78C3DFBD6}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
